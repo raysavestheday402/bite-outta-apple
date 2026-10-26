@@ -62,8 +62,8 @@ window.LIBRARY = [
 "year": "2010",
 "rating": "TV-Y7",
 "poster": "posters/006.jpg",
-"link": "https://tv.apple.com/us/search?term=Baby%20Einstein%20Classics",
-"direct": false,
+"link": "https://tv.apple.com/us/show/baby-einstein-classics/umc.cmc.sjm3iuqzorfwaavwz8g9vers",
+"direct": true,
 "tags": []
 },
 {
@@ -207,17 +207,6 @@ window.LIBRARY = [
 "rating": "TV-Y7",
 "poster": "posters/015a.jpg",
 "link": "https://tv.apple.com/us/search?term=Animaniacs",
-"direct": false,
-"tags": []
-},
-{
-"id": "015b",
-"title": "Freakazoid!",
-"kind": "tv",
-"year": "1995",
-"rating": "TV-Y7",
-"poster": "posters/015b.jpg",
-"link": "https://tv.apple.com/us/search?term=Freakazoid!",
 "direct": false,
 "tags": []
 },
