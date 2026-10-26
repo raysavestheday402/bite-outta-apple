@@ -778,9 +778,9 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
   var byId = {};
   items.forEach(function (it) { byId[String(it.d.id)] = it; });
 
-  // Apple TV+ titles need a subscription, so they only show under their own chip (and in Favorites and search)
-  // unless this is true
-  var PLUS_EVERYWHERE = false;
+  // Apple TV+ titles need a subscription. true mixes them into every chip and the count;
+  // false shows them only under their own chip, Favorites, Recent and search
+  var PLUS_EVERYWHERE = true;
   var owned = items.filter(function (i) { return PLUS_EVERYWHERE || !i.plus; });
   var nShows = owned.filter(function (i) { return i.show; }).length;
   var nMovies = owned.length - nShows;
