@@ -54,7 +54,13 @@
   "id": "umc.cmc.6s37w8j0y778k8ucyw5pw0goq",
   "kind": "tv"
  },
-<<<<<<< Updated upstream
+ "017": {
+  "art": "https://is1-ssl.mzstatic.com/image/thumb/Video124/v4/59/e1/19/59e11949-13cf-8cca-091e-a391d159d26c/pr_source.lsr/600x900bb.jpg",
+  "for": "Tom and Jerry",
+  "found": "Tom and Jerry (2020) - show",
+  "id": "umc.cmc.4cn8ixz0zpcr6n93cygbmauac",
+  "kind": "tv"
+ },
  "151": {
   "for": "A Charlie Brown Christmas",
   "found": "from Ray's list (not yet tap-tested)",
@@ -66,21 +72,6 @@
   "found": "from Ray's list (not yet tap-tested)",
   "id": "umc.cmc.7grdgbjdq3tiy37f4dc3yeyms",
   "kind": "movie"
-=======
- "015a": {
-  "art": "https://is1-ssl.mzstatic.com/image/thumb/Video114/v4/33/c6/d7/33c6d72c-8056-852e-0d88-604b918d555d/pr_source.lsr/600x900bb.jpg",
-  "for": "Animaniacs",
-  "found": "Animaniacs (2021) - show",
-  "id": "umc.cmc.1h3klqv0gz7ioo1pzghp5gjo6",
-  "kind": "tv"
- },
- "017": {
-  "art": "https://is1-ssl.mzstatic.com/image/thumb/Video124/v4/59/e1/19/59e11949-13cf-8cca-091e-a391d159d26c/pr_source.lsr/600x900bb.jpg",
-  "for": "Tom and Jerry",
-  "found": "Tom and Jerry (2020) - show",
-  "id": "umc.cmc.4cn8ixz0zpcr6n93cygbmauac",
-  "kind": "tv"
->>>>>>> Stashed changes
  },
  "153": {
   "for": "A Charlie Brown Valentine",
