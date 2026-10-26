@@ -6,11 +6,11 @@
 
 - **Two ways to browse:** a big poster **Grid**, or a classic iPod-style **Cover Flow** you swipe through one cover at a time.
 - **One tap opens the movie in the Apple TV app**, so it's ready to play. Titles without a known Apple TV ID open an Apple TV search for that name instead.
-- **Made for a kid who can't read yet:** picture filters (⭐ All · 🎬 Movies · 📺 Shows · 🏰 Disney & Pixar · 🎄 Holidays · ➕ Apple TV+ · ❤️ Favorites), large tap targets, and no long-press popups or accidental zoom.
+- **Made for a kid who can't read yet:** picture filters (⭐ All, A to Z · 🎬 Movies · 📺 Shows · 🏰 Disney & Pixar · 🎄 Holidays · ➕ Apple TV+ · ❤️ Favorites), large tap targets, and no long-press popups or accidental zoom.
 - **Apple TV+ kids titles** (Peanuts, Fraggle Rock, Wolfwalkers…) show up with everything else and also have their own ➕ chip. They play only while the iPad has an Apple TV+ subscription.
 - **Favorites** and 🕒 **Recent** (recently watched) are saved on each device.
 - **Works without Wi‑Fi:** the app and every poster are saved on the iPad. With no Wi‑Fi, a red alert shows a green **Open Downloads** button that opens the Apple TV app, where downloaded titles still play.
-- **Link check for grown-ups:** tap 🔧 Link check at the very bottom of the page. Every title gets a 🔗 Mark broken button, a 🔗 Check links filter lists what's marked plus titles that open a search, and Copy results gives a list to paste to Claude. Tap Done checking to turn it off.
+- **Broken links:** tap the 🔗 next to a title's heart if it doesn't open right. A 🔗 Check links filter then lists what's marked plus titles that open a search, and Copy results gives a list to paste to Claude.
 - **No frameworks and no build step.** It's plain HTML, CSS and JavaScript.
 
 ## What's in here
@@ -19,7 +19,7 @@
 |---|---|
 | `index.html` | The whole app: layout, styles and code. |
 | `sw.js` | Saves the app and posters on the device so it opens offline. |
-| `data.js` | The library: 152 titles with year, rating, poster and Apple TV link. Generated, so don't edit it by hand. |
+| `data.js` | The library: every title with year, rating, poster and Apple TV link. Generated, so don't edit it by hand. |
 | `posters/` | Cover art, 600 px wide. |
 | `icons/` | Home-screen icon, favicons and `manifest.webmanifest`. |
 | `tools/Update Library.bat` | Double-click to run the whole update (below). |
@@ -39,8 +39,6 @@
 3. Tap **Share → Add to Home Screen**.
 
 It opens full-screen with its own icon, labeled **TV Library**.
-
-If a poster ever opens to **Buy** instead of **Play**, the gold **Open TV app** button at the top of the page opens the Apple TV app itself, where the movie is waiting in the Library tab. The button only appears on iPhone and iPad.
 
 For a poster to show **Play** instead of **Buy**, the iPad's Apple Account has to own the title. Being in the same Family Sharing group with **Purchase Sharing** turned on counts. Screen Time content limits also have to allow the title's rating.
 

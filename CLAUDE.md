@@ -44,9 +44,11 @@ Git-ignored and never committed: `keys.txt`, `Covers/` (any level), `site_check/
 - **Recent** (Recently Watched) lists the titles last opened in Apple TV, newest first (up to 24).
 - **No Wi‑Fi:** when `navigator.onLine` is false, a red "No Wi‑Fi" alert pinned in the toolbar shows a green **Open Downloads** button (`videos://`, iPhone/iPad only) into the Apple TV app, where downloaded titles still play. A web page can't see the TV app's downloads, so it can't list them itself.
 - The Cover Flow stage has `touch-action: none`, so swipes on the covers never scroll the page. The title and buttons under it still scroll, so small screens can reach Play.
-- **Link check (grown-ups only):** the small 🔧 Link check button in the footer (or `?test=1` / `?test=0`) turns it on or off for that device. It adds a 🔗 Check links chip (titles marked broken, then search links), broken-link flags on posters, a 🔗 Mark broken toggle on each title (Grid and Cover Flow), and a Copy results button that copies a plain-text report to paste to Claude. While it's off, the kid sees only the footer button.
+- **Broken links:** every title has a round 🔗 button next to its heart (Grid), and Cover Flow has a 🔗 Mark broken button. Ray asked for it to always be there (Oct 2026). Marking a title shows a red flag on its poster and the 🔗 Check links chip (marked titles, then search links), with a bar holding Copy results, a plain-text report to paste to Claude. Done checking goes back to All.
+- **Link check mode:** the small 🔧 Link check button in the footer (or `?test=1` / `?test=0`) also keeps the Check links chip and bar visible and flags titles that open a search.
 - Per-device state in `localStorage` under `rstd:favs`, `rstd:chip`, `rstd:view`, `rstd:recent`, `rstd:marks` and `rstd:test`, always through the `lsGet` / `lsSet` try/catch wrappers.
-- Movies are listed before shows. Sorting ignores a leading "The/A/An".
+- Every list, All included, is one A to Z list with movies and shows mixed. Sorting ignores a leading "The/A/An".
+- The header count shows the movies and shows in the current chip or search.
 - Escape any library text with `esc()` and links with `safeUrl()` when building HTML.
 
 ## A `data.js` entry
