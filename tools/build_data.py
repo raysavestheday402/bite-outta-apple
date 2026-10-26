@@ -1,20 +1,22 @@
 """Rebuilds data.js and posters/ from a Covers folder made by get_covers.py.
-Usage: python tools/build_data.py "path\\to\\Covers"   (needs Pillow: pip install pillow)"""
+Usage: python tools/build_data.py ["path\\to\\Covers"]   (needs Pillow: pip install -r tools/requirements.txt)
+With no path it uses the Covers folder used last time, or tools/Covers.
+Direct Apple TV links come from tools/apple_links.json (find_apple_links.py) first, then the Covers folder's apple-links.json."""
 import json, os, re, sys, shutil
 from PIL import Image, PngImagePlugin
+from libtools import SITE, APPLE_LINKS, load_rows, items, covers_dir, cover_files, load_json
 PngImagePlugin.MAX_TEXT_CHUNK = 100 * 1024 * 1024
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-COVERS = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, "..", "Covers")
-SITE = os.path.join(HERE, "..")
+COVERS = covers_dir(sys.argv[1] if len(sys.argv) > 1 else None)
 POST = os.path.join(SITE, "posters")
+if not os.path.isdir(COVERS):  # check before wiping posters/
+    sys.exit(f"Covers folder not found: {COVERS}")
 shutil.rmtree(POST, ignore_errors=True); os.makedirs(POST)
 
-rows = json.load(open(os.path.join(HERE, "cover_rows.json")))
-def jload(name):
-    p = os.path.join(COVERS, name)
-    return json.load(open(p, encoding="utf-8")) if os.path.exists(p) else {}
-details, links = jload("details.json"), jload("apple-links.json")
+rows = load_rows()
+details = load_json(os.path.join(COVERS, "details.json"))
+links = load_json(os.path.join(COVERS, "apple-links.json"))
+links.update(load_json(APPLE_LINKS))
 
 YEARS = {r["n"]: r["year"] for r in rows if r["year"]}
 
@@ -43,42 +45,37 @@ def save_poster(src, out):
     im.save(out, "JPEG", quality=84, optimize=True, progressive=True)
     return im.size
 
-files = {}
-for f in os.listdir(COVERS):
-    m = re.match(r"(\d{3}[a-z]?) - (.+)\.(jpg|png)$", f, re.I)
-    if m: files[m.group(1)] = (f, m.group(2))
+files = cover_files(COVERS)
 
 lib = []; report = []
-for r in rows:
-    n3 = f"{r['n']:03d}"
-    keys = sorted(k for k in files if k[:3] == n3) or [n3]
-    if r["label"].startswith("Steven Spielberg Presents"):
-        if r["mode"] == "skip": continue
-    for key in keys:
-        label = r["label"]; kind = "tv" if r["kind"] == "tv" or r["n"] <= 17 else "movie"
-        if label.startswith("Halloweentown"): kind = "movie"
-        title = DISPLAY.get(label, label)
-        if len(key) == 4:  # a/b/c/d choices -> separate shows named from the file
-            title = re.sub(r"^Steven Spielberg Presents\s+", "", files[key][1])
-            title = re.sub(r"\s*\(\d{4}\)$", "", title)
-        d = details.get(key, {}) or {}
-        year = d.get("year") or ("" if label in NO_YEAR else YEARS.get(r["n"], ""))
-        poster = None
-        if key in files:
-            size = save_poster(os.path.join(COVERS, files[key][0]), os.path.join(POST, f"{key}.jpg"))
-            poster = f"posters/{key}.jpg"
-        else:
-            report.append(f"{key} {title}: NO COVER")
-        lk = links.get(key)
-        if lk:
-            link = f"https://tv.apple.com/us/{'show' if lk['kind'] == 'tv' else 'movie'}/{slug(title)}/{lk['id']}"
-        else:
-            link = "https://tv.apple.com/us/search?term=" + re.sub(r"\s+", "%20", re.sub(r"[^\w\s'&!:.-]", "", title))
-        tags = []
-        if label in DISNEY: tags.append("disney")
-        if label in HOLIDAY: tags.append("holiday")
-        lib.append(dict(id=key, title=title, kind=kind, year=str(year or ""), rating=d.get("rating", ""),
-                        poster=poster, link=link, direct=bool(lk), tags=tags))
+for it in items(rows):
+    key, label = it["key"], it["label"]
+    title = it["title"] or DISPLAY.get(label, label)
+    if it["choice"] and not it["title"] and key in files:  # older choice rows are named from the cover file
+        title = re.sub(r"^Steven Spielberg Presents\s+", "", files[key].split(" - ", 1)[1].rsplit(".", 1)[0])
+        title = re.sub(r"\s*\(\d{4}\)$", "", title)
+    d = details.get(key, {}) or {}
+    year = d.get("year") or ("" if label in NO_YEAR else str((it["choice"] or {}).get("year") or YEARS.get(it["n"], "")))
+    poster = None
+    src = files.get(key) or (files.get(key[:3]) if it["choice"] else None)  # a split collection can borrow the box-set cover
+    if src:
+        save_poster(os.path.join(COVERS, src), os.path.join(POST, f"{key}.jpg"))
+        poster = f"posters/{key}.jpg"
+        if src != files.get(key):
+            report.append(f"{key} {title}: using the {key[:3]} cover until it has its own")
+    else:
+        report.append(f"{key} {title}: NO COVER")
+    lk = links.get(key)
+    if lk:
+        link = f"https://tv.apple.com/us/{'show' if lk['kind'] == 'tv' else 'movie'}/{slug(title)}/{lk['id']}"
+    else:
+        link = "https://tv.apple.com/us/search?term=" + re.sub(r"\s+", "%20", re.sub(r"[^\w\s'&!:.-]", "", title))
+    tags = []
+    if label in DISNEY or "disney" in it["tags"]: tags.append("disney")
+    if label in HOLIDAY or "holiday" in it["tags"]: tags.append("holiday")
+    tags += [t for t in it["tags"] if t not in tags]
+    lib.append(dict(id=key, title=title, kind=it["kind"], year=str(year or ""), rating=d.get("rating", ""),
+                    poster=poster, link=link, direct=bool(lk), tags=tags))
 
 with open(os.path.join(SITE, "data.js"), "w", encoding="utf-8") as f:
     f.write("/* raysavestheday library data - generated, do not edit by hand */\n")
