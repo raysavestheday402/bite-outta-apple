@@ -18,7 +18,7 @@ window.LIBRARY = [
 "year": "2018",
 "rating": "TV-Y7",
 "poster": "posters/002.jpg",
-"link": "https://tv.apple.com/us/show/the-adventures-of-rocky-and-bullwinkle/umc.cmc.2wmix37f9fl3a4w0tagki41sz",
+"link": "https://tv.apple.com/us/show/the-adventures-of-rocky-and-bullwinkle/umc.cmc.8sc2ssrggcjdu1ergite1e3d",
 "direct": true,
 "tags": []
 },

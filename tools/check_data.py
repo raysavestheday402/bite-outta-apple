@@ -30,7 +30,9 @@ for x in lib:
 used = {os.path.basename(x["poster"]) for x in lib if x.get("poster")}
 for f in sorted(set(os.listdir(os.path.join(SITE, "posters"))) - used):
     problems.append(f"posters/{f} isn't used by any title")
-for name in ("index.html", "data.js", "icons/manifest.webmanifest"):
+# every text file Netlify serves from the repo root, not just the app
+served = ["icons/manifest.webmanifest"] + [f for f in os.listdir(SITE) if f.lower().endswith((".html", ".js", ".md", ".json", ".txt"))]
+for name in served:
     text = open(os.path.join(SITE, name), encoding="utf-8").read().lower()
     for w in BANNED_WORDS:
         if w in text:
