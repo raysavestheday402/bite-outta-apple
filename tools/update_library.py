@@ -1,0 +1,43 @@
+"""
+update_library.py - the whole library update in one go. Double-click "Update Library.bat", or run:
+  python tools/update_library.py                         uses the Covers folder from last time (or tools/Covers)
+  python tools/update_library.py "C:\\path\\to\\Covers"   uses (and remembers) this Covers folder
+
+It runs, in order:
+  1. find_apple_links.py   direct Apple TV links for titles that still open a search (asks when it isn't sure)
+  2. get_covers.py         covers and details for titles that don't have a cover yet (keeps every cover you have)
+  3. build_data.py         rebuilds data.js and posters/
+  4. check_data.py         checks everything before you push
+Then commit and push with GitHub Desktop.
+"""
+import os, subprocess, sys
+from libtools import HERE, covers_dir, say, pause
+
+
+def run(script, *args):
+    say(f"\n=== {script} ===", "c")
+    return subprocess.call([sys.executable, os.path.join(HERE, script), *args]) == 0
+
+
+def main():
+    folder = covers_dir(sys.argv[1] if len(sys.argv) > 1 and not sys.argv[1].startswith("-") else None)
+    os.makedirs(folder, exist_ok=True)
+    say(f"Covers folder: {folder}", "d")
+    extra = ["--yes"] if "--yes" in sys.argv else []
+    run("find_apple_links.py", "--covers", folder, "--no-pause", *extra)
+    run("get_covers.py", "--covers", folder, "--missing", "--no-pause")
+    if not run("build_data.py", folder):
+        say("build_data.py stopped with an error (see above). Nothing to push yet.", "r")
+        return
+    if run("check_data.py"):
+        say("\nAll done. Open GitHub Desktop, look over the changes, then Commit and Push.", "g")
+    else:
+        say("\nThe checks above found problems. Fix those (or ask Claude) before pushing.", "y")
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        say("\nStopped.", "y")
+    pause()

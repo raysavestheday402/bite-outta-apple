@@ -43,6 +43,10 @@
   --play-lo: #0A3FB8;
   --violet: #7B3FE4;
   --teal: #0A8591;
+  --go-green: #1FAA4B;
+  --go-green-hi: #45D873;
+  --go-green-lo: #10783A;
+  --amber: #F59E0B;
 
   /* neutrals and text */
   --white: #FFFFFF;
@@ -214,7 +218,22 @@ a:focus-visible, button:focus-visible, input:focus-visible {
   font-weight: 700; font-size: 16px; line-height: 1.2; color: var(--meta);
   text-shadow: var(--shadow-text);
 }
-.count-wrap { margin-left: auto; }
+.count-wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-left: auto; }
+/* backup button: opens the Apple TV app itself (for when a poster shows Buy instead of Play) */
+.tv-app {
+  display: inline-flex; align-items: center; gap: 9px;
+  min-height: 48px; margin: 0; padding: 0 18px 0 8px; border-radius: 999px;
+  border: 2px solid var(--gold); background: var(--glass-navy); color: var(--white);
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-weight: 800; font-size: 16px; line-height: 1; white-space: nowrap; text-decoration: none;
+  text-shadow: var(--shadow-text); box-shadow: var(--shadow-chip);
+  -webkit-user-drag: none; transition: transform .12s ease;
+}
+.tv-app svg { flex: none; width: 34px; height: 34px; }
+.tv-app:active { transform: scale(.95); }
+@media (hover: hover) and (pointer: fine) {
+  .tv-app:hover { background: var(--hairline-2); }
+}
 .count {
   display: inline-block; margin: 0; padding: 7px 14px; border-radius: 999px;
   background: var(--glass-navy); color: var(--white); text-shadow: var(--shadow-text);
@@ -460,7 +479,7 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
   -webkit-mask-image: linear-gradient(to bottom, var(--black) calc(100% - 70px), transparent);
   mask-image: linear-gradient(to bottom, var(--black) calc(100% - 70px), transparent);
   perspective: 1100px; perspective-origin: 50% 38%;
-  touch-action: pan-y; cursor: grab;
+  touch-action: none; cursor: grab;   /* swipes on the covers move the covers, never the page */
 }
 .stage:active { cursor: grabbing; }
 .stage::before {
@@ -492,7 +511,7 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
   display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere;
 }
 .flow-meta { margin: 4px 0 0; min-height: 1.4em; color: var(--meta); text-shadow: var(--shadow-text); font-weight: 700; font-size: 15px; }
-.flow-actions { display: flex; justify-content: center; align-items: center; gap: 14px; margin-top: 12px; }
+.flow-actions { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 14px; margin-top: 12px; }
 .fav-flow { position: relative; flex: none; width: 56px; height: 56px; padding: 0; }
 .fav-flow::before { left: 4px; top: 4px; width: 48px; height: 48px; }
 .fav-flow svg { width: 24px; height: 24px; }
@@ -527,6 +546,66 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
   .flow-title { font-size: 24px; }
 }
 
+/* ---------- no Wi-Fi alert (pinned in the toolbar while offline) ---------- */
+.off-wrap { padding-top: 12px; }
+.offline {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 18px;
+  padding: 10px 14px; border-radius: 24px; border: 2px solid var(--white);
+  background: linear-gradient(180deg, var(--heart-red), var(--red));
+  box-shadow: var(--shadow-btn);
+}
+.off-msg {
+  display: inline-flex; align-items: center; gap: 10px; margin: 0;
+  font-family: var(--font-display), system-ui, sans-serif; font-weight: 800; font-size: 26px; line-height: 1.1;
+  color: var(--white); text-shadow: var(--shadow-text);
+}
+.off-msg svg { flex: none; width: 42px; height: 42px; }
+.dl-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  min-height: 58px; padding: 0 26px 0 14px; border-radius: 999px; border: 2px solid var(--white);
+  background: linear-gradient(180deg, var(--go-green-hi), var(--go-green-lo)); color: var(--white);
+  font-family: var(--font-body), system-ui, sans-serif; font-weight: 800; font-size: 20px; line-height: 1;
+  text-decoration: none; text-shadow: var(--shadow-text); box-shadow: var(--shadow-btn);
+  -webkit-user-drag: none; transition: transform .12s ease;
+}
+.dl-btn svg { flex: none; width: 32px; height: 32px; }
+.dl-btn:active { transform: scale(.95); }
+@media (max-width: 599px) {
+  .off-msg { font-size: 22px; }
+  .dl-btn { font-size: 18px; }
+}
+
+/* ---------- link check (grown-ups only: on with ?test=1, off with ?test=0) ---------- */
+.test-bar {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; padding-top: 2px; padding-bottom: 10px;
+  color: var(--white); font-weight: 800; font-size: 15px; line-height: 1.3; text-shadow: var(--shadow-text);
+}
+.test-sum { flex: 1 1 240px; margin: 0; }
+.t-btn {
+  min-height: 40px; margin: 0; padding: 0 16px; border-radius: 999px;
+  border: 1px solid var(--hairline-2); background: var(--veil); color: var(--white);
+  font-family: var(--font-body), system-ui, sans-serif; font-weight: 800; font-size: 15px;
+  cursor: pointer; -webkit-appearance: none; appearance: none;
+}
+.link-flag {
+  position: absolute; top: 8px; right: 8px; width: 36px; height: 36px;
+  display: grid; place-items: center; border-radius: 50%; border: 2px solid currentColor;
+  background: var(--white); box-shadow: var(--shadow-tile);
+}
+.link-flag svg { width: 20px; height: 20px; }
+.link-flag.bad { color: var(--red); }
+.link-flag.search { color: var(--amber); }
+.marks { display: flex; gap: 6px; margin-top: 8px; }
+.mark {
+  flex: 1 1 0; min-height: 38px; margin: 0; padding: 0 8px; border-radius: 999px;
+  border: 1px solid var(--hairline-2); background: var(--veil); color: var(--white);
+  font-family: var(--font-body), system-ui, sans-serif; font-weight: 800; font-size: 14px; line-height: 1; white-space: nowrap;
+  cursor: pointer; -webkit-appearance: none; appearance: none;
+}
+.mark.bad[aria-pressed="true"] { background: var(--red); border-color: var(--white); }
+.flow-marks { flex: none; width: 200px; margin-top: 0; }
+.flow-marks .mark { min-height: 48px; }
+
 /* ---------- footer ---------- */
 .stripe-wrap { margin-top: 28px; }
 .stripe {
@@ -544,6 +623,7 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
   background: var(--grad-gold); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
 }
 .foot p { max-width: 460px; margin: 0 auto; }
+.foot-btn { margin-top: 14px; min-height: 36px; font-size: 13px; color: var(--meta); }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
@@ -563,11 +643,20 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
       <h1>Apple TV Library</h1>
       <p class="tag">Movies &amp; shows</p>
     </div>
-    <div class="count-wrap"><p class="count" id="count"></p></div>
+    <div class="count-wrap">
+      <p class="count" id="count"></p>
+      <a class="tv-app" id="tvApp" href="videos://" draggable="false" aria-label="Open the Apple TV app" hidden><svg viewBox="0 0 34 34" aria-hidden="true" focusable="false"><circle cx="17" cy="17" r="16" fill="#1E6BFF" stroke="#FFFFFF" stroke-width="2"></circle><rect x="8" y="10" width="18" height="12" rx="2.5" fill="none" stroke="#FFFFFF" stroke-width="2.2"></rect><path d="M13 25.5h8" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"></path><path d="M15 13.2v5.6l4.8-2.8z" fill="#FFD25A"></path></svg>Open TV app</a>
+    </div>
   </div>
 </header>
 
 <div class="toolbar" id="toolbar">
+  <div class="wrap off-wrap" id="offline" role="alert" hidden>
+    <div class="offline">
+      <p class="off-msg"><svg viewBox="0 0 42 42" aria-hidden="true" focusable="false"><circle cx="21" cy="21" r="20" fill="#FFFFFF"></circle><g fill="none" stroke="#C8102E" stroke-width="3.2" stroke-linecap="round"><path d="M9 17.5a17 17 0 0 1 24 0"></path><path d="M13.5 22a10.5 10.5 0 0 1 15 0"></path><path d="M18 26.5a4 4 0 0 1 6 0"></path><path d="M10 10l22 22"></path></g><circle cx="21" cy="30.5" r="2" fill="#C8102E"></circle></svg>No Wi&#8209;Fi</p>
+      <a class="dl-btn" id="dlBtn" href="videos://" draggable="false" aria-label="Open downloads in the Apple TV app"><svg viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="15" fill="#FFFFFF"></circle><g fill="none" stroke="#10783A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8v11"></path><path d="M11 14.5l5 5 5-5"></path><path d="M9.5 23.5h13"></path></g></svg>Open Downloads</a>
+    </div>
+  </div>
   <div class="wrap bar-in">
     <div class="search" id="searchBox">
       <svg class="mag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5L21 21"></path></svg>
@@ -580,12 +669,20 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
     </div>
     <div class="chips" id="chips" role="group" aria-label="Filter">
       <button class="chip" type="button" data-chip="all" aria-pressed="true"><span class="ico" aria-hidden="true">&#x2B50;&#xFE0F;</span>All</button>
+      <button class="chip" type="button" data-chip="recent" aria-pressed="false"><span class="ico" aria-hidden="true">&#x1F552;&#xFE0F;</span>Recent</button>
       <button class="chip" type="button" data-chip="movies" aria-pressed="false"><span class="ico" aria-hidden="true">&#x1F3AC;&#xFE0F;</span>Movies</button>
       <button class="chip" type="button" data-chip="shows" aria-pressed="false"><span class="ico" aria-hidden="true">&#x1F4FA;&#xFE0F;</span>Shows</button>
       <button class="chip" type="button" data-chip="disney" aria-pressed="false"><span class="ico" aria-hidden="true">&#x1F3F0;&#xFE0F;</span>Disney &amp; Pixar</button>
       <button class="chip" type="button" data-chip="holidays" aria-pressed="false"><span class="ico" aria-hidden="true">&#x1F384;&#xFE0F;</span>Holidays</button>
+      <button class="chip" type="button" data-chip="plus" aria-pressed="false" hidden><span class="ico" aria-hidden="true">&#x2795;&#xFE0F;</span>Apple TV+</button>
       <button class="chip" type="button" data-chip="favs" aria-pressed="false"><span class="ico" aria-hidden="true">&#x2764;&#xFE0F;</span>Favorites<span class="n" id="favCount" hidden>0</span></button>
+      <button class="chip" type="button" data-chip="check" aria-pressed="false" hidden><span class="ico" aria-hidden="true">&#x1F517;&#xFE0F;</span>Check links</button>
     </div>
+  </div>
+  <div class="wrap test-bar" id="testBar" hidden>
+    <p class="test-sum" id="testSum"></p>
+    <button class="t-btn" id="testCopy" type="button">Copy results</button>
+    <button class="t-btn" id="testExit" type="button">Done checking</button>
   </div>
 </div>
 
@@ -597,6 +694,7 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
     <div class="flow-actions">
       <button class="fav-flow" id="flowFav" type="button" aria-pressed="false" aria-label="Add to favorites"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path></svg></button>
       <a class="play-btn" id="flowPlay" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"></path></svg>Play in Apple TV</a>
+      <span class="marks flow-marks" id="flowMarks" hidden><button class="mark bad" type="button" data-mark="bad" aria-pressed="false">&#x1F517; Mark broken</button></span>
     </div>
     <div class="flow-scrub">
       <input class="scrub" id="flowScrub" type="range" min="0" max="0" step="1" value="0" aria-label="Scrub through titles">
@@ -613,6 +711,7 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
 <footer class="foot">
   <div class="foot-brand">Apple TV Library</div>
   <p>Posters and details from TMDB. This product uses the TMDB API but is not endorsed or certified by TMDB.</p>
+  <button class="t-btn foot-btn" id="testToggle" type="button">&#x1F527; Link check</button>
 </footer>
 
 <script src="data.js"></script>
@@ -624,9 +723,11 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
 
   function $(id) { return document.getElementById(id); }
   var resultsEl = $('results'), searchEl = $('search'), clearEl = $('clear'), chipsEl = $('chips'), searchBoxEl = $('searchBox');
-  var toolbarEl = $('toolbar'), headerEl = $('top'), countEl = $('count'), favCountEl = $('favCount'), statusEl = $('status'), segEl = $('seg');
+  var toolbarEl = $('toolbar'), headerEl = $('top'), countEl = $('count'), tvAppEl = $('tvApp'), favCountEl = $('favCount'), statusEl = $('status'), segEl = $('seg');
   var flowEl = $('flow'), stageEl = $('stage'), flowTitleEl = $('flowTitle'), flowMetaEl = $('flowMeta'), flowFavEl = $('flowFav');
   var flowPlayEl = $('flowPlay'), scrubEl = $('flowScrub'), flowCountEl = $('flowCount'), flowLiveEl = $('flowLive');
+  var offlineEl = $('offline'), dlBtnEl = $('dlBtn'), flowMarksEl = $('flowMarks');
+  var testBarEl = $('testBar'), testSumEl = $('testSum'), testCopyEl = $('testCopy'), testExitEl = $('testExit');
 
   /* ---------- storage (always optional) ---------- */
   function lsGet(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
@@ -665,7 +766,8 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
       k: key,
       dig: /^[0-9]/.test(key) ? 1 : 0,
       tags: Array.isArray(d.tags) ? d.tags : [],
-      show: d.kind === 'tv'
+      show: d.kind === 'tv',
+      plus: Array.isArray(d.tags) && d.tags.indexOf('plus') !== -1
     };
   });
   items.sort(function (a, b) {
@@ -676,16 +778,51 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
   var byId = {};
   items.forEach(function (it) { byId[String(it.d.id)] = it; });
 
-  var nShows = items.filter(function (i) { return i.show; }).length;
-  var nMovies = items.length - nShows;
+  // Apple TV+ titles need a subscription. true mixes them into every chip and the count;
+  // false shows them only under their own chip, Favorites, Recent and search
+  var PLUS_EVERYWHERE = true;
+  var owned = items.filter(function (i) { return PLUS_EVERYWHERE || !i.plus; });
+  var nShows = owned.filter(function (i) { return i.show; }).length;
+  var nMovies = owned.length - nShows;
   var parts = [];
   if (nMovies) parts.push(plural(nMovies, 'movie', 'movies'));
   if (nShows) parts.push(plural(nShows, 'show', 'shows'));
   countEl.textContent = parts.join(' · ');
-  if (!parts.length) countEl.parentNode.hidden = true;
+  if (!parts.length) countEl.hidden = true;
+
+  // the backup "Open TV app" button only shows on iPhone / iPad, where videos:// opens the Apple TV app
+  // (iPadOS reports itself as a Mac, so a touch screen gives it away)
+  var appleTouch = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  tvAppEl.hidden = !appleTouch;
+  dlBtnEl.hidden = !appleTouch;
+
+  // no Wi-Fi: a red alert with a green button into the Apple TV app, where downloaded titles still play
+  function syncOnline() {
+    var off = navigator.onLine === false;
+    if (offlineEl.hidden !== off) return;
+    offlineEl.hidden = !off;
+    onResize();
+    flowReveal();
+  }
 
   /* ---------- state ---------- */
-  var LABELS = { all: 'All', movies: 'Movies', shows: 'Shows', disney: 'Disney & Pixar', holidays: 'Holidays', favs: 'Favorites' };
+  var LABELS = { all: 'All', recent: 'Recently Watched', movies: 'Movies', shows: 'Shows', disney: 'Disney & Pixar', holidays: 'Holidays', plus: 'Apple TV+', favs: 'Favorites' };
+  var hasPlus = items.some(function (i) { return i.plus; });
+  if (!hasPlus) delete LABELS.plus;
+  else chipsEl.querySelector('.chip[data-chip="plus"]').hidden = false;
+  // link check, for grown-ups testing links: ?test=1 turns it on for this device, ?test=0 turns it off
+  var testMode = (function () {
+    var m = /[?&]test=([01])\b/.exec(window.location.search);
+    if (m) lsSet('rstd:test', m[1]);
+    return lsGet('rstd:test') === '1';
+  })();
+  if (testMode) {
+    LABELS.check = 'Links to check';
+    chipsEl.querySelector('.chip[data-chip="check"]').hidden = false;
+    testBarEl.hidden = false;
+    flowMarksEl.hidden = false;
+  }
   var chip = lsGet('rstd:chip');
   if (!Object.prototype.hasOwnProperty.call(LABELS, chip)) chip = 'all';
   var view = lsGet('rstd:view') === 'flow' ? 'flow' : 'grid';
@@ -699,6 +836,38 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
       if (Array.isArray(arr)) arr.forEach(function (id) { id = String(id); if (byId[id]) favs.add(id); });
     } catch (e) { /* ignore bad data */ }
   })();
+  function loadIds(key) {
+    try {
+      var arr = JSON.parse(lsGet(key) || '[]');
+      return Array.isArray(arr) ? arr.map(String).filter(function (id) { return byId[id]; }) : [];
+    } catch (e) { return []; }
+  }
+
+  // Recently Watched: ids of the titles last opened in Apple TV, newest first
+  var recent = loadIds('rstd:recent');
+  function addRecent(id) {
+    id = String(id);
+    if (!byId[id]) return;
+    recent = [id].concat(recent.filter(function (x) { return x !== id; })).slice(0, 24);
+    lsSet('rstd:recent', JSON.stringify(recent));
+  }
+
+  // link check marks: id -> 'bad' (broken). Older 'ok' marks are ignored
+  var marks = {};
+  (function () {
+    try {
+      var o = JSON.parse(lsGet('rstd:marks') || '{}');
+      Object.keys(o || {}).forEach(function (id) { if (byId[id] && o[id] === 'bad') marks[id] = 'bad'; });
+    } catch (e) { /* ignore bad data */ }
+  })();
+  function setMark(id, val) {
+    if (marks[id] === val) delete marks[id]; else marks[id] = val;
+    lsSet('rstd:marks', JSON.stringify(marks));
+    syncTestBar();
+  }
+  // marked broken first, then search links (no direct Apple TV link)
+  function checkRank(it) { return marks[String(it.d.id)] === 'bad' ? 0 : 1; }
+
   function saveFavs() { lsSet('rstd:favs', JSON.stringify(Array.from(favs))); }
   function toggleFav(id) {
     var on = !favs.has(id);
@@ -708,18 +877,30 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
     return on;
   }
 
-  function matchChip(it) {
+  function matchChip(it, q) {
+    if (it.plus && !PLUS_EVERYWHERE && !q && chip !== 'plus' && chip !== 'favs' && chip !== 'recent' && chip !== 'check') return false;
     switch (chip) {
       case 'movies': return !it.show;
       case 'shows': return it.show;
       case 'disney': return it.tags.indexOf('disney') !== -1;
       case 'holidays': return it.tags.indexOf('holiday') !== -1;
+      case 'plus': return it.plus;
       case 'favs': return favs.has(String(it.d.id));
+      case 'recent': return recent.indexOf(String(it.d.id)) !== -1;
+      case 'check': return marks[String(it.d.id)] === 'bad' || !it.d.direct;
       default: return true;
     }
   }
-  // "All" with no search reads Movies A-Z then Shows A-Z; everything else is one A-Z list
+  // "All" with no search reads Movies A-Z then Shows A-Z; Recent is newest first; everything else is one A-Z list
   function ordered(list, q) {
+    if (chip === 'recent') {
+      return list.slice().sort(function (a, b) { return recent.indexOf(String(a.d.id)) - recent.indexOf(String(b.d.id)); });
+    }
+    if (chip === 'check') {
+      return list.map(function (it, i) { return { it: it, i: i, r: checkRank(it) }; })
+        .sort(function (a, b) { return a.r - b.r || a.i - b.i; })
+        .map(function (x) { return x.it; });
+    }
     if (chip !== 'all' || q) return list;
     return list.filter(function (i) { return !i.show; }).concat(list.filter(function (i) { return i.show; }));
   }
@@ -731,6 +912,22 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
     return '<div class="ph g' + (hash(String(d.id)) % 4 + 1) + '" aria-hidden="true"><span>' + esc(d.title) + '</span></div>';
   }
 
+  var LINK_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M10 14.5l-1.8 1.8a3.2 3.2 0 0 1-4.5-4.5L6 9.5"></path><path d="M14 9.5l1.8-1.8a3.2 3.2 0 0 1 4.5 4.5L18 14.5"></path><path d="M8.5 3v2.5M3 8.5h2.5M15.5 21v-2.5M21 15.5h-2.5"></path></svg>';
+
+  // link check only: a broken-link flag on titles marked broken (red) or that open a search (amber)
+  function flagHTML(d) {
+    if (!testMode) return '';
+    var m = marks[String(d.id)];
+    if (m === 'bad') return '<span class="link-flag bad" title="Broken">' + LINK_ICON + '</span>';
+    return d.direct ? '' : '<span class="link-flag search" title="Opens a search, not the title">' + LINK_ICON + '</span>';
+  }
+  function marksHTML(id) {
+    if (!testMode) return '';
+    var on = marks[id] === 'bad';
+    return '<div class="marks"><button class="mark bad" type="button" data-mark="bad" aria-pressed="' + on + '">' +
+      (on ? '&#x274C; Broken' : '&#x1F517; Mark broken') + '</button></div>';
+  }
+
   function cardHTML(it) {
     var d = it.d, id = String(d.id), t = esc(d.title);
     var meta = [d.year, d.rating].filter(function (x) { return x; }).join(' · ');
@@ -739,11 +936,12 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
       : tileHTML(d);
     return '<div class="card" role="listitem" data-id="' + esc(id) + '">' +
       '<a class="tap" href="' + esc(safeUrl(d.link)) + '" target="_blank" rel="noopener" draggable="false" aria-label="Watch ' + t + ' in Apple TV">' +
-        '<div class="poster">' + media + (it.show ? '<span class="badge">SHOW</span>' : '') + '<span class="play-disc" aria-hidden="true"></span></div>' +
+        '<div class="poster">' + media + (it.show ? '<span class="badge">SHOW</span>' : '') + flagHTML(d) + '<span class="play-disc" aria-hidden="true"></span></div>' +
         '<div class="name">' + t + '</div>' +
         (meta ? '<div class="meta">' + esc(meta) + '</div>' : '') +
       '</a>' +
       '<button class="fav" type="button" aria-pressed="' + favs.has(id) + '" aria-label="Add ' + t + ' to favorites">' + HEART + '</button>' +
+      marksHTML(id) +
     '</div>';
   }
 
@@ -761,10 +959,13 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
   function render() {
     var rawQ = searchEl.value.trim();
     var q = norm(rawQ);
-    var list = items.filter(function (it) { return matchChip(it) && (!q || it.n.indexOf(q) !== -1); });
-    var emptyFav = chip === 'favs' && favs.size === 0;
+    var list = items.filter(function (it) { return matchChip(it, q) && (!q || it.n.indexOf(q) !== -1); });
+    var emptyMsg = chip === 'favs' && favs.size === 0 ? 'Tap the <span class="hrt">♥</span> on any poster to save it here.'
+      : chip === 'recent' && !recent.length ? '&#x1F552; Movies and shows you watch will show up here.'
+      : chip === 'check' && !list.length && !q ? '&#x2705; No broken links. Tap &#x1F517; Mark broken on any title that doesn&#39;t open right.'
+      : '';
 
-    if (view === 'flow' && !emptyFav && list.length) {
+    if (view === 'flow' && !emptyMsg && list.length) {
       resultsEl.innerHTML = '';
       resultsEl.hidden = true;
       var flowWasHidden = flowEl.hidden;
@@ -779,8 +980,8 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
     flowEl.hidden = true;
     resultsEl.hidden = false;
     var html;
-    if (emptyFav) {
-      html = emptyHTML('Tap the <span class="hrt">♥</span> on any poster to save it here.');
+    if (emptyMsg) {
+      html = emptyHTML(emptyMsg);
     } else if (!list.length) {
       html = emptyHTML('No matches for “' + esc(rawQ) + '”. Try another word.');
     } else if (chip === 'all' && !q) {
@@ -790,7 +991,7 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
              (shows.length ? sectionHTML('h-shows', 'Shows', shows) : '');
     } else {
       var title = q ? (chip === 'all' ? 'Search results' : 'Search results in ' + LABELS[chip]) : LABELS[chip];
-      html = sectionHTML('h-list', title, list);
+      html = sectionHTML('h-list', title, ordered(list, q));
     }
     resultsEl.innerHTML = html;
     statusEl.textContent = plural(list.length, 'title', 'titles') + ' shown';
@@ -965,6 +1166,7 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
     var d = it.d, id = String(d.id), n = fl.list.length;
     var bits = [d.year, d.rating].filter(function (x) { return x; });
     if (it.show) bits.unshift('Show');
+    if (testMode && !d.direct) bits.push('Search link');
     fl.id = id;
     flowTitleEl.firstChild.textContent = d.title;
     flowMetaEl.textContent = bits.join(' · ');
@@ -972,6 +1174,7 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
     flowPlayEl.setAttribute('aria-label', 'Play ' + d.title + ' in Apple TV');
     flowFavEl.setAttribute('aria-pressed', favs.has(id) ? 'true' : 'false');
     flowFavEl.setAttribute('aria-label', 'Add ' + d.title + ' to favorites');
+    if (testMode) syncFlowMarks();
     flowCountEl.textContent = (i + 1) + ' of ' + n;
     if (scrubEl.value !== String(i)) scrubEl.value = String(i);
     window.clearTimeout(fl.liveT);
@@ -1074,7 +1277,25 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
     var a = e.target.closest ? e.target.closest('a.cf') : null;
     if (!a) return;
     if (fl.dragged) { e.preventDefault(); return; }
-    if (a._i !== fl.center) { e.preventDefault(); flowGoto(a._i, 320); }
+    if (a._i !== fl.center) { e.preventDefault(); flowGoto(a._i, 320); return; }
+    if (fl.list[a._i]) addRecent(fl.list[a._i].d.id);
+  });
+  flowPlayEl.addEventListener('click', function () { if (fl.id) addRecent(fl.id); });
+
+  function syncFlowMarks() {
+    var btns = flowMarksEl.querySelectorAll('.mark');
+    for (var i = 0; i < btns.length; i++) {
+      var on = marks[fl.id] === btns[i].getAttribute('data-mark');
+      btns[i].setAttribute('aria-pressed', on ? 'true' : 'false');
+      btns[i].innerHTML = on ? '&#x274C; Broken' : '&#x1F517; Mark broken';
+    }
+  }
+  flowMarksEl.addEventListener('click', function (e) {
+    var btn = e.target.closest ? e.target.closest('.mark') : null;
+    if (!btn || !fl.id) return;
+    setMark(fl.id, btn.getAttribute('data-mark'));
+    if (chip === 'check') { fl.keep = fl.center; render(); return; }
+    syncFlowMarks();
   });
   stageEl.addEventListener('dragstart', function (e) { e.preventDefault(); });
 
@@ -1168,7 +1389,16 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
   });
 
   resultsEl.addEventListener('click', function (e) {
-    var btn = e.target.closest ? e.target.closest('.fav') : null;
+    if (!e.target.closest) return;
+    var tap = e.target.closest('.tap'), mark = e.target.closest('.mark');
+    if (tap || mark) {
+      var c = (tap || mark).closest('.card');
+      if (!c) return;
+      if (tap) addRecent(c.getAttribute('data-id'));
+      else { setMark(c.getAttribute('data-id'), mark.getAttribute('data-mark')); render(); }
+      return;
+    }
+    var btn = e.target.closest('.fav');
     if (!btn) return;
     var card = btn.closest('.card');
     var id = card ? card.getAttribute('data-id') : null;
@@ -1217,7 +1447,54 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
   // lets :active press feedback fire on older iOS Safari
   document.addEventListener('touchstart', function () {}, { passive: true });
 
+  // coming back from the Apple TV app: Recent picks up what was just opened
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden && chip === 'recent') render();
+  });
+  window.addEventListener('online', syncOnline);
+  window.addEventListener('offline', syncOnline);
+
+  /* ---------- link check bar ---------- */
+  function syncTestBar() {
+    if (!testMode) return;
+    var bad = 0, search = 0;
+    items.forEach(function (it) {
+      if (marks[String(it.d.id)] === 'bad') bad++; else if (!it.d.direct) search++;
+    });
+    testSumEl.textContent = 'Link check: tap \u{1F517} Mark broken on any title that opens the wrong page. ' +
+      bad + ' marked broken · ' + search + ' more open a search.';
+  }
+  function testReport() {
+    var bad = [], search = [];
+    items.forEach(function (it) {
+      var line = it.d.title + (it.show ? ' (show)' : '') + ' [' + it.d.id + ']';
+      if (marks[String(it.d.id)] === 'bad') bad.push(line); else if (!it.d.direct) search.push(line);
+    });
+    return 'TV Library link check\n\n' +
+      'Marked broken (' + bad.length + '):\n' + (bad.join('\n') || '-') + '\n\n' +
+      'Open a search instead of the title (' + search.length + '):\n' + (search.join('\n') || '-') + '\n';
+  }
+  testCopyEl.addEventListener('click', function () {
+    var text = testReport();
+    var done = function () { testCopyEl.textContent = 'Copied!'; window.setTimeout(function () { testCopyEl.textContent = 'Copy results'; }, 1800); };
+    var fallback = function () { window.prompt('Copy the link check results:', text); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback);
+    else fallback();
+  });
+  function setTestMode(on) {
+    lsSet('rstd:test', on ? '1' : '0');
+    window.location.href = window.location.pathname;
+  }
+  testExitEl.addEventListener('click', function () { setTestMode(false); });
+  var testToggleEl = $('testToggle');
+  if (testMode) testToggleEl.innerHTML = '&#x1F527; Turn off link check';
+  testToggleEl.addEventListener('click', function () {
+    setTestMode(!testMode);
+  });
+
   /* ---------- start ---------- */
+  syncOnline();
+  syncTestBar();
   syncSearchBox();
   syncChips();
   syncView();
@@ -1228,6 +1505,15 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
   var startBtn = chipsEl.querySelector('.chip[data-chip="' + chip + '"]');
   if (startBtn) revealChip(startBtn);
   flowReveal();
+
+  // offline support: sw.js keeps the app and every poster on the device
+  if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost')) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('sw.js').then(function () { return navigator.serviceWorker.ready; }).then(function (reg) {
+        if (reg.active) reg.active.postMessage('save-posters');
+      }).catch(function () { /* offline support is optional */ });
+    });
+  }
 })();
 </script>
 </body>
