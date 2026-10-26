@@ -37,6 +37,18 @@ for name in served:
     for w in BANNED_WORDS:
         if w in text:
             problems.append(f"{name} mentions {w!r}")
+for name in ("apple_links.json", "cover_rows.json"):
+    try:
+        json.load(open(os.path.join(HERE, name), encoding="utf-8"))
+    except ValueError:
+        problems.append(f"tools/{name} is damaged (a leftover merge conflict?)")
+seen = {}
+for x in lib:  # two titles opening the same Apple TV page usually means one link is wrong
+    if x["direct"]:
+        tv_id = x["link"].split("?")[0].rstrip("/").rsplit("/", 1)[-1]
+        if tv_id in seen:
+            problems.append(f"{x['id']} {x['title']}: same Apple TV link as {seen[tv_id]}")
+        seen[tv_id] = f"{x['id']} {x['title']}"
 
 movies = sum(x["kind"] == "movie" for x in lib)
 plus = sum("plus" in x.get("tags", []) for x in lib)

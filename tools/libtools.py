@@ -77,8 +77,10 @@ def cover_files(folder):
 def load_json(path):
     try:
         return json.load(open(path, encoding="utf-8")) if os.path.exists(path) else {}
-    except ValueError:
-        return {}
+    except ValueError as e:
+        # never carry on with an empty list: that would quietly drop every link in it
+        raise SystemExit(f"\n{path} is damaged ({e}).\n"
+                         "If it has <<<<<<< or >>>>>>> lines, GitHub Desktop left a merge conflict in it. Ask Claude to fix it.")
 
 
 def save_json(path, data):

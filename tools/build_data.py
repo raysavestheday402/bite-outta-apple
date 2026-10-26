@@ -17,16 +17,16 @@ COVERS = covers_dir(sys.argv[1] if len(sys.argv) > 1 else None)
 POST = os.path.join(SITE, "posters")
 if not os.path.isdir(COVERS):  # check before wiping posters/
     sys.exit(f"Covers folder not found: {COVERS}")
+rows = load_rows()
+details = load_json(os.path.join(COVERS, "details.json"))
+links = load_json(os.path.join(COVERS, "apple-links.json"))
+links.update(load_json(APPLE_LINKS))
 OLD = site_library()
 KEEP = tempfile.mkdtemp()  # the current posters, so titles without a file in Covers keep theirs
 if os.path.isdir(POST):
     shutil.copytree(POST, KEEP, dirs_exist_ok=True)
 shutil.rmtree(POST, ignore_errors=True); os.makedirs(POST)
 
-rows = load_rows()
-details = load_json(os.path.join(COVERS, "details.json"))
-links = load_json(os.path.join(COVERS, "apple-links.json"))
-links.update(load_json(APPLE_LINKS))
 
 YEARS = {r["n"]: r["year"] for r in rows if r["year"]}
 

@@ -206,8 +206,8 @@ window.LIBRARY = [
 "year": "1993",
 "rating": "TV-Y7",
 "poster": "posters/015a.jpg",
-"link": "https://tv.apple.com/us/show/animaniacs/umc.cmc.1h3klqv0gz7ioo1pzghp5gjo6",
-"direct": true,
+"link": "https://tv.apple.com/us/search?term=Animaniacs",
+"direct": false,
 "tags": []
 },
 {
