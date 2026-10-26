@@ -60,21 +60,17 @@ For a poster to show **Play** instead of **Buy**, the iPad's Apple Account has t
 
 1. In GitHub Desktop, pull the latest changes.
 2. Add or remove titles in `tools/cover_rows.json` if you want to (field meanings are in `CLAUDE.md`). Give new titles the next unused number.
-3. Run the update. The first time, point it at your Covers folder so it keeps every cover you already have:
-   ```
-   python tools\update_library.py "C:\Users\raysa\Claude Files\Apple TV Archive\Covers"
-   ```
-   After that it remembers the folder, so you can just double-click **`tools\Update Library.bat`**.
+3. In GitHub Desktop choose **Repository → Show in Explorer**, open the `tools` folder there and double-click **`Update Library.bat`**. It has to be this folder, the one GitHub Desktop uses, or the results won't show up as changes to push. (To use your Covers archive for new covers, run `python tools\update_library.py "C:\Users\raysa\Claude Files\Apple TV Archive\Covers"` once from that folder; it's remembered after that. It isn't required: the site's own posters, years, ratings and links are kept either way.)
 4. It runs four steps:
-   - **Apple TV links** (`find_apple_links.py`): looks up every title that still opens a search. When it isn't sure, it lists what it found and you type a number, or press Enter to skip.
-   - **Covers** (`get_covers.py --missing`): downloads covers only for titles that don't have one yet.
-   - **Build** (`build_data.py`): rewrites `data.js` and `posters/`.
+   - **Apple TV links** (`find_apple_links.py`): looks up only new titles (like the Apple TV+ ones) and titles that still open a search. Titles that already open directly are skipped. When it isn't sure, it lists what it found and you type a number, or press Enter to skip. What happened to each title is saved in `apple-links-log.csv` in the Covers folder.
+   - **Covers** (`get_covers.py --missing`): downloads covers only for titles that have none, in the Covers folder or on the site.
+   - **Build** (`build_data.py`): rewrites `data.js` and `posters/`. A new title shows up once it has a cover.
    - **Check** (`check_data.py`): lists anything wrong, and any titles that still open a search.
 5. Look over the new posters, then commit and push in GitHub Desktop. Netlify deploys in about a minute.
 
 ### If a title still opens a search
 
-Find it in the Apple TV app (or at tv.apple.com), tap **Share → Copy Link**, then paste it in with its id from `data.js` or `cover_rows.json`:
+Find it in the Apple TV app (or at tv.apple.com), tap **Share → Copy Link**, then paste it in with its id from `data.js` or `cover_rows.json`. Links from another country's store or for an episode work too. If a title's link is broken rather than a search, the same `--set` fixes it, or run `python tools\find_apple_links.py 105` to look that one up again.
 
 ```
 python tools\find_apple_links.py --set 105 "https://tv.apple.com/us/movie/the-pout-pout-fish/umc.cmc.xxxxx"

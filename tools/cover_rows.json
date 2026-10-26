@@ -13,7 +13,7 @@
  {"n": 12, "kind": "tv", "label": "Rocko's Modern Life", "term": "Rocko's Modern Life", "year": 1993, "mode": "", "wiki": [], "alts": []},
  {"n": 13, "kind": "tv", "label": "Rugrats", "term": "Rugrats", "year": 1991, "mode": "", "wiki": [], "alts": []},
  {"n": 14, "kind": "tv", "label": "Sabrina, The Teenage Witch", "term": "Sabrina the Teenage Witch", "year": 1996, "mode": "", "wiki": [], "alts": []},
- {"n": 15, "kind": "tv", "label": "Steven Spielberg Presents... (1)", "term": "Steven Spielberg Presents", "year": "", "mode": "multi", "choices": [{"kind": "tv", "term": "Animaniacs", "year": 1993}, {"kind": "tv", "term": "Freakazoid!", "year": 1995}, {"kind": "tv", "term": "Pinky and the Brain", "year": 1995}, {"kind": "tv", "term": "Pinky, Elmyra & the Brain", "year": 1998}]},
+ {"n": 15, "kind": "tv", "label": "Steven Spielberg Presents... (1)", "term": "Steven Spielberg Presents", "year": "", "mode": "multi", "choices": [{"kind": "tv", "term": "Animaniacs", "year": 1993, "title": "Animaniacs"}, {"kind": "tv", "term": "Freakazoid!", "year": 1995, "title": "Freakazoid!"}, {"kind": "tv", "term": "Pinky and the Brain", "year": 1995, "title": "Pinky and the Brain"}], "wiki": []},
  {"n": 16, "kind": "tv", "label": "Steven Spielberg Presents... (2)", "term": "Steven Spielberg Presents", "year": "", "mode": "skip"},
  {"n": 17, "kind": "tv", "label": "Tom and Jerry", "term": "Tom and Jerry", "year": "", "mode": "", "wiki": [], "alts": []},
  {"n": 18, "kind": "movie", "label": "The Adventures of Rocky and Bullwinkle", "term": "The Adventures of Rocky and Bullwinkle", "year": 2000, "mode": "", "wiki": ["The Adventures of Rocky and Bullwinkle (film)"], "alts": []},

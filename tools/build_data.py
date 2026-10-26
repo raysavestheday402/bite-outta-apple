@@ -1,16 +1,26 @@
-"""Rebuilds data.js and posters/ from a Covers folder made by get_covers.py.
+"""Rebuilds data.js and posters/ from the title list, a Covers folder made by get_covers.py, and what the site has now.
 Usage: python tools/build_data.py ["path\\to\\Covers"]   (needs Pillow: pip install -r tools/requirements.txt)
 With no path it uses the Covers folder used last time, or tools/Covers.
-Direct Apple TV links come from tools/apple_links.json (find_apple_links.py) first, then the Covers folder's apple-links.json."""
-import json, os, re, sys, shutil
+
+For each title, best first:
+  cover:  the Covers folder, then the poster already in posters/ (a split collection can borrow the box-set cover)
+  link:   tools/apple_links.json, then the Covers folder's apple-links.json, then the direct link already in data.js
+  year/rating: the Covers folder's details.json, then what data.js already has
+So the Covers folder only needs the new titles; nothing on the site is lost if it's empty.
+A title with no cover anywhere is left off the site until it has one."""
+import json, os, re, sys, shutil, tempfile
 from PIL import Image, PngImagePlugin
-from libtools import SITE, APPLE_LINKS, load_rows, items, covers_dir, cover_files, load_json
+from libtools import SITE, APPLE_LINKS, load_rows, items, site_library, covers_dir, cover_files, load_json
 PngImagePlugin.MAX_TEXT_CHUNK = 100 * 1024 * 1024
 
 COVERS = covers_dir(sys.argv[1] if len(sys.argv) > 1 else None)
 POST = os.path.join(SITE, "posters")
 if not os.path.isdir(COVERS):  # check before wiping posters/
     sys.exit(f"Covers folder not found: {COVERS}")
+OLD = site_library()
+KEEP = tempfile.mkdtemp()  # the current posters, so titles without a file in Covers keep theirs
+if os.path.isdir(POST):
+    shutil.copytree(POST, KEEP, dirs_exist_ok=True)
 shutil.rmtree(POST, ignore_errors=True); os.makedirs(POST)
 
 rows = load_rows()
@@ -47,7 +57,7 @@ def save_poster(src, out):
 
 files = cover_files(COVERS)
 
-lib = []; report = []
+lib = []; report = []; waiting = []
 for it in items(rows):
     key, label = it["key"], it["label"]
     title = it["title"] or DISPLAY.get(label, label)
@@ -55,31 +65,48 @@ for it in items(rows):
         title = re.sub(r"^Steven Spielberg Presents\s+", "", files[key].split(" - ", 1)[1].rsplit(".", 1)[0])
         title = re.sub(r"\s*\(\d{4}\)$", "", title)
     d = details.get(key, {}) or {}
-    year = d.get("year") or ("" if label in NO_YEAR else str((it["choice"] or {}).get("year") or YEARS.get(it["n"], "")))
-    poster = None
-    src = files.get(key) or (files.get(key[:3]) if it["choice"] else None)  # a split collection can borrow the box-set cover
-    if src:
-        save_poster(os.path.join(COVERS, src), os.path.join(POST, f"{key}.jpg"))
-        poster = f"posters/{key}.jpg"
-        if src != files.get(key):
-            report.append(f"{key} {title}: using the {key[:3]} cover until it has its own")
+    old = OLD.get(key) or {}
+    box = (OLD.get(key[:3]) or {}) if it["choice"] else {}  # a split collection starts from the box set's entry
+    year = d.get("year") or old.get("year") or ("" if label in NO_YEAR else str((it["choice"] or {}).get("year") or YEARS.get(it["n"], "")))
+    rating = d.get("rating") or old.get("rating") or box.get("rating", "")
+    kept = os.path.join(KEEP, f"{key}.jpg")
+    if key in files:
+        save_poster(os.path.join(COVERS, files[key]), os.path.join(POST, f"{key}.jpg"))
+    elif os.path.exists(kept):
+        shutil.copyfile(kept, os.path.join(POST, f"{key}.jpg"))
+    elif it["choice"] and (key[:3] in files or os.path.exists(os.path.join(KEEP, f"{key[:3]}.jpg"))):
+        if key[:3] in files:
+            save_poster(os.path.join(COVERS, files[key[:3]]), os.path.join(POST, f"{key}.jpg"))
+        else:
+            shutil.copyfile(os.path.join(KEEP, f"{key[:3]}.jpg"), os.path.join(POST, f"{key}.jpg"))
+        report.append(f"{key} {title}: using the {key[:3]} cover until it has its own")
     else:
-        report.append(f"{key} {title}: NO COVER")
+        waiting.append(f"{key} {title}")
+        continue
+    poster = f"posters/{key}.jpg"
     lk = links.get(key)
-    if lk:
+    if lk and lk.get("url"):
+        link = lk["url"]
+    elif lk:
         link = f"https://tv.apple.com/us/{'show' if lk['kind'] == 'tv' else 'movie'}/{slug(title)}/{lk['id']}"
+    elif old.get("direct"):
+        link = old["link"]
     else:
         link = "https://tv.apple.com/us/search?term=" + re.sub(r"\s+", "%20", re.sub(r"[^\w\s'&!:.-]", "", title))
     tags = []
     if label in DISNEY or "disney" in it["tags"]: tags.append("disney")
     if label in HOLIDAY or "holiday" in it["tags"]: tags.append("holiday")
     tags += [t for t in it["tags"] if t not in tags]
-    lib.append(dict(id=key, title=title, kind=it["kind"], year=str(year or ""), rating=d.get("rating", ""),
-                    poster=poster, link=link, direct=bool(lk), tags=tags))
+    lib.append(dict(id=key, title=title, kind=it["kind"], year=str(year or ""), rating=rating,
+                    poster=poster, link=link, direct=bool(lk) or bool(old.get("direct") and link == old.get("link")), tags=tags))
 
 with open(os.path.join(SITE, "data.js"), "w", encoding="utf-8") as f:
     f.write("/* raysavestheday library data - generated, do not edit by hand */\n")
     f.write("window.LIBRARY = " + json.dumps(lib, ensure_ascii=False, indent=0) + ";\n")
 print(len(lib), "titles |", sum(1 for x in lib if x["kind"] == "movie"), "movies,", sum(1 for x in lib if x["kind"] == "tv"), "shows |",
-      sum(x["direct"] for x in lib), "direct links |", sum(1 for x in lib if not x["poster"]), "without poster")
+      sum(x["direct"] for x in lib), "direct links")
+shutil.rmtree(KEEP, ignore_errors=True)
 print("\n".join(report))
+if waiting:
+    print(f"{len(waiting)} titles are left off until they have a cover (run get_covers.py --missing):")
+    print("  " + "\n  ".join(waiting))

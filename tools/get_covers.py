@@ -17,11 +17,11 @@ folder you name with --covers "C:\\path\\to\\Covers" (remembered for next time).
 
 Usage:
   python tools/get_covers.py              every title (replaces covers it finds again)
-  python tools/get_covers.py --missing    only titles that don't have a cover yet (keeps hand-picked covers)
+  python tools/get_covers.py --missing    only titles with no cover in the Covers folder or posters/ (keeps every cover you have)
   python tools/get_covers.py 010a 151     only these ids
 """
 import json, os, re, sys, time, csv, urllib.request, urllib.parse, urllib.error
-from libtools import HERE, APPLE_LINKS, items, covers_dir, cover_files, load_json, say, pause
+from libtools import HERE, APPLE_LINKS, items, has_poster, covers_dir, cover_files, load_json, say, pause
 
 ARGS = sys.argv[1:]
 OUT = covers_dir(ARGS[ARGS.index("--covers") + 1] if "--covers" in ARGS else None)
@@ -300,7 +300,9 @@ def find_one(tm, fkey, wiki, kind, names, year, wiki_titles, apple_art=None):
 def main():
     only = {a for a in ARGS if re.fullmatch(r"\d{3}[a-z]?", a)}
     have = cover_files(OUT)
-    todo = [it for it in items() if (not only or it["key"] in only) and not ("--missing" in ARGS and it["key"] in have)]
+    # --missing: a title counts as having a cover if the Covers folder or the site's posters/ has one
+    todo = [it for it in items() if (not only or it["key"] in only)
+            and not ("--missing" in ARGS and (it["key"] in have or has_poster(it["key"])))]
     if not todo:
         say("Every title already has a cover.", "g")
         return
