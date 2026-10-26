@@ -7,3 +7,9 @@ __pycache__/
 Thumbs.db
 site_check/
 Covers/
+.venv/
+venv/
+.vscode/
+.idea/
+desktop.ini
+.netlify/

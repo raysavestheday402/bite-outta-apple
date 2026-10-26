@@ -1,16 +1,19 @@
 """Rebuilds data.js and posters/ from a Covers folder made by get_covers.py.
-Usage: python tools/build_data.py "path\\to\\Covers"   (needs Pillow: pip install pillow)"""
+Usage: python tools/build_data.py ["path\\to\\Covers"]   (needs Pillow: pip install -r tools/requirements.txt)
+With no path it uses tools/Covers, which is where get_covers.py saves everything."""
 import json, os, re, sys, shutil
 from PIL import Image, PngImagePlugin
 PngImagePlugin.MAX_TEXT_CHUNK = 100 * 1024 * 1024
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-COVERS = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, "..", "Covers")
+COVERS = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, "Covers")  # where get_covers.py saves them
 SITE = os.path.join(HERE, "..")
 POST = os.path.join(SITE, "posters")
+if not os.path.isdir(COVERS):  # check before wiping posters/
+    sys.exit(f"Covers folder not found: {COVERS}")
 shutil.rmtree(POST, ignore_errors=True); os.makedirs(POST)
 
-rows = json.load(open(os.path.join(HERE, "cover_rows.json")))
+rows = json.load(open(os.path.join(HERE, "cover_rows.json"), encoding="utf-8"))
 def jload(name):
     p = os.path.join(COVERS, name)
     return json.load(open(p, encoding="utf-8")) if os.path.exists(p) else {}

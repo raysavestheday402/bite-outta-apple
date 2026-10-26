@@ -1,6 +1,8 @@
-# bite-out-of-appl 🍎
+# bite-outta-apple 🍎
 
 **Apple TV Library**: a kid-friendly, tap-a-poster launcher for our family's purchased Apple TV / iTunes movies and shows. It's built to live on an iPad home screen.
+
+**Live:** https://raysavesthedaylibrary.netlify.app (Netlify redeploys on every push).
 
 - **Two ways to browse:** a big poster **Grid**, or a classic iPod-style **Cover Flow** you swipe through one cover at a time.
 - **One tap opens the movie in the Apple TV app**, so it's ready to play. Titles without a known Apple TV ID open an Apple TV search for that name instead.
@@ -18,7 +20,9 @@
 | `icons/` | Home-screen icon, favicons and `manifest.webmanifest`. |
 | `tools/get_covers.py` | Downloads posters (TMDB → fanart.tv → Wikipedia), details, and Apple TV links (Wikidata). |
 | `tools/build_data.py` | Rebuilds `data.js` and `posters/` from the downloaded covers. |
-| `tools/cover_rows.json` | The title list the tools work from. |
+| `tools/cover_rows.json` | The title list. Both scripts read it, so it's the only place to edit. |
+| `tools/check_data.py` | Quick offline checks (posters present, kids ratings, links) to run before pushing. |
+| `CLAUDE.md` | Project rules and notes for working on this with Claude. |
 
 ## Put it on the iPad
 
@@ -32,10 +36,11 @@ For a poster to show **Play** instead of **Buy**, the iPad's Apple Account has t
 
 ## Updating the library
 
-1. Add or remove titles in `tools/cover_rows.json`. The download script has its own built-in copy of the list, so update that too, or ask Claude to regenerate it.
-2. Run `python tools/get_covers.py`. It asks once for a free TMDB API key and stores it in `keys.txt`, which is git-ignored and never committed.
-3. Run `python tools/build_data.py "path\to\Covers"` (needs `pip install pillow`).
-4. Commit and push.
+1. Add or remove titles in `tools/cover_rows.json` (the field meanings are in `CLAUDE.md`). Give new titles the next unused number.
+2. Install Pillow once: `pip install -r tools/requirements.txt`.
+3. Run `python tools/get_covers.py`. It asks once for a free TMDB API key and stores it in `tools/keys.txt`, which is git-ignored and never committed. Covers land in `tools/Covers/`.
+4. Run `python tools/build_data.py`. With no path it reads `tools/Covers/`; you can also pass a folder, like `python tools/build_data.py "path\to\Covers"`.
+5. Run `python tools/check_data.py`, then commit and push.
 
 ## Credits
 
