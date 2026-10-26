@@ -1,6 +1,7 @@
 """Sanity checks for data.js and posters/ before pushing. No downloads, no extra packages.
 Usage: python tools/check_data.py"""
 import json, os, re, sys
+from libtools import items
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SITE = os.path.join(HERE, "..")
@@ -36,6 +37,14 @@ for name in ("index.html", "data.js", "icons/manifest.webmanifest"):
             problems.append(f"{name} mentions {w!r}")
 
 movies = sum(x["kind"] == "movie" for x in lib)
-print(f"{len(lib)} titles | {movies} movies, {len(lib) - movies} shows | {sum(x['direct'] for x in lib)} direct links")
+plus = sum("plus" in x.get("tags", []) for x in lib)
+print(f"{len(lib)} titles | {movies} movies, {len(lib) - movies} shows | {plus} Apple TV+ | {sum(x['direct'] for x in lib)} direct links")
+pending = [it["key"] for it in items() if it["key"] not in set(ids)]
+if pending:
+    print(f"{len(pending)} titles in cover_rows.json aren't on the site yet (run tools/update_library.py): {' '.join(pending)}")
+search = [f'{x["id"]} {x["title"]}' for x in lib if not x["direct"]]
+if search:
+    print(f"{len(search)} still open an Apple TV search instead of the title (run tools/find_apple_links.py):")
+    print("  " + "\n  ".join(search))
 print("\n".join(problems) if problems else "All good.")
 sys.exit(1 if problems else 0)
