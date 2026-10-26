@@ -17,6 +17,7 @@ Usage (from the repo folder):
   python tools/find_apple_links.py                 look up new titles and titles that open a search
   python tools/find_apple_links.py 105 010a        look up just these ids (use this for a link you know is broken)
   python tools/find_apple_links.py --yes           don't ask; skip anything it isn't sure about
+  python tools/find_apple_links.py --test          check whether Apple's search answers from this PC (send the output to Claude)
   python tools/find_apple_links.py --set 105 https://tv.apple.com/us/movie/the-pout-pout-fish/umc.cmc.xxxx
                                                     use a link you copied yourself (Apple TV app: Share > Copy Link)
   python tools/find_apple_links.py --covers "C:\\path\\to\\Covers"   which Covers folder to check for links found earlier
@@ -203,6 +204,25 @@ def entry(c, title):
     return e
 
 
+def self_test():
+    """Shows what each Apple source answers for one well-known title, so a broken source can be fixed."""
+    tests = [("Apple TV search", "https://uts-api.itunes.apple.com/uts/v3/search?" + urllib.parse.urlencode(dict(UTS, searchTerm="Frozen")), "application/json"),
+             ("tv.apple.com page", "https://tv.apple.com/us/search?term=Frozen", "text/html"),
+             ("iTunes Store", "https://itunes.apple.com/search?term=Frozen&country=us&media=movie&entity=movie&limit=3", "application/json")]
+    for name, url, accept in tests:
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": accept, "Accept-Language": "en-US"})
+            with urllib.request.urlopen(req, timeout=15) as r:
+                text = r.read().decode("utf-8", "replace")
+                say(f"{name}: HTTP {r.status}, {len(text)} characters, {len(set(UMC.findall(text)))} Apple TV ids", "g" if UMC.search(text) else "y")
+                say("   " + re.sub(r"\s+", " ", text[:300]), "d")
+        except urllib.error.HTTPError as e:
+            say(f"{name}: HTTP {e.code} {e.reason}", "r")
+            say("   " + re.sub(r"\s+", " ", e.read().decode("utf-8", "replace")[:300]), "d")
+        except Exception as e:
+            say(f"{name}: {type(e).__name__}: {e}", "r")
+
+
 def pasted(url, title):
     """An apple_links.json entry for a link copied from the Apple TV app. Links from another country's
     store (tv.apple.com/ca/..., ?l=fr) are switched to the US store. Episode links are kept whole."""
@@ -237,6 +257,8 @@ def main(argv):
         say(f"Saved {key} -> {links[key].get('url') or links[key]['id']}. Now run build_data.py (or update_library.py).", "g")
         return
 
+    if "--test" in argv:
+        return self_test()
     yes = "--yes" in argv
     folder = None
     if "--covers" in argv:
@@ -251,6 +273,7 @@ def main(argv):
             if k in only: todo.append(it)
         elif k not in links and k not in wikidata and not (site.get(k) or {}).get("direct"):
             todo.append(it)  # new, or still opens a search
+    todo.sort(key=lambda it: it["key"] in site)  # new titles first: they're the likeliest to be found
     if not todo:
         say("Nothing to look up: every title already opens directly.", "g")
         return
@@ -260,9 +283,14 @@ def main(argv):
     logfile = os.path.join(covers_dir(folder), "apple-links-log.csv")
     try:
         for num, it in enumerate(todo, 1):
-            if num == 4 and UTS_STATS["asked"] and not UTS_STATS["answered"]:
-                say("   (Apple TV's search isn't answering, so this will be slow and find little. "
-                    "Pasting links with --set works without it.)", "r")
+            # stop early rather than grind through the list when Apple isn't giving this PC any results
+            if num == 4 and not any(r.startswith(("found", "not sure")) for _, _, r in log):
+                say("\nThe first 3 lookups found nothing, so Apple's search isn't working from this PC. Stopping here.", "r")
+                say("Run  python tools\\find_apple_links.py --test  and send Claude what it prints.", "y")
+                for it2 in todo[num - 1:]:
+                    log.append((it2["key"], it2["title"] or it2["term"], "not tried"))
+                skipped += len(todo) - num + 1
+                break
             got, skipped = look_up(it, num, len(todo), links, yes, log, got, skipped)
     finally:
         if log:

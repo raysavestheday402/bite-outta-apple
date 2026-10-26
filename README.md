@@ -62,8 +62,8 @@ For a poster to show **Play** instead of **Buy**, the iPad's Apple Account has t
 2. Add or remove titles in `tools/cover_rows.json` if you want to (field meanings are in `CLAUDE.md`). Give new titles the next unused number.
 3. In GitHub Desktop choose **Repository → Show in Explorer**, open the `tools` folder there and double-click **`Update Library.bat`**. It has to be this folder, the one GitHub Desktop uses, or the results won't show up as changes to push. (To use your Covers archive for new covers, run `python tools\update_library.py "C:\Users\raysa\Claude Files\Apple TV Archive\Covers"` once from that folder; it's remembered after that. It isn't required: the site's own posters, years, ratings and links are kept either way.)
 4. It runs four steps:
-   - **Apple TV links** (`find_apple_links.py`): looks up only new titles (like the Apple TV+ ones) and titles that still open a search. Titles that already open directly are skipped. When it isn't sure, it lists what it found and you type a number, or press Enter to skip. What happened to each title is saved in `apple-links-log.csv` in the Covers folder.
-   - **Covers** (`get_covers.py --missing`): downloads covers only for titles that have none, in the Covers folder or on the site.
+   - **Covers** (`get_covers.py --missing`): downloads covers, years, ratings and Wikidata's Apple TV ids only for titles that have no cover yet, in the Covers folder or on the site.
+   - **Apple TV links** (`find_apple_links.py`): searches Apple TV only for titles that still have no direct link after that. Titles that already open directly are never re-checked. If the first 3 searches find nothing, it stops instead of grinding through the list. What happened to each title is saved in `apple-links-log.csv` in the Covers folder.
    - **Build** (`build_data.py`): rewrites `data.js` and `posters/`. A new title shows up once it has a cover.
    - **Check** (`check_data.py`): lists anything wrong, and any titles that still open a search.
 5. Look over the new posters, then commit and push in GitHub Desktop. Netlify deploys in about a minute.
