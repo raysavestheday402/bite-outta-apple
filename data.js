@@ -7,8 +7,8 @@ window.LIBRARY = [
 "year": "1994",
 "rating": "TV-Y",
 "poster": "posters/001.jpg",
-"link": "https://tv.apple.com/us/search?term=AAAHH!!!%20Real%20Monsters",
-"direct": false,
+"link": "https://tv.apple.com/us/show/aaahh-real-monsters/umc.cmc.4scc535gskndkoi46h91cwjae",
+"direct": true,
 "tags": []
 },
 {

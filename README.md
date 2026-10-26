@@ -10,7 +10,7 @@
 - **Apple TV+ kids titles** (Peanuts, Fraggle Rock, Wolfwalkers…) have their own ➕ chip. They need an Apple TV+ subscription, so they stay out of All, Movies and Shows.
 - **Favorites** and 🕒 **Recent** (recently watched) are saved on each device.
 - **Works without Wi‑Fi:** the app and every poster are saved on the iPad. With no Wi‑Fi, a red alert shows a green **Open Downloads** button that opens the Apple TV app, where downloaded titles still play.
-- **Link check for grown-ups:** open the site with `?test=1` on the end of the address to flag search links, mark titles ✅ Works or ❌ Broken, and copy the results. `?test=0` turns it off.
+- **Link check for grown-ups:** tap 🔧 Link check at the very bottom of the page. Every title gets a 🔗 Mark broken button, a 🔗 Check links filter lists what's marked plus titles that open a search, and Copy results gives a list to paste to Claude. Tap Done checking to turn it off.
 - **No frameworks and no build step.** It's plain HTML, CSS and JavaScript.
 
 ## What's in here

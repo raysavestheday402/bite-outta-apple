@@ -595,7 +595,6 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
 .link-flag svg { width: 20px; height: 20px; }
 .link-flag.bad { color: var(--red); }
 .link-flag.search { color: var(--amber); }
-.link-flag.ok { color: var(--go-green-lo); }
 .marks { display: flex; gap: 6px; margin-top: 8px; }
 .mark {
   flex: 1 1 0; min-height: 38px; margin: 0; padding: 0 8px; border-radius: 999px;
@@ -603,9 +602,8 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
   font-family: var(--font-body), system-ui, sans-serif; font-weight: 800; font-size: 14px; line-height: 1; white-space: nowrap;
   cursor: pointer; -webkit-appearance: none; appearance: none;
 }
-.mark.ok[aria-pressed="true"] { background: var(--go-green); border-color: var(--white); }
 .mark.bad[aria-pressed="true"] { background: var(--red); border-color: var(--white); }
-.flow-marks { flex: none; width: 220px; margin-top: 0; }
+.flow-marks { flex: none; width: 200px; margin-top: 0; }
 .flow-marks .mark { min-height: 48px; }
 
 /* ---------- footer ---------- */
@@ -625,6 +623,7 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
   background: var(--grad-gold); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
 }
 .foot p { max-width: 460px; margin: 0 auto; }
+.foot-btn { margin-top: 14px; min-height: 36px; font-size: 13px; color: var(--meta); }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
@@ -683,7 +682,7 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
   <div class="wrap test-bar" id="testBar" hidden>
     <p class="test-sum" id="testSum"></p>
     <button class="t-btn" id="testCopy" type="button">Copy results</button>
-    <button class="t-btn" id="testExit" type="button">Turn off link check</button>
+    <button class="t-btn" id="testExit" type="button">Done checking</button>
   </div>
 </div>
 
@@ -695,7 +694,7 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
     <div class="flow-actions">
       <button class="fav-flow" id="flowFav" type="button" aria-pressed="false" aria-label="Add to favorites"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path></svg></button>
       <a class="play-btn" id="flowPlay" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"></path></svg>Play in Apple TV</a>
-      <span class="marks flow-marks" id="flowMarks" hidden><button class="mark ok" type="button" data-mark="ok" aria-pressed="false">&#x2705; Works</button><button class="mark bad" type="button" data-mark="bad" aria-pressed="false">&#x274C; Broken</button></span>
+      <span class="marks flow-marks" id="flowMarks" hidden><button class="mark bad" type="button" data-mark="bad" aria-pressed="false">&#x1F517; Mark broken</button></span>
     </div>
     <div class="flow-scrub">
       <input class="scrub" id="flowScrub" type="range" min="0" max="0" step="1" value="0" aria-label="Scrub through titles">
@@ -712,6 +711,7 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
 <footer class="foot">
   <div class="foot-brand">Apple TV Library</div>
   <p>Posters and details from TMDB. This product uses the TMDB API but is not endorsed or certified by TMDB.</p>
+  <button class="t-btn foot-btn" id="testToggle" type="button">&#x1F527; Link check</button>
 </footer>
 
 <script src="data.js"></script>
@@ -852,12 +852,12 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
     lsSet('rstd:recent', JSON.stringify(recent));
   }
 
-  // link check marks: id -> 'ok' (opens and plays) or 'bad' (broken)
+  // link check marks: id -> 'bad' (broken). Older 'ok' marks are ignored
   var marks = {};
   (function () {
     try {
       var o = JSON.parse(lsGet('rstd:marks') || '{}');
-      Object.keys(o || {}).forEach(function (id) { if (byId[id] && (o[id] === 'ok' || o[id] === 'bad')) marks[id] = o[id]; });
+      Object.keys(o || {}).forEach(function (id) { if (byId[id] && o[id] === 'bad') marks[id] = 'bad'; });
     } catch (e) { /* ignore bad data */ }
   })();
   function setMark(id, val) {
@@ -865,11 +865,8 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
     lsSet('rstd:marks', JSON.stringify(marks));
     syncTestBar();
   }
-  // broken first, then search links (no direct Apple TV link), then everything else not yet marked as working
-  function checkRank(it) {
-    var m = marks[String(it.d.id)];
-    return m === 'bad' ? 0 : !it.d.direct ? 1 : 2;
-  }
+  // marked broken first, then search links (no direct Apple TV link)
+  function checkRank(it) { return marks[String(it.d.id)] === 'bad' ? 0 : 1; }
 
   function saveFavs() { lsSet('rstd:favs', JSON.stringify(Array.from(favs))); }
   function toggleFav(id) {
@@ -890,7 +887,7 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
       case 'plus': return it.plus;
       case 'favs': return favs.has(String(it.d.id));
       case 'recent': return recent.indexOf(String(it.d.id)) !== -1;
-      case 'check': return marks[String(it.d.id)] !== 'ok';
+      case 'check': return marks[String(it.d.id)] === 'bad' || !it.d.direct;
       default: return true;
     }
   }
@@ -916,22 +913,19 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
   }
 
   var LINK_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M10 14.5l-1.8 1.8a3.2 3.2 0 0 1-4.5-4.5L6 9.5"></path><path d="M14 9.5l1.8-1.8a3.2 3.2 0 0 1 4.5 4.5L18 14.5"></path><path d="M8.5 3v2.5M3 8.5h2.5M15.5 21v-2.5M21 15.5h-2.5"></path></svg>';
-  var CHECK_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>';
 
-  // link check only: a broken-link flag on titles marked broken (red) or that open a search (amber); a check on working ones
+  // link check only: a broken-link flag on titles marked broken (red) or that open a search (amber)
   function flagHTML(d) {
     if (!testMode) return '';
     var m = marks[String(d.id)];
-    if (m === 'ok') return '<span class="link-flag ok" title="Works">' + CHECK_ICON + '</span>';
     if (m === 'bad') return '<span class="link-flag bad" title="Broken">' + LINK_ICON + '</span>';
     return d.direct ? '' : '<span class="link-flag search" title="Opens a search, not the title">' + LINK_ICON + '</span>';
   }
   function marksHTML(id) {
     if (!testMode) return '';
-    return '<div class="marks">' +
-      '<button class="mark ok" type="button" data-mark="ok" aria-pressed="' + (marks[id] === 'ok') + '">&#x2705; Works</button>' +
-      '<button class="mark bad" type="button" data-mark="bad" aria-pressed="' + (marks[id] === 'bad') + '">&#x274C; Broken</button>' +
-    '</div>';
+    var on = marks[id] === 'bad';
+    return '<div class="marks"><button class="mark bad" type="button" data-mark="bad" aria-pressed="' + on + '">' +
+      (on ? '&#x274C; Broken' : '&#x1F517; Mark broken') + '</button></div>';
   }
 
   function cardHTML(it) {
@@ -968,7 +962,7 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
     var list = items.filter(function (it) { return matchChip(it, q) && (!q || it.n.indexOf(q) !== -1); });
     var emptyMsg = chip === 'favs' && favs.size === 0 ? 'Tap the <span class="hrt">♥</span> on any poster to save it here.'
       : chip === 'recent' && !recent.length ? '&#x1F552; Movies and shows you watch will show up here.'
-      : chip === 'check' && !list.length && !q ? '&#x2705; Every link is marked as working.'
+      : chip === 'check' && !list.length && !q ? '&#x2705; No broken links. Tap &#x1F517; Mark broken on any title that doesn&#39;t open right.'
       : '';
 
     if (view === 'flow' && !emptyMsg && list.length) {
@@ -1290,7 +1284,11 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
 
   function syncFlowMarks() {
     var btns = flowMarksEl.querySelectorAll('.mark');
-    for (var i = 0; i < btns.length; i++) btns[i].setAttribute('aria-pressed', marks[fl.id] === btns[i].getAttribute('data-mark') ? 'true' : 'false');
+    for (var i = 0; i < btns.length; i++) {
+      var on = marks[fl.id] === btns[i].getAttribute('data-mark');
+      btns[i].setAttribute('aria-pressed', on ? 'true' : 'false');
+      btns[i].innerHTML = on ? '&#x274C; Broken' : '&#x1F517; Mark broken';
+    }
   }
   flowMarksEl.addEventListener('click', function (e) {
     var btn = e.target.closest ? e.target.closest('.mark') : null;
@@ -1459,24 +1457,22 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
   /* ---------- link check bar ---------- */
   function syncTestBar() {
     if (!testMode) return;
-    var bad = 0, ok = 0, search = 0;
+    var bad = 0, search = 0;
     items.forEach(function (it) {
-      var m = marks[String(it.d.id)];
-      if (m === 'bad') bad++; else if (m === 'ok') ok++; else if (!it.d.direct) search++;
+      if (marks[String(it.d.id)] === 'bad') bad++; else if (!it.d.direct) search++;
     });
-    testSumEl.textContent = 'Link check: ' + bad + ' broken · ' + ok + ' working · ' + search + ' search links not checked · ' +
-      (items.length - bad - ok) + ' left to check';
+    testSumEl.textContent = 'Link check: tap \u{1F517} Mark broken on any title that opens the wrong page. ' +
+      bad + ' marked broken · ' + search + ' more open a search.';
   }
   function testReport() {
-    var bad = [], ok = 0, search = [];
+    var bad = [], search = [];
     items.forEach(function (it) {
-      var m = marks[String(it.d.id)], line = it.d.title + ' [' + it.d.id + ']';
-      if (m === 'bad') bad.push(line); else if (m === 'ok') ok++; else if (!it.d.direct) search.push(line);
+      var line = it.d.title + (it.show ? ' (show)' : '') + ' [' + it.d.id + ']';
+      if (marks[String(it.d.id)] === 'bad') bad.push(line); else if (!it.d.direct) search.push(line);
     });
-    return 'TV Library link check (' + items.length + ' titles)\n\n' +
-      'Broken (' + bad.length + '):\n' + (bad.join('\n') || '-') + '\n\n' +
-      'Working: ' + ok + '\n\n' +
-      'Search links not checked yet (' + search.length + '):\n' + (search.join('\n') || '-') + '\n';
+    return 'TV Library link check\n\n' +
+      'Marked broken (' + bad.length + '):\n' + (bad.join('\n') || '-') + '\n\n' +
+      'Open a search instead of the title (' + search.length + '):\n' + (search.join('\n') || '-') + '\n';
   }
   testCopyEl.addEventListener('click', function () {
     var text = testReport();
@@ -1485,9 +1481,15 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback);
     else fallback();
   });
-  testExitEl.addEventListener('click', function () {
-    lsSet('rstd:test', '0');
+  function setTestMode(on) {
+    lsSet('rstd:test', on ? '1' : '0');
     window.location.href = window.location.pathname;
+  }
+  testExitEl.addEventListener('click', function () { setTestMode(false); });
+  var testToggleEl = $('testToggle');
+  if (testMode) testToggleEl.innerHTML = '&#x1F527; Turn off link check';
+  testToggleEl.addEventListener('click', function () {
+    setTestMode(!testMode);
   });
 
   /* ---------- start ---------- */
