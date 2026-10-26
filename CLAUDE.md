@@ -70,7 +70,7 @@ Git-ignored and never committed: `keys.txt`, `Covers/` (any level), `site_check/
 | `mode` | `""` normally, `"skip"` to leave the row out, `"multi"` for rows with special handling. |
 | `wiki` | Exact Wikipedia page titles, used as a fallback poster source and for Wikidata ids. |
 | `alts` | Other names to try on TMDB. |
-| `choices` | Splits one row into several titles (`015a`, `015b`…), each with its own `kind`, `term`, `year` and optional `title`, `alts`, `apple`, `tags`. Used for collections (Halloweentown, `010a`–`010d`) so each movie gets its own link. Until a choice has its own cover, it borrows the row's old cover (`010 - ….jpg`). |
+| `choices` | Splits one row into several titles (`015a`, `015b`…), each with its own `kind`, `term`, `year` and optional `title`, `alts`, `apple`, `tags`. Used for collections (Halloweentown, `010a`–`010d`) so each movie gets its own link. Until a choice has its own cover, it borrows the row's old cover (`010 - ….jpg`). To remove a choice, give it `"skip": true` rather than deleting it, so later letters don't shift (Freakazoid `015b`). |
 | `title` | Optional name to show (otherwise `DISPLAY` or `label`). |
 | `apple` | Optional search term for Apple TV if it differs from `term`. |
 | `tags` | Optional extra tags: `"plus"` for Apple TV+, `"holiday"`, `"disney"`. |

@@ -22,6 +22,7 @@ def run(script, *args):
 def main():
     folder = covers_dir(sys.argv[1] if len(sys.argv) > 1 and not sys.argv[1].startswith("-") else None)
     os.makedirs(folder, exist_ok=True)
+    say("Update Library - version 3 (looks up only new titles and search links)", "c")
     say(f"Covers folder: {folder}", "d")
     extra = ["--yes"] if "--yes" in sys.argv else []
     run("get_covers.py", "--covers", folder, "--missing", "--no-pause")

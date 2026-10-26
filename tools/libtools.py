@@ -24,6 +24,8 @@ def items(rows=None):
         n3 = f"{r['n']:03d}"
         if "choices" in r:
             for i, ch in enumerate(r["choices"]):
+                if ch.get("skip"):  # removed, but keeps its place so later letters (and saved favorites) don't shift
+                    continue
                 wiki = [r["wiki"][i]] if i < len(r.get("wiki", [])) else []
                 out.append(dict(key=f"{n3}{chr(97 + i)}", n=r["n"], row=r, choice=ch, label=r["label"],
                                 title=ch.get("title"), kind=ch["kind"], term=ch["term"], year=ch.get("year", ""),
