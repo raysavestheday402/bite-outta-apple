@@ -212,28 +212,7 @@ a:focus-visible, button:focus-visible, input:focus-visible {
   -webkit-text-fill-color: transparent;
   filter: drop-shadow(0 2px 0 var(--navy-deep)) drop-shadow(0 4px 8px var(--drop-ink));
 }
-.brand .tag {
-  display: inline-block; margin: 2px 0 0 -10px; padding: 3px 10px; border-radius: 999px;
-  background: var(--glass-navy);
-  font-weight: 700; font-size: 16px; line-height: 1.2; color: var(--meta);
-  text-shadow: var(--shadow-text);
-}
 .count-wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-left: auto; }
-/* backup button: opens the Apple TV app itself (for when a poster shows Buy instead of Play) */
-.tv-app {
-  display: inline-flex; align-items: center; gap: 9px;
-  min-height: 48px; margin: 0; padding: 0 18px 0 8px; border-radius: 999px;
-  border: 2px solid var(--gold); background: var(--glass-navy); color: var(--white);
-  font-family: var(--font-body), system-ui, sans-serif;
-  font-weight: 800; font-size: 16px; line-height: 1; white-space: nowrap; text-decoration: none;
-  text-shadow: var(--shadow-text); box-shadow: var(--shadow-chip);
-  -webkit-user-drag: none; transition: transform .12s ease;
-}
-.tv-app svg { flex: none; width: 34px; height: 34px; }
-.tv-app:active { transform: scale(.95); }
-@media (hover: hover) and (pointer: fine) {
-  .tv-app:hover { background: var(--hairline-2); }
-}
 .count {
   display: inline-block; margin: 0; padding: 7px 14px; border-radius: 999px;
   background: var(--glass-navy); color: var(--white); text-shadow: var(--shadow-text);
@@ -331,7 +310,6 @@ a:focus-visible, button:focus-visible, input:focus-visible {
   .icon-wrap { width: 56px; height: 56px; }
   .icon-wrap::before { inset: -4px; border-radius: 21px; }
   .brand h1 { font-size: 30px; }
-  .brand .tag { font-size: 14px; }
   .count-wrap { margin-left: 0; }
   .seg-btn { padding: 0; width: 40px; }
   .seg-btn .lbl { display: none; }
@@ -367,9 +345,9 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
 }
 
 .card { position: relative; min-width: 0; }
-/* two columns under the poster: text (flexible) + a fixed column the heart button sits in */
+/* two columns under the poster: text (flexible) + a fixed column the broken-link and heart buttons sit in */
 .tap {
-  display: grid; grid-template-columns: minmax(0, 1fr) 34px; column-gap: 8px;
+  display: grid; grid-template-columns: minmax(0, 1fr) 72px; column-gap: 8px;
   border-radius: 18px; color: inherit; text-decoration: none;
 }
 .name, .meta { grid-column: 1; }
@@ -439,15 +417,24 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
   position: absolute; top: 0; right: -5px; width: 44px; height: 44px; padding: 0;
   margin: calc(150% + 10px + (15px * 1.25) / 2 - 22px) 0 0;
 }
-.fav, .fav-flow {
+.brk {
+  position: absolute; top: 0; right: 33px; width: 44px; height: 44px; padding: 0;
+  margin: calc(150% + 10px + (15px * 1.25) / 2 - 22px) 0 0;
+}
+.fav, .fav-flow, .brk {
   display: grid; place-items: center; isolation: isolate;
   border: 0; border-radius: 50%; background: none; color: var(--white);
   cursor: pointer; -webkit-appearance: none; appearance: none;
 }
-.fav::before, .fav-flow::before {
+.fav::before, .fav-flow::before, .brk::before {
   content: ""; position: absolute; z-index: -1; left: 5px; top: 5px; width: 34px; height: 34px;
   border: 1.5px solid var(--hairline-2); border-radius: 50%; background: var(--veil-14);
 }
+.brk svg { width: 18px; height: 18px; }
+.brk[aria-pressed="true"] { color: var(--red); }
+.brk[aria-pressed="true"]::before { background: var(--white); border-color: var(--white); }
+.brk:focus-visible { outline: none; }
+.brk:focus-visible::before { outline: 3px solid var(--gold); outline-offset: 3px; }
 .fav svg, .fav-flow svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.3; stroke-linejoin: round; }
 .fav[aria-pressed="true"], .fav-flow[aria-pressed="true"] { color: var(--heart-red); }
 .fav[aria-pressed="true"]::before, .fav-flow[aria-pressed="true"]::before { background: var(--white); border-color: var(--white); }
@@ -641,11 +628,9 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
     <span class="icon-wrap"><img class="app-icon" src="icons/icon-192.png" alt="" width="76" height="76"></span>
     <div class="brand">
       <h1>Apple TV Library</h1>
-      <p class="tag">Movies &amp; shows</p>
     </div>
     <div class="count-wrap">
       <p class="count" id="count"></p>
-      <a class="tv-app" id="tvApp" href="videos://" draggable="false" aria-label="Open the Apple TV app" hidden><svg viewBox="0 0 34 34" aria-hidden="true" focusable="false"><circle cx="17" cy="17" r="16" fill="#1E6BFF" stroke="#FFFFFF" stroke-width="2"></circle><rect x="8" y="10" width="18" height="12" rx="2.5" fill="none" stroke="#FFFFFF" stroke-width="2.2"></rect><path d="M13 25.5h8" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"></path><path d="M15 13.2v5.6l4.8-2.8z" fill="#FFD25A"></path></svg>Open TV app</a>
     </div>
   </div>
 </header>
@@ -694,7 +679,7 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
     <div class="flow-actions">
       <button class="fav-flow" id="flowFav" type="button" aria-pressed="false" aria-label="Add to favorites"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path></svg></button>
       <a class="play-btn" id="flowPlay" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"></path></svg>Play in Apple TV</a>
-      <span class="marks flow-marks" id="flowMarks" hidden><button class="mark bad" type="button" data-mark="bad" aria-pressed="false">&#x1F517; Mark broken</button></span>
+      <span class="marks flow-marks" id="flowMarks"><button class="mark bad" type="button" data-mark="bad" aria-pressed="false">&#x1F517; Mark broken</button></span>
     </div>
     <div class="flow-scrub">
       <input class="scrub" id="flowScrub" type="range" min="0" max="0" step="1" value="0" aria-label="Scrub through titles">
@@ -723,7 +708,7 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
 
   function $(id) { return document.getElementById(id); }
   var resultsEl = $('results'), searchEl = $('search'), clearEl = $('clear'), chipsEl = $('chips'), searchBoxEl = $('searchBox');
-  var toolbarEl = $('toolbar'), headerEl = $('top'), countEl = $('count'), tvAppEl = $('tvApp'), favCountEl = $('favCount'), statusEl = $('status'), segEl = $('seg');
+  var toolbarEl = $('toolbar'), headerEl = $('top'), countEl = $('count'), favCountEl = $('favCount'), statusEl = $('status'), segEl = $('seg');
   var flowEl = $('flow'), stageEl = $('stage'), flowTitleEl = $('flowTitle'), flowMetaEl = $('flowMeta'), flowFavEl = $('flowFav');
   var flowPlayEl = $('flowPlay'), scrubEl = $('flowScrub'), flowCountEl = $('flowCount'), flowLiveEl = $('flowLive');
   var offlineEl = $('offline'), dlBtnEl = $('dlBtn'), flowMarksEl = $('flowMarks');
@@ -781,20 +766,21 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
   // Apple TV+ titles need a subscription. true mixes them into every chip and the count;
   // false shows them only under their own chip, Favorites, Recent and search
   var PLUS_EVERYWHERE = true;
-  var owned = items.filter(function (i) { return PLUS_EVERYWHERE || !i.plus; });
-  var nShows = owned.filter(function (i) { return i.show; }).length;
-  var nMovies = owned.length - nShows;
-  var parts = [];
-  if (nMovies) parts.push(plural(nMovies, 'movie', 'movies'));
-  if (nShows) parts.push(plural(nShows, 'show', 'shows'));
-  countEl.textContent = parts.join(' · ');
-  if (!parts.length) countEl.hidden = true;
+  // the header count matches what's on screen: the chip and search shown right now
+  function syncCount(list) {
+    var nShows = list.filter(function (i) { return i.show; }).length;
+    var nMovies = list.length - nShows;
+    var parts = [];
+    if (nMovies) parts.push(plural(nMovies, 'movie', 'movies'));
+    if (nShows) parts.push(plural(nShows, 'show', 'shows'));
+    countEl.textContent = parts.join(' · ');
+    countEl.hidden = !parts.length;
+  }
 
-  // the backup "Open TV app" button only shows on iPhone / iPad, where videos:// opens the Apple TV app
+  // the Open Downloads button only shows on iPhone / iPad, where videos:// opens the Apple TV app
   // (iPadOS reports itself as a Mac, so a touch screen gives it away)
   var appleTouch = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
     (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  tvAppEl.hidden = !appleTouch;
   dlBtnEl.hidden = !appleTouch;
 
   // no Wi-Fi: a red alert with a green button into the Apple TV app, where downloaded titles still play
@@ -817,12 +803,9 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
     if (m) lsSet('rstd:test', m[1]);
     return lsGet('rstd:test') === '1';
   })();
-  if (testMode) {
-    LABELS.check = 'Links to check';
-    chipsEl.querySelector('.chip[data-chip="check"]').hidden = false;
-    testBarEl.hidden = false;
-    flowMarksEl.hidden = false;
-  }
+  // the Check links chip shows once a title is marked broken (or always in link check mode)
+  LABELS.check = 'Links to check';
+  var checkChipEl = chipsEl.querySelector('.chip[data-chip="check"]');
   var chip = lsGet('rstd:chip');
   if (!Object.prototype.hasOwnProperty.call(LABELS, chip)) chip = 'all';
   var view = lsGet('rstd:view') === 'flow' ? 'flow' : 'grid';
@@ -901,8 +884,7 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
         .sort(function (a, b) { return a.r - b.r || a.i - b.i; })
         .map(function (x) { return x.it; });
     }
-    if (chip !== 'all' || q) return list;
-    return list.filter(function (i) { return !i.show; }).concat(list.filter(function (i) { return i.show; }));
+    return list;  // A to Z, movies and shows together
   }
 
   /* ---------- markup ---------- */
@@ -916,16 +898,13 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
 
   // link check only: a broken-link flag on titles marked broken (red) or that open a search (amber)
   function flagHTML(d) {
-    if (!testMode) return '';
     var m = marks[String(d.id)];
     if (m === 'bad') return '<span class="link-flag bad" title="Broken">' + LINK_ICON + '</span>';
-    return d.direct ? '' : '<span class="link-flag search" title="Opens a search, not the title">' + LINK_ICON + '</span>';
+    return d.direct || !testMode ? '' : '<span class="link-flag search" title="Opens a search, not the title">' + LINK_ICON + '</span>';
   }
-  function marksHTML(id) {
-    if (!testMode) return '';
-    var on = marks[id] === 'bad';
-    return '<div class="marks"><button class="mark bad" type="button" data-mark="bad" aria-pressed="' + on + '">' +
-      (on ? '&#x274C; Broken' : '&#x1F517; Mark broken') + '</button></div>';
+  // broken-link button next to the heart: red when marked, listed under the Check links chip
+  function marksHTML(id, t) {
+    return '<button class="brk" type="button" data-mark="bad" aria-pressed="' + (marks[id] === 'bad') + '" aria-label="Mark ' + t + ' as a broken link">' + LINK_ICON + '</button>';
   }
 
   function cardHTML(it) {
@@ -941,7 +920,7 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
         (meta ? '<div class="meta">' + esc(meta) + '</div>' : '') +
       '</a>' +
       '<button class="fav" type="button" aria-pressed="' + favs.has(id) + '" aria-label="Add ' + t + ' to favorites">' + HEART + '</button>' +
-      marksHTML(id) +
+      marksHTML(id, t) +
     '</div>';
   }
 
@@ -962,8 +941,9 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
     var list = items.filter(function (it) { return matchChip(it, q) && (!q || it.n.indexOf(q) !== -1); });
     var emptyMsg = chip === 'favs' && favs.size === 0 ? 'Tap the <span class="hrt">♥</span> on any poster to save it here.'
       : chip === 'recent' && !recent.length ? '&#x1F552; Movies and shows you watch will show up here.'
-      : chip === 'check' && !list.length && !q ? '&#x2705; No broken links. Tap &#x1F517; Mark broken on any title that doesn&#39;t open right.'
+      : chip === 'check' && !list.length && !q ? '&#x2705; No broken links. Tap the &#x1F517; next to the heart on any title that doesn&#39;t open right.'
       : '';
+    syncCount(emptyMsg ? [] : list);
 
     if (view === 'flow' && !emptyMsg && list.length) {
       resultsEl.innerHTML = '';
@@ -984,11 +964,6 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
       html = emptyHTML(emptyMsg);
     } else if (!list.length) {
       html = emptyHTML('No matches for “' + esc(rawQ) + '”. Try another word.');
-    } else if (chip === 'all' && !q) {
-      var movies = list.filter(function (i) { return !i.show; });
-      var shows = list.filter(function (i) { return i.show; });
-      html = (movies.length ? sectionHTML('h-movies', 'Movies', movies) : '') +
-             (shows.length ? sectionHTML('h-shows', 'Shows', shows) : '');
     } else {
       var title = q ? (chip === 'all' ? 'Search results' : 'Search results in ' + LABELS[chip]) : LABELS[chip];
       html = sectionHTML('h-list', title, ordered(list, q));
@@ -1174,7 +1149,7 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
     flowPlayEl.setAttribute('aria-label', 'Play ' + d.title + ' in Apple TV');
     flowFavEl.setAttribute('aria-pressed', favs.has(id) ? 'true' : 'false');
     flowFavEl.setAttribute('aria-label', 'Add ' + d.title + ' to favorites');
-    if (testMode) syncFlowMarks();
+    syncFlowMarks();
     flowCountEl.textContent = (i + 1) + ' of ' + n;
     if (scrubEl.value !== String(i)) scrubEl.value = String(i);
     window.clearTimeout(fl.liveT);
@@ -1350,6 +1325,7 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
     chip = btn.getAttribute('data-chip');
     lsSet('rstd:chip', chip);
     syncChips();
+    syncTestBar();
     revealChip(btn);
     render();
     resultsToTop();
@@ -1390,7 +1366,7 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
 
   resultsEl.addEventListener('click', function (e) {
     if (!e.target.closest) return;
-    var tap = e.target.closest('.tap'), mark = e.target.closest('.mark');
+    var tap = e.target.closest('.tap'), mark = e.target.closest('[data-mark]');
     if (tap || mark) {
       var c = (tap || mark).closest('.card');
       if (!c) return;
@@ -1456,12 +1432,13 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
 
   /* ---------- link check bar ---------- */
   function syncTestBar() {
-    if (!testMode) return;
+    checkChipEl.hidden = !(testMode || chip === 'check' || Object.keys(marks).length);
+    testBarEl.hidden = !(testMode || chip === 'check');
     var bad = 0, search = 0;
     items.forEach(function (it) {
       if (marks[String(it.d.id)] === 'bad') bad++; else if (!it.d.direct) search++;
     });
-    testSumEl.textContent = 'Link check: tap \u{1F517} Mark broken on any title that opens the wrong page. ' +
+    testSumEl.textContent = 'Link check: tap the \u{1F517} next to the heart on any title that opens the wrong page. ' +
       bad + ' marked broken · ' + search + ' more open a search.';
   }
   function testReport() {
@@ -1485,7 +1462,7 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
     lsSet('rstd:test', on ? '1' : '0');
     window.location.href = window.location.pathname;
   }
-  testExitEl.addEventListener('click', function () { setTestMode(false); });
+  testExitEl.addEventListener('click', function () { lsSet('rstd:chip', 'all'); setTestMode(false); });
   var testToggleEl = $('testToggle');
   if (testMode) testToggleEl.innerHTML = '&#x1F527; Turn off link check';
   testToggleEl.addEventListener('click', function () {
