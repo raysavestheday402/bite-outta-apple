@@ -28,6 +28,8 @@
 
 It opens full-screen with its own icon, labeled **TV Library**.
 
+If a poster ever opens to **Buy** instead of **Play**, the gold **Open TV app** button at the top of the page opens the Apple TV app itself, where the movie is waiting in the Library tab. The button only appears on iPhone and iPad.
+
 For a poster to show **Play** instead of **Buy**, the iPad's Apple Account has to own the title. Being in the same Family Sharing group with **Purchase Sharing** turned on counts. Screen Time content limits also have to allow the title's rating.
 
 ## Updating the library
