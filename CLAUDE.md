@@ -76,7 +76,7 @@ Rows 151 and up are the Apple TV+ kids & family titles.
 
 1. Add or edit rows in `tools/cover_rows.json`. Mark Disney/Pixar or holiday titles with `tags` (or add the `label` to `DISNEY` / `HOLIDAY` in `tools/build_data.py`), and give a `title` if the label isn't the name to show.
 2. `pip install -r tools/requirements.txt` (once).
-3. `python tools/update_library.py ["path\\to\\Covers"]` (or double-click `tools/Update Library.bat`). Ray's Covers folder is `C:\Users\raysa\Claude Files\Apple TV Archive\Covers`; the path is remembered after the first run. It finds Apple TV links, downloads covers only for titles without one (so the two hand-added covers, *The Land of Sometimes* and *A Scooby-Doo! Valentine Bouquet*, are kept), rebuilds `data.js` and `posters/`, and runs the checks.
+3. `python tools/update_library.py ["path\to\Covers"]` (or double-click `tools/Update Library.bat`). Ray's Covers folder is `C:\Users\raysa\Claude Files\Apple TV Archive\Covers`; the path is remembered after the first run. It finds Apple TV links, downloads covers only for titles without one (so the two hand-added covers, *The Land of Sometimes* and *A Scooby-Doo! Valentine Bouquet*, are kept), rebuilds `data.js` and `posters/`, and runs the checks.
 4. Check new covers by eye, then commit and push. Netlify deploys in about a minute.
 
 For a title that still opens a search: `python tools/find_apple_links.py --set <id> "<tv.apple.com link>"` (Ray gets the link from the Apple TV app's Share → Copy Link). A full re-download of every cover is `python tools/get_covers.py` with no flags.
