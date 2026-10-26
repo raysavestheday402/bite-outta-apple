@@ -40,7 +40,7 @@ Git-ignored and never committed: `keys.txt`, `Covers/` (any level), `site_check/
 
 - One IIFE reads `window.LIBRARY` and renders either the poster **Grid** or iPod-style **Cover Flow** (swipe, scrubber, "Play in Apple TV" button).
 - Filter chips: `all`, `recent`, `movies`, `shows`, `disney`, `holidays`, `plus`, `favs`. `disney`, `holidays` and `plus` come from each entry's `tags` (`"disney"`, `"holiday"`, `"plus"`).
-- Apple TV+ titles (`"plus"` tag) need a subscription, so they only show under the ➕ Apple TV+ chip, in Favorites and in search results, and aren't in the header count. Set `PLUS_EVERYWHERE = true` in `index.html` to mix them in. The chip hides itself when no title has the tag.
+- Apple TV+ titles (`"plus"` tag) are mixed into every chip and the header count (Ray's choice, Oct 2026) and also have their own ➕ Apple TV+ chip. They need a subscription to play. Set `PLUS_EVERYWHERE = false` in `index.html` to show them only under ➕, in Favorites, Recent and search. The chip hides itself when no title has the tag.
 - **Recent** (Recently Watched) lists the titles last opened in Apple TV, newest first (up to 24).
 - **No Wi‑Fi:** when `navigator.onLine` is false, a red "No Wi‑Fi" alert pinned in the toolbar shows a green **Open Downloads** button (`videos://`, iPhone/iPad only) into the Apple TV app, where downloaded titles still play. A web page can't see the TV app's downloads, so it can't list them itself.
 - The Cover Flow stage has `touch-action: none`, so swipes on the covers never scroll the page. The title and buttons under it still scroll, so small screens can reach Play.
