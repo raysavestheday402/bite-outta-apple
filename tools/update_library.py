@@ -19,14 +19,27 @@ def run(script, *args):
     return subprocess.call([sys.executable, os.path.join(HERE, script), *args]) == 0
 
 
+def pillow():
+    """build_data needs Pillow. Install it the first time instead of stopping with an error."""
+    try:
+        import PIL  # noqa: F401
+        return True
+    except ImportError:
+        say("Installing Pillow (needed once to make the posters)...", "c")
+        return subprocess.call([sys.executable, "-m", "pip", "install", "-r", os.path.join(HERE, "requirements.txt")]) == 0
+
+
 def main():
     folder = covers_dir(sys.argv[1] if len(sys.argv) > 1 and not sys.argv[1].startswith("-") else None)
     os.makedirs(folder, exist_ok=True)
-    say("Update Library - version 3 (looks up only new titles and search links)", "c")
+    say("Update Library - version 4 (looks up only new titles and search links)", "c")
     say(f"Covers folder: {folder}", "d")
     extra = ["--yes"] if "--yes" in sys.argv else []
     run("get_covers.py", "--covers", folder, "--missing", "--no-pause")
     run("find_apple_links.py", "--covers", folder, "--no-pause", *extra)
+    if not pillow():
+        say("Couldn't install Pillow. Open Command Prompt and run:  python -m pip install pillow  then run this again.", "r")
+        return
     if not run("build_data.py", folder):
         say("build_data.py stopped with an error (see above). Nothing to push yet.", "r")
         return

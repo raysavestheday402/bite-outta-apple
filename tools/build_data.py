@@ -4,7 +4,7 @@ With no path it uses the Covers folder used last time, or tools/Covers.
 
 For each title, best first:
   cover:  the Covers folder, then the poster already in posters/ (a split collection can borrow the box-set cover)
-  link:   tools/apple_links.json, then the Covers folder's apple-links.json, then the direct link already in data.js
+  link:   a "link" in cover_rows.json, then tools/apple_links.json, then the Covers folder's apple-links.json, then the direct link already in data.js
   year/rating: the Covers folder's details.json, then what data.js already has
 So the Covers folder only needs the new titles; nothing on the site is lost if it's empty.
 A title with no cover anywhere is left off the site until it has one."""
@@ -85,7 +85,9 @@ for it in items(rows):
         continue
     poster = f"posters/{key}.jpg"
     lk = links.get(key)
-    if lk and lk.get("url"):
+    if it["link"]:  # a link pasted into cover_rows.json wins over everything
+        link, lk = it["link"], {"url": it["link"]}
+    elif lk and lk.get("url"):
         link = lk["url"]
     elif lk:
         link = f"https://tv.apple.com/us/{'show' if lk['kind'] == 'tv' else 'movie'}/{slug(title)}/{lk['id']}"

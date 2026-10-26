@@ -1279,8 +1279,8 @@ window.LIBRARY = [
 "year": "2026",
 "rating": "PG",
 "poster": "posters/105.jpg",
-"link": "https://tv.apple.com/us/search?term=The%20Pout-Pout%20Fish",
-"direct": false,
+"link": "https://tv.apple.com/us/movie/the-pout-pout-fish/umc.cmc.7hbhyavdo48iphwhjm0q66xzx",
+"direct": true,
 "tags": []
 },
 {

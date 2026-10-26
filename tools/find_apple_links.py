@@ -271,7 +271,7 @@ def main(argv):
         k = it["key"]
         if only:
             if k in only: todo.append(it)
-        elif k not in links and k not in wikidata and not (site.get(k) or {}).get("direct"):
+        elif not it["link"] and k not in links and k not in wikidata and not (site.get(k) or {}).get("direct"):
             todo.append(it)  # new, or still opens a search
     todo.sort(key=lambda it: it["key"] in site)  # new titles first: they're the likeliest to be found
     if not todo:
