@@ -8,7 +8,9 @@
 - **One tap opens the movie in the Apple TV app**, so it's ready to play. Titles without a known Apple TV ID open an Apple TV search for that name instead.
 - **Made for a kid who can't read yet:** picture filters (⭐ All · 🎬 Movies · 📺 Shows · 🏰 Disney & Pixar · 🎄 Holidays · ➕ Apple TV+ · ❤️ Favorites), large tap targets, and no long-press popups or accidental zoom.
 - **Apple TV+ kids titles** (Peanuts, Fraggle Rock, Wolfwalkers…) have their own ➕ chip. They need an Apple TV+ subscription, so they stay out of All, Movies and Shows.
-- **Favorites** are saved on each device.
+- **Favorites** and 🕒 **Recent** (recently watched) are saved on each device.
+- **Works without Wi‑Fi:** the app and every poster are saved on the iPad. With no Wi‑Fi, a red alert shows a green **Open Downloads** button that opens the Apple TV app, where downloaded titles still play.
+- **Link check for grown-ups:** open the site with `?test=1` on the end of the address to flag search links, mark titles ✅ Works or ❌ Broken, and copy the results. `?test=0` turns it off.
 - **No frameworks and no build step.** It's plain HTML, CSS and JavaScript.
 
 ## What's in here
@@ -16,6 +18,7 @@
 | Path | What it is |
 |---|---|
 | `index.html` | The whole app: layout, styles and code. |
+| `sw.js` | Saves the app and posters on the device so it opens offline. |
 | `data.js` | The library: 152 titles with year, rating, poster and Apple TV link. Generated, so don't edit it by hand. |
 | `posters/` | Cover art, 600 px wide. |
 | `icons/` | Home-screen icon, favicons and `manifest.webmanifest`. |
