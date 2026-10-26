@@ -13,3 +13,4 @@ venv/
 .idea/
 desktop.ini
 .netlify/
+tools/covers_folder.txt

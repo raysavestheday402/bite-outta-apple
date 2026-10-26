@@ -584,6 +584,7 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
       <button class="chip" type="button" data-chip="shows" aria-pressed="false"><span class="ico" aria-hidden="true">&#x1F4FA;&#xFE0F;</span>Shows</button>
       <button class="chip" type="button" data-chip="disney" aria-pressed="false"><span class="ico" aria-hidden="true">&#x1F3F0;&#xFE0F;</span>Disney &amp; Pixar</button>
       <button class="chip" type="button" data-chip="holidays" aria-pressed="false"><span class="ico" aria-hidden="true">&#x1F384;&#xFE0F;</span>Holidays</button>
+      <button class="chip" type="button" data-chip="plus" aria-pressed="false" hidden><span class="ico" aria-hidden="true">&#x2795;&#xFE0F;</span>Apple TV+</button>
       <button class="chip" type="button" data-chip="favs" aria-pressed="false"><span class="ico" aria-hidden="true">&#x2764;&#xFE0F;</span>Favorites<span class="n" id="favCount" hidden>0</span></button>
     </div>
   </div>
@@ -665,7 +666,8 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
       k: key,
       dig: /^[0-9]/.test(key) ? 1 : 0,
       tags: Array.isArray(d.tags) ? d.tags : [],
-      show: d.kind === 'tv'
+      show: d.kind === 'tv',
+      plus: Array.isArray(d.tags) && d.tags.indexOf('plus') !== -1
     };
   });
   items.sort(function (a, b) {
@@ -676,8 +678,12 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
   var byId = {};
   items.forEach(function (it) { byId[String(it.d.id)] = it; });
 
-  var nShows = items.filter(function (i) { return i.show; }).length;
-  var nMovies = items.length - nShows;
+  // Apple TV+ titles need a subscription, so they only show under their own chip (and in Favorites and search)
+  // unless this is true
+  var PLUS_EVERYWHERE = false;
+  var owned = items.filter(function (i) { return PLUS_EVERYWHERE || !i.plus; });
+  var nShows = owned.filter(function (i) { return i.show; }).length;
+  var nMovies = owned.length - nShows;
   var parts = [];
   if (nMovies) parts.push(plural(nMovies, 'movie', 'movies'));
   if (nShows) parts.push(plural(nShows, 'show', 'shows'));
@@ -685,7 +691,10 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
   if (!parts.length) countEl.parentNode.hidden = true;
 
   /* ---------- state ---------- */
-  var LABELS = { all: 'All', movies: 'Movies', shows: 'Shows', disney: 'Disney & Pixar', holidays: 'Holidays', favs: 'Favorites' };
+  var LABELS = { all: 'All', movies: 'Movies', shows: 'Shows', disney: 'Disney & Pixar', holidays: 'Holidays', plus: 'Apple TV+', favs: 'Favorites' };
+  var hasPlus = items.some(function (i) { return i.plus; });
+  if (!hasPlus) delete LABELS.plus;
+  else chipsEl.querySelector('.chip[data-chip="plus"]').hidden = false;
   var chip = lsGet('rstd:chip');
   if (!Object.prototype.hasOwnProperty.call(LABELS, chip)) chip = 'all';
   var view = lsGet('rstd:view') === 'flow' ? 'flow' : 'grid';
@@ -708,12 +717,14 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
     return on;
   }
 
-  function matchChip(it) {
+  function matchChip(it, q) {
+    if (it.plus && !PLUS_EVERYWHERE && !q && chip !== 'plus' && chip !== 'favs') return false;
     switch (chip) {
       case 'movies': return !it.show;
       case 'shows': return it.show;
       case 'disney': return it.tags.indexOf('disney') !== -1;
       case 'holidays': return it.tags.indexOf('holiday') !== -1;
+      case 'plus': return it.plus;
       case 'favs': return favs.has(String(it.d.id));
       default: return true;
     }
@@ -761,7 +772,7 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
   function render() {
     var rawQ = searchEl.value.trim();
     var q = norm(rawQ);
-    var list = items.filter(function (it) { return matchChip(it) && (!q || it.n.indexOf(q) !== -1); });
+    var list = items.filter(function (it) { return matchChip(it, q) && (!q || it.n.indexOf(q) !== -1); });
     var emptyFav = chip === 'favs' && favs.size === 0;
 
     if (view === 'flow' && !emptyFav && list.length) {

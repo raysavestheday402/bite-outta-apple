@@ -1,34 +1,34 @@
 """
-get_covers.py  (version 6 - posters, details, and Apple TV links)
+get_covers.py  (version 7 - posters, details, and Apple TV links)
 Gets the best poster for every kids title in the Apple TV Library portal.
 
 Where it looks, best first:
   1. TMDB (themoviedb.org)  - official posters for movies AND tall posters for TV shows
   2. fanart.tv              - high-quality posters, used when TMDB has none
   3. Wikipedia              - the poster on each title's exact Wikipedia page
+  4. Apple TV               - the poster find_apple_links.py saw on the title's Apple TV page
 
 TMDB and fanart.tv need a free personal API key. The script asks for them the first time
 and saves them in keys.txt next to this script, so you only enter them once.
-Without keys it still works, using Wikipedia only.
+Without keys it still works, using Wikipedia and Apple TV only.
 
-The titles come from cover_rows.json. Everything is saved to tools/Covers (git-ignored).
+The titles come from cover_rows.json. Everything is saved to the Covers folder: tools/Covers, or the
+folder you name with --covers "C:\\path\\to\\Covers" (remembered for next time).
+
+Usage:
+  python tools/get_covers.py              every title (replaces covers it finds again)
+  python tools/get_covers.py --missing    only titles that don't have a cover yet (keeps hand-picked covers)
+  python tools/get_covers.py 010a 151     only these ids
 """
 import json, os, re, sys, time, csv, urllib.request, urllib.parse, urllib.error
+from libtools import HERE, APPLE_LINKS, items, covers_dir, cover_files, load_json, say, pause
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-OUT = os.path.join(HERE, "Covers")
+ARGS = sys.argv[1:]
+OUT = covers_dir(ARGS[ARGS.index("--covers") + 1] if "--covers" in ARGS else None)
 KEYS = os.path.join(HERE, "keys.txt")
 os.makedirs(OUT, exist_ok=True)
-# The title list lives in cover_rows.json (shared with build_data.py). Rows marked "skip" are left out.
-PLAN = [r for r in json.load(open(os.path.join(HERE, "cover_rows.json"), encoding="utf-8")) if r.get("mode") != "skip"]
 UA = "AppleTVLibraryCovers/4.0 (personal, non-commercial) Python-urllib"
 WIKI_BAD = ("novel", "book", "album", "soundtrack", "video game", "song", "franchise")
-
-if os.name == "nt":
-    os.system("")
-def say(s, c=None):
-    codes = {"g": "92", "y": "93", "r": "91", "c": "96", "d": "90"}
-    print(f"\033[{codes[c]}m{s}\033[0m" if c else s, flush=True)
 
 # ---------- keys ----------
 def load_keys():
@@ -192,9 +192,9 @@ def wiki_lookup(titles):
     return out
 
 # ---------- saving ----------
-def clear(prefix):
+def clear(key):
     for f in os.listdir(OUT):
-        if re.match(re.escape(prefix) + r"[a-z]? - ", f):
+        if f.startswith(key + " - "):
             try: os.remove(os.path.join(OUT, f))
             except OSError: pass
 
@@ -275,8 +275,8 @@ def details(tm, tid):
         return {}
 
 # ---------- main ----------
-def find_one(tm, fkey, wiki, kind, names, year, wiki_titles):
-    """Try TMDB, then fanart.tv, then Wikipedia. Returns (url, source, sure, found)."""
+def find_one(tm, fkey, wiki, kind, names, year, wiki_titles, apple_art=None):
+    """Try TMDB, then fanart.tv, then Wikipedia, then Apple TV. Returns (url, source, sure, found, tmdb id)."""
     if tm:
         r, sure = tm.find(kind, names, year)
         if r:
@@ -293,9 +293,17 @@ def find_one(tm, fkey, wiki, kind, names, year, wiki_titles):
     for t in wiki_titles:
         if t in wiki:
             return wiki[t], "Wikipedia", True, t, None
+    if apple_art:
+        return apple_art["art"], "Apple TV", True, apple_art.get("found") or names[0], None
     return None, None, False, "", None
 
 def main():
+    only = {a for a in ARGS if re.fullmatch(r"\d{3}[a-z]?", a)}
+    have = cover_files(OUT)
+    todo = [it for it in items() if (not only or it["key"] in only) and not ("--missing" in ARGS and it["key"] in have)]
+    if not todo:
+        say("Every title already has a cover.", "g")
+        return
     tkey, fkey = load_keys()
     tm = TMDB(tkey) if tkey else None
     if tm:
@@ -304,70 +312,49 @@ def main():
         except PermissionError:
             say("TMDB didn't accept that key. Delete keys.txt and run again to re-enter it.", "r")
             tm = None
-    say("Sources: " + ", ".join(s for s, on in (("TMDB", tm), ("fanart.tv", fkey), ("Wikipedia", True)) if on), "c")
+    say("Sources: " + ", ".join(s for s, on in (("TMDB", tm), ("fanart.tv", fkey), ("Wikipedia", True), ("Apple TV", True)) if on), "c")
 
     say("Looking up Wikipedia pages (backup source)...", "d")
-    all_wiki = sorted({t for p in PLAN for t in p.get("wiki", [])})
-    wiki = wiki_lookup(all_wiki)
-    say(f"Getting covers for {len(PLAN)} titles into: {OUT}\n", "c")
+    wiki = wiki_lookup(sorted({t for it in todo for t in it["wiki"]}))
+    apple = load_json(APPLE_LINKS)
+    say(f"Getting covers for {len(todo)} titles into: {OUT}\n", "c")
 
     log = []
     LINKS_IN = {}
-    for p in PLAN:
-        n3 = f"{p['n']:03d}"
-        label = p["label"]
-        say(f"[{p['n']}] {label}")
+    for it in todo:
+        key, label = it["key"], it["title"] or it["label"]
+        say(f"[{key}] {label}")
         try:
-            if "choices" in p:
-                got = []
-                for i, ch in enumerate(p["choices"]):
-                    wt = [p["wiki"][i]] if i < len(p.get("wiki", [])) else []
-                    url, src, sure, found, tid = find_one(tm, fkey, wiki, ch["kind"], [ch["term"]], ch["year"], wt)
-                    data = download(url) if url else None
-                    if data:
-                        got.append((data, src, found or ch["term"]))
-                        key = f"{n3}{chr(97 + len(got) - 1)}"
-                        META[key] = details(tm, tid)
-                        LINKS_IN[key] = {"kind": ch["kind"], "tmdb": tid[1] if tid else None,
-                                         "qid": QIDS.get(wt[0]) if wt else None}
-                if got:
-                    clear(n3)
-                    for i, (data, src, found) in enumerate(got):
-                        fn = write(data, f"{n3}{chr(97 + i)}", found)
-                        say(f"   choice {chr(97 + i)}: {found}  [{src}]", "y")
-                        log.append(dict(number=f"{p['n']}{chr(97 + i)}", title=label, found=found, source=src, file=fn, status="CHOICE"))
-                else:
-                    say("   nothing found - keeping what's there", "r")
-                    log.append(dict(number=p["n"], title=label, found="", source="", file="", status="NOT FOUND"))
-                continue
-
-            names = [p["term"]] + p.get("alts", [])
-            url, src, sure, found, tid = find_one(tm, fkey, wiki, p["kind"], names, p["year"], p.get("wiki", []))
+            art = apple.get(key) if (apple.get(key) or {}).get("art") else None
+            url, src, sure, found, tid = find_one(tm, fkey, wiki, it["kind"], it["names"], it["year"], it["wiki"], art)
             data = download(url) if url else None
             if data:
-                clear(n3)
-                fn = write(data, n3, label)
-                status = "OK" if sure else "CHECK"
-                META[n3] = details(tm, tid)
-                LINKS_IN[n3] = {"kind": p["kind"], "tmdb": tid[1] if tid else None,
-                                "qid": next((QIDS[t] for t in p.get("wiki", []) if t in QIDS), None)}
+                clear(key)
+                fn = write(data, key, found if it["choice"] else it["label"])
+                META[key] = details(tm, tid)
+                LINKS_IN[key] = {"kind": it["kind"], "tmdb": tid[1] if tid else None,
+                                 "qid": next((QIDS[t] for t in it["wiki"] if t in QIDS), None)}
+                status = "CHOICE" if it["choice"] else ("OK" if sure else "CHECK")
                 say(f"   {found}  [{src}]", "g" if sure else "y")
-                log.append(dict(number=p["n"], title=label, found=found, source=src, file=fn, status=status))
+                log.append(dict(number=key, title=label, found=found, source=src, file=fn, status=status))
             else:
-                have = [f for f in os.listdir(OUT) if f.startswith(n3)]
-                say("   not found" + (" - keeping the one already there" if have else ""), "r")
-                log.append(dict(number=p["n"], title=label, found="", source="", file=have[0] if have else "", status="NOT FOUND"))
+                old = have.get(key)
+                say("   not found" + (" - keeping the one already there" if old else ""), "r")
+                log.append(dict(number=key, title=label, found="", source="", file=old or "", status="NOT FOUND"))
         except PermissionError:
             say("TMDB stopped accepting the key - continuing without it.", "r")
             tm = None
 
-    say("\nLooking up Apple TV links...", "c")
+    say("\nLooking up Apple TV links on Wikidata...", "c")
     links = apple_links(LINKS_IN)
-    say(f"Found direct Apple TV links for {len(links)} of {len(LINKS_IN)} titles (the rest will open an Apple TV search).", "c")
-    with open(os.path.join(OUT, "apple-links.json"), "w", encoding="utf-8") as f:
-        json.dump(links, f, indent=1)
-    with open(os.path.join(OUT, "details.json"), "w", encoding="utf-8") as f:
-        json.dump(META, f, indent=1, ensure_ascii=False)
+    say(f"Wikidata had direct Apple TV links for {len(links)} of {len(LINKS_IN)} titles.", "c")
+    # merge into what's already in the folder, so a --missing run keeps everything found before
+    for name, new in (("apple-links.json", links), ("details.json", {k: v for k, v in META.items() if v})):
+        path = os.path.join(OUT, name)
+        merged = load_json(path)
+        merged.update(new)
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(merged, f, indent=1, ensure_ascii=False)
     with open(os.path.join(OUT, "covers-log.json"), "w", encoding="utf-8") as f:
         json.dump(log, f, indent=1)
     with open(os.path.join(OUT, "covers-log.csv"), "w", newline="", encoding="utf-8") as f:
@@ -377,14 +364,13 @@ def main():
     chk = sum(x["status"] == "CHECK" for x in log)
     bad = sum(x["status"] == "NOT FOUND" for x in log)
     say(f"\nDone. {ok} matched, {chk} to double-check, {bad} not found.", "c")
-    say("Go back to Claude and say: covers are done")
+    if chk or bad:
+        say("Open covers-log.csv in the Covers folder to see which ones.", "d")
 
 if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
         say("\nStopped. Run it again any time.", "y")
-    try:
-        input("\nPress Enter to close this window...")
-    except EOFError:
-        pass
+    if "--no-pause" not in ARGS:
+        pause()
