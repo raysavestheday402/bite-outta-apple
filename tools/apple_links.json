@@ -48,22 +48,388 @@
   "id": "umc.cmc.6s37w8j0y778k8ucyw5pw0goq",
   "kind": "tv"
  },
+ "151": {
+  "for": "A Charlie Brown Christmas",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.mbxalimrwrtq72wj4h601pyf",
+  "kind": "movie"
+ },
+ "152": {
+  "for": "A Charlie Brown Thanksgiving",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.7grdgbjdq3tiy37f4dc3yeyms",
+  "kind": "movie"
+ },
+ "153": {
+  "for": "A Charlie Brown Valentine",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.30cyxu8by31op677sm0djtm72",
+  "kind": "movie"
+ },
+ "154": {
+  "for": "A Summer Musical",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.xesgxj0bt8yrrkrunae0wke7",
+  "kind": "movie"
+ },
  "155": {
   "for": "Blush",
-  "found": "pasted by hand",
+  "found": "from Ray's list (not yet tap-tested)",
   "id": "umc.cmc.5hwonajppobtrqy7f9bs7cf6y",
   "kind": "movie"
  },
  "156": {
   "for": "Charlie Brown's Christmas Tales",
-  "found": "pasted by hand",
+  "found": "from Ray's list (not yet tap-tested)",
   "id": "umc.cmc.3kzb220yzo1iz1oy11kpu498x",
   "kind": "movie"
  },
+ "157": {
+  "for": "For Auld Lang Syne",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.5xuo4simneuqt8ibn2kyskonu",
+  "kind": "movie"
+ },
+ "158": {
+  "for": "Happy New Year, Charlie Brown!",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.72bog44gdxl0cafwane0z8r32",
+  "kind": "movie"
+ },
+ "159": {
+  "for": "Here We Are: Notes for Living on Planet Earth",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.1j55m7c1krge4yhia6x4u5o48",
+  "kind": "movie"
+ },
+ "160": {
+  "for": "I Want a Dog for Christmas, Charlie Brown",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.39d349kfxr4sevo0fkv1uurhj",
+  "kind": "movie"
+ },
+ "162": {
+  "for": "It's the Easter Beagle, Charlie Brown!",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.17y48i5ko6gft5ieh148nzqzn",
+  "kind": "movie"
+ },
+ "163": {
+  "for": "It's the Great Pumpkin, Charlie Brown",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.1c5nvp802hos5t3u0umlukkwh",
+  "kind": "movie"
+ },
+ "164": {
+  "for": "It's the Small Things, Charlie Brown",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.gr1rsr9lp2tzfwb0w6zhq9y3",
+  "kind": "movie"
+ },
+ "165": {
+  "for": "Luck",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.5w6fq1u39v7ozsdv3jkx0nrfs",
+  "kind": "movie"
+ },
+ "166": {
+  "for": "Lucy's School",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.45v5b3bbri53qgfjhirzrivp2",
+  "kind": "movie"
+ },
+ "167": {
+  "for": "Lulu Is a Rhinoceros",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.3q3rnlgmnlkdh3p5djze6l019",
+  "kind": "movie"
+ },
+ "168": {
+  "for": "One-of-a-Kind Marcie",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.1a1h3avg5tx7g68ws3y06ty17",
+  "kind": "movie"
+ },
+ "169": {
+  "for": "Peanuts in Space: Secrets of Apollo 10",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.6ippzjfc3jg0l4b8x8cslmhfa",
+  "kind": "movie"
+ },
+ "170": {
+  "for": "The Boy, the Mole, the Fox and the Horse",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.2aenzye90tqkj7iy0131oom9x",
+  "kind": "movie"
+ },
+ "171": {
+  "for": "The First Snow of Fraggle Rock",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.53j5hly8hazx7k256whpn1w64",
+  "kind": "movie"
+ },
+ "172": {
+  "for": "The Velveteen Rabbit",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.7kjdwwm5m1cnk7t080steajqz",
+  "kind": "movie"
+ },
+ "173": {
+  "for": "There's No Place Like Home, Snoopy",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.52sgmi3vdpedurrbtz6louqqo",
+  "kind": "movie"
+ },
+ "174": {
+  "for": "To Mom (and Dad), With Love",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.3flhku7zffp93eqd53bqlzi04",
+  "kind": "movie"
+ },
+ "175": {
+  "for": "Welcome Home, Franklin",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.yy12locz1vttqczsnlnwtei3",
+  "kind": "movie"
+ },
+ "176": {
+  "for": "Wolfwalkers",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.amuoq00hqelfi98j0gvg641x",
+  "kind": "movie"
+ },
+ "177": {
+  "for": "Amber Brown",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.3rbpynkdkoc4rlyskaa8n3nmi",
+  "kind": "tv"
+ },
+ "178": {
+  "for": "Be My Valentine, Charlie Brown",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.749in83y74eb4w3e0jvy5dlnh",
+  "kind": "movie"
+ },
+ "179": {
+  "for": "BE@RBRICK",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.18fsq2h43zx0v5h31hyeq1d7w",
+  "kind": "tv"
+ },
+ "180": {
+  "for": "Best Foot Forward",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.2jx8ltni2dnxa5rxx7ip1mesm",
+  "kind": "tv"
+ },
+ "181": {
+  "for": "Camp Snoopy",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.4erhnrmkf9vgeojl3uryxsc0j",
+  "kind": "tv"
+ },
+ "182": {
+  "for": "Circuit Breakers",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.5yhan8dv6gc9ww55ua7z4dq5t",
+  "kind": "tv"
+ },
+ "183": {
+  "for": "Curses!",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.4zami3bauzt4rzxhh4tzfmrfl",
+  "kind": "tv"
+ },
+ "184": {
+  "for": "Doug Unplugs",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.3oxevpgaoqomu820s0e70ri75",
+  "kind": "tv"
+ },
+ "185": {
+  "for": "Duck & Goose",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.qayvbuimq7lxab6y2cs9tbcj",
+  "kind": "tv"
+ },
+ "186": {
+  "for": "El Deafo",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.775eomzc9ljfk7bop9shbu7m0",
+  "kind": "tv"
+ },
+ "187": {
+  "for": "Eva the Owlet",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.49ts9z2smhboe9tweoygj8gv2",
+  "kind": "tv"
+ },
+ "188": {
+  "for": "Fraggle Rock",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.2m5fntzbjem6fhniurq8a17om",
+  "kind": "tv"
+ },
+ "189": {
+  "for": "Fraggle Rock: Back to the Rock",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.2r077021gw7fu0noml0hln2yq",
+  "kind": "tv"
+ },
+ "190": {
+  "for": "Fraggle Rock: Rock On!",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.6d0biwqzy6ykvxf36eb9wm3gl",
+  "kind": "tv"
+ },
+ "191": {
+  "for": "Frog and Toad",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.xvcgt6ied9s3atejpk92tv1h",
+  "kind": "tv"
+ },
+ "192": {
+  "for": "Get Rolling with Otis",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.3tql7vmqfmedyw1ab7efys3z",
+  "kind": "tv"
+ },
+ "193": {
+  "for": "Ghostwriter",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.3z6okqcnxoo6ohte3k2z5vvrp",
+  "kind": "tv"
+ },
+ "194": {
+  "for": "Goldie",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.2reh3g5q197hlblohp6l3fzk5",
+  "kind": "tv"
+ },
+ "195": {
+  "for": "Harriet the Spy",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.3gx9h3d2f823gl8pvpippy5p9",
+  "kind": "tv"
+ },
+ "196": {
+  "for": "Hello, Jack! The Kindness Show",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.67f7csjyodc41iybksdv6s0pt",
+  "kind": "tv"
+ },
  "197": {
   "for": "Helpsters",
-  "found": "pasted by hand",
+  "found": "from Ray's list (not yet tap-tested)",
   "id": "umc.cmc.kfh7cellb1a3dmiehxhvq8gl",
+  "kind": "tv"
+ },
+ "198": {
+  "for": "Helpsters Help You",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.3xi33xb3r3xbxx4lssz8cswdr",
+  "kind": "tv"
+ },
+ "199": {
+  "for": "Interrupting Chicken",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.18gr0rhyi18lt79vgtw794wcw",
+  "kind": "tv"
+ },
+ "201": {
+  "for": "Life by Ella",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.1suiyueh1ntwjtsstcwldofno",
+  "kind": "tv"
+ },
+ "202": {
+  "for": "Lovely Little Farm",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.iajaormpogjbe142ssfirdys",
+  "kind": "tv"
+ },
+ "204": {
+  "for": "My Brother the Minotaur",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.2xp2k3if93s921ariv5tlhr1p",
+  "kind": "tv"
+ },
+ "205": {
+  "for": "Not a Box",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.5v5f721a2mlxcurdhh0wm56if",
+  "kind": "tv"
+ },
+ "206": {
+  "for": "Pinecone & Pony",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.2jwlalsi34m25fcfljpvk990r",
+  "kind": "tv"
+ },
+ "207": {
+  "for": "Pretzel and the Puppies",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.kpgzlz0lejug1vhtakgizdlh",
+  "kind": "tv"
+ },
+ "210": {
+  "for": "Shape Island",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.40xdlw2jijoj95c3a6y2m3738",
+  "kind": "tv"
+ },
+ "212": {
+  "for": "Snoopy in Space: The Search for Life",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.12l86ri6vfjlimw2m8b8dzszs",
+  "kind": "tv"
+ },
+ "213": {
+  "for": "Stillwater",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.3czcagetjq31vvbgkkyp1xiao",
+  "kind": "tv"
+ },
+ "214": {
+  "for": "Surfside Girls",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.4371g2xacdr0wfs071dm3q30x",
+  "kind": "tv"
+ },
+ "215": {
+  "for": "The Charlie Brown and Snoopy Show",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.1kt2wacwwoz0brw6duwve9hje",
+  "kind": "tv"
+ },
+ "216": {
+  "for": "The Peanuts Classics",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.63led2pm5a1w4wvabyn4xxxjp",
+  "kind": "tv"
+ },
+ "219": {
+  "for": "This Is America, Charlie Brown",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.3glsixv3225ngtbm57lq72oam",
+  "kind": "tv"
+ },
+ "220": {
+  "for": "Wolfboy and the Everything Factory",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.6f1xxgn2dg52deawakawg20r9",
+  "kind": "tv"
+ },
+ "221": {
+  "for": "Wonder Pets: In the City",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.dsa24wciry96i1e8dcq0b9sm",
+  "kind": "tv"
+ },
+ "224": {
+  "for": "Yo Gabba GabbaLand!",
+  "found": "from Ray's list (not yet tap-tested)",
+  "id": "umc.cmc.6a8qdw6e76cba2l0rkgzfbocl",
   "kind": "tv"
  }
 }
