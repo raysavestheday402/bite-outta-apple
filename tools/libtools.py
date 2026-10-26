@@ -36,6 +36,19 @@ def items(rows=None):
     return out
 
 
+def site_library():
+    """{id: entry} from the committed data.js: what the site has now (links, years, ratings, posters)."""
+    try:
+        src = open(os.path.join(SITE, "data.js"), encoding="utf-8").read()
+        return {x["id"]: x for x in json.loads(src[src.index("["):src.rindex("]") + 1])}
+    except (OSError, ValueError):
+        return {}
+
+
+def has_poster(key):
+    return os.path.exists(os.path.join(SITE, "posters", f"{key}.jpg"))
+
+
 def covers_dir(arg=None, remember=True):
     """The Covers folder: the path given, else the one used last time, else tools/Covers."""
     path = arg

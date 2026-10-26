@@ -100,13 +100,55 @@ window.LIBRARY = [
 "tags": []
 },
 {
-"id": "010",
-"title": "Halloweentown: 4-Movie Collection",
+"id": "010a",
+"title": "Halloweentown",
 "kind": "movie",
 "year": "1998",
 "rating": "G",
-"poster": "posters/010.jpg",
-"link": "https://tv.apple.com/us/movie/halloweentown-4-movie-collection/umc.cmc.4os9y9m9tttgnd0hv4rb5nm6k",
+"poster": "posters/010a.jpg",
+"link": "https://tv.apple.com/us/movie/halloweentown/umc.cmc.4os9y9m9tttgnd0hv4rb5nm6k",
+"direct": true,
+"tags": [
+"disney",
+"holiday"
+]
+},
+{
+"id": "010b",
+"title": "Halloweentown II: Kalabar's Revenge",
+"kind": "movie",
+"year": "2001",
+"rating": "G",
+"poster": "posters/010b.jpg",
+"link": "https://tv.apple.com/us/movie/halloweentown-ii-kalabar-s-revenge/umc.cmc.47kv381pzdifd1zkfl1nxrm60",
+"direct": true,
+"tags": [
+"disney",
+"holiday"
+]
+},
+{
+"id": "010c",
+"title": "Halloweentown High",
+"kind": "movie",
+"year": "2004",
+"rating": "G",
+"poster": "posters/010c.jpg",
+"link": "https://tv.apple.com/us/episode/halloweentown-high/umc.cmc.59ngs9vp28r4zzotwmya60dcb?showId=umc.cmc.3bah76qzj85crrt4q9uwa5q75",
+"direct": true,
+"tags": [
+"disney",
+"holiday"
+]
+},
+{
+"id": "010d",
+"title": "Return to Halloweentown",
+"kind": "movie",
+"year": "2006",
+"rating": "G",
+"poster": "posters/010d.jpg",
+"link": "https://tv.apple.com/us/movie/return-to-halloweentown/umc.cmc.75eg3vua9sv1jsjprp7q7kb9u",
 "direct": true,
 "tags": [
 "disney",
@@ -142,8 +184,8 @@ window.LIBRARY = [
 "year": "1991",
 "rating": "TV-Y7",
 "poster": "posters/013.jpg",
-"link": "https://tv.apple.com/us/search?term=Rugrats",
-"direct": false,
+"link": "https://tv.apple.com/us/show/rugrats/umc.cmc.2vi5ywfdn7chq5w5zy63mi0j5",
+"direct": true,
 "tags": []
 },
 {
@@ -186,19 +228,8 @@ window.LIBRARY = [
 "year": "1995",
 "rating": "TV-Y7",
 "poster": "posters/015c.jpg",
-"link": "https://tv.apple.com/us/search?term=Pinky%20and%20the%20Brain",
-"direct": false,
-"tags": []
-},
-{
-"id": "015d",
-"title": "Pinky, Elmyra & The Brain",
-"kind": "tv",
-"year": "1998",
-"rating": "TV-Y7",
-"poster": "posters/015d.jpg",
-"link": "https://tv.apple.com/us/search?term=Pinky%20Elmyra%20&%20The%20Brain",
-"direct": false,
+"link": "https://tv.apple.com/us/show/pinky-and-the-brain/umc.cmc.6s37w8j0y778k8ucyw5pw0goq",
+"direct": true,
 "tags": []
 },
 {

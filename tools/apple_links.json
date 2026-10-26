@@ -10,5 +10,60 @@
   "found": "pasted by hand",
   "id": "umc.cmc.8sc2ssrggcjdu1ergite1e3d",
   "kind": "tv"
+ },
+ "010a": {
+  "for": "Halloweentown",
+  "found": "pasted by hand",
+  "id": "umc.cmc.4os9y9m9tttgnd0hv4rb5nm6k",
+  "kind": "movie"
+ },
+ "010b": {
+  "for": "Halloweentown II: Kalabar's Revenge",
+  "found": "pasted by hand",
+  "id": "umc.cmc.47kv381pzdifd1zkfl1nxrm60",
+  "kind": "movie"
+ },
+ "010c": {
+  "for": "Halloweentown High",
+  "found": "pasted by hand",
+  "id": "umc.cmc.59ngs9vp28r4zzotwmya60dcb",
+  "kind": "tv",
+  "url": "https://tv.apple.com/us/episode/halloweentown-high/umc.cmc.59ngs9vp28r4zzotwmya60dcb?showId=umc.cmc.3bah76qzj85crrt4q9uwa5q75"
+ },
+ "010d": {
+  "for": "Return to Halloweentown",
+  "found": "pasted by hand",
+  "id": "umc.cmc.75eg3vua9sv1jsjprp7q7kb9u",
+  "kind": "movie"
+ },
+ "013": {
+  "for": "Rugrats",
+  "found": "pasted by hand",
+  "id": "umc.cmc.2vi5ywfdn7chq5w5zy63mi0j5",
+  "kind": "tv"
+ },
+ "015c": {
+  "for": "Pinky and the Brain",
+  "found": "pasted by hand",
+  "id": "umc.cmc.6s37w8j0y778k8ucyw5pw0goq",
+  "kind": "tv"
+ },
+ "155": {
+  "for": "Blush",
+  "found": "pasted by hand",
+  "id": "umc.cmc.5hwonajppobtrqy7f9bs7cf6y",
+  "kind": "movie"
+ },
+ "156": {
+  "for": "Charlie Brown's Christmas Tales",
+  "found": "pasted by hand",
+  "id": "umc.cmc.3kzb220yzo1iz1oy11kpu498x",
+  "kind": "movie"
+ },
+ "197": {
+  "for": "Helpsters",
+  "found": "pasted by hand",
+  "id": "umc.cmc.kfh7cellb1a3dmiehxhvq8gl",
+  "kind": "tv"
  }
 }

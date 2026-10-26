@@ -1,5 +1,8 @@
 """
-find_apple_links.py - finds the direct Apple TV page for every title that still opens an Apple TV search.
+find_apple_links.py - finds the direct Apple TV page for titles that need one.
+
+It only looks up titles that need it: new titles that aren't on the site yet (like the Apple TV+ ones)
+and titles that still open an Apple TV search. Titles that already open directly are left alone.
 
 How it looks, best first:
   1. Apple TV's own search (the same one tv.apple.com uses). Works for purchases and Apple TV+ originals.
@@ -11,16 +14,16 @@ it shows what it found and asks you to pick (just press Enter to skip that one).
 Results go in tools/apple_links.json, which is committed, so each title only has to be found once.
 
 Usage (from the repo folder):
-  python tools/find_apple_links.py                 look up every title without a direct link
-  python tools/find_apple_links.py 105 010a        look up just these ids (even if they have a link)
-  python tools/find_apple_links.py --all           look up every title again
+  python tools/find_apple_links.py                 look up new titles and titles that open a search
+  python tools/find_apple_links.py 105 010a        look up just these ids (use this for a link you know is broken)
   python tools/find_apple_links.py --yes           don't ask; skip anything it isn't sure about
+  python tools/find_apple_links.py --test          check whether Apple's search answers from this PC (send the output to Claude)
   python tools/find_apple_links.py --set 105 https://tv.apple.com/us/movie/the-pout-pout-fish/umc.cmc.xxxx
                                                     use a link you copied yourself (Apple TV app: Share > Copy Link)
   python tools/find_apple_links.py --covers "C:\\path\\to\\Covers"   which Covers folder to check for links found earlier
 """
 import json, os, re, sys, time, urllib.request, urllib.parse, urllib.error
-from libtools import (APPLE_LINKS, items, covers_dir, load_json, save_json, norm, say, pause)
+from libtools import (APPLE_LINKS, items, site_library, covers_dir, load_json, save_json, norm, say, pause)
 
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
 UMC = re.compile(r"umc\.cmc\.[a-z0-9]+")
@@ -31,12 +34,12 @@ UTS = {"caller": "web", "locale": "en-US", "pfm": "web", "sf": "143441", "v": "9
 
 
 # ---------- web ----------
-def fetch(url, accept="application/json", tries=3):
+def fetch(url, accept="application/json", tries=2):
     """Returns (final_url, text) or (None, None)."""
     for i in range(tries):
         try:
             req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": accept, "Accept-Language": "en-US"})
-            with urllib.request.urlopen(req, timeout=30) as r:
+            with urllib.request.urlopen(req, timeout=15) as r:
                 return r.geturl(), r.read().decode("utf-8", "replace")
         except urllib.error.HTTPError as e:
             if e.code in (400, 401, 403, 404):
@@ -74,9 +77,13 @@ def art_url(images):
     return None
 
 
+UTS_STATS = {"asked": 0, "answered": 0}
+
 def search_uts(term):
     q = dict(UTS, searchTerm=term)
     _, text = fetch("https://uts-api.itunes.apple.com/uts/v3/search?" + urllib.parse.urlencode(q))
+    UTS_STATS["asked"] += 1
+    UTS_STATS["answered"] += bool(text)
     try:
         js = json.loads(text) if text else None
     except ValueError:
@@ -155,7 +162,7 @@ def best_for(it, title):
     terms = [it["apple"]] + [t for t in (title, it["term"]) if t and t != it["apple"]]
     cands = []
     for source in ("uts", "page", "itunes"):
-        for term in terms[:2]:
+        for term in terms[:2] if source == "uts" else terms[:1]:  # the slower sources get one try
             if source == "uts": found = search_uts(term)
             elif source == "page": found = search_page(term)
             else: found = search_itunes(term, it["kind"])
@@ -197,6 +204,39 @@ def entry(c, title):
     return e
 
 
+def self_test():
+    """Shows what each Apple source answers for one well-known title, so a broken source can be fixed."""
+    tests = [("Apple TV search", "https://uts-api.itunes.apple.com/uts/v3/search?" + urllib.parse.urlencode(dict(UTS, searchTerm="Frozen")), "application/json"),
+             ("tv.apple.com page", "https://tv.apple.com/us/search?term=Frozen", "text/html"),
+             ("iTunes Store", "https://itunes.apple.com/search?term=Frozen&country=us&media=movie&entity=movie&limit=3", "application/json")]
+    for name, url, accept in tests:
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": accept, "Accept-Language": "en-US"})
+            with urllib.request.urlopen(req, timeout=15) as r:
+                text = r.read().decode("utf-8", "replace")
+                say(f"{name}: HTTP {r.status}, {len(text)} characters, {len(set(UMC.findall(text)))} Apple TV ids", "g" if UMC.search(text) else "y")
+                say("   " + re.sub(r"\s+", " ", text[:300]), "d")
+        except urllib.error.HTTPError as e:
+            say(f"{name}: HTTP {e.code} {e.reason}", "r")
+            say("   " + re.sub(r"\s+", " ", e.read().decode("utf-8", "replace")[:300]), "d")
+        except Exception as e:
+            say(f"{name}: {type(e).__name__}: {e}", "r")
+
+
+def pasted(url, title):
+    """An apple_links.json entry for a link copied from the Apple TV app. Links from another country's
+    store (tv.apple.com/ca/..., ?l=fr) are switched to the US store. Episode links are kept whole."""
+    m = re.match(r"https://tv\.apple\.com/(?:[a-z]{2}/)?(movie|show|season|episode)/([^/?#]+)/(umc\.cmc\.[a-z0-9]+)", url.strip())
+    if not m:
+        raise ValueError("That doesn't look like an Apple TV link (it should look like https://tv.apple.com/us/movie/.../umc.cmc...).")
+    kind, slug, ident = m.groups()
+    show = re.search(r"showId=(umc\.cmc\.[a-z0-9]+)", url)
+    e = {"kind": "movie" if kind == "movie" else "tv", "id": ident, "found": "pasted by hand", "for": title}
+    if kind in ("season", "episode"):
+        e["url"] = f"https://tv.apple.com/us/{kind}/{slug}/{ident}" + (f"?showId={show.group(1)}" if show else "")
+    return e
+
+
 # ---------- main ----------
 def main(argv):
     links = load_json(APPLE_LINKS)
@@ -206,61 +246,85 @@ def main(argv):
             key, url = argv[i + 1], argv[i + 2]
         except IndexError:
             sys.exit("Usage: python tools/find_apple_links.py --set 105 https://tv.apple.com/us/movie/.../umc.cmc.xxxx")
-        m = PAGE.search(url) or re.search(r"/(movie|show|season)/[^?]*?(umc\.cmc\.[a-z0-9]+)", url)
-        show = re.search(r"showId=(umc\.cmc\.[a-z0-9]+)", url)
-        if not m and not show:
-            sys.exit("That doesn't look like an Apple TV link (it should contain umc.cmc.).")
-        kind = "tv" if show or m.group(1) in ("show", "season") else "movie"
-        ident = show.group(1) if show else m.groups()[-1]
         known = {x["key"]: x for x in items()}
         if key not in known:
             sys.exit(f"No title with id {key} in cover_rows.json.")
-        links[key] = {"kind": kind, "id": ident, "found": "pasted by hand", "for": known[key]["title"] or known[key]["label"]}
+        try:
+            links[key] = pasted(url, known[key]["title"] or known[key]["label"])
+        except ValueError as e:
+            sys.exit(str(e))
         save_json(APPLE_LINKS, links)
-        say(f"Saved {key} -> {kind} {ident}. Now run build_data.py (or update_library.py).", "g")
+        say(f"Saved {key} -> {links[key].get('url') or links[key]['id']}. Now run build_data.py (or update_library.py).", "g")
         return
 
+    if "--test" in argv:
+        return self_test()
     yes = "--yes" in argv
     folder = None
     if "--covers" in argv:
         folder = argv[argv.index("--covers") + 1]
     wikidata = load_json(os.path.join(covers_dir(folder), "apple-links.json"))
+    site = site_library()
     only = {a for a in argv if re.fullmatch(r"\d{3}[a-z]?", a)}
     todo = []
     for it in items():
+        k = it["key"]
         if only:
-            if it["key"] in only: todo.append(it)
-        elif "--all" in argv or (it["key"] not in links and it["key"] not in wikidata):
-            todo.append(it)
+            if k in only: todo.append(it)
+        elif k not in links and k not in wikidata and not (site.get(k) or {}).get("direct"):
+            todo.append(it)  # new, or still opens a search
+    todo.sort(key=lambda it: it["key"] in site)  # new titles first: they're the likeliest to be found
     if not todo:
-        say("Every title already has a direct Apple TV link.", "g")
+        say("Nothing to look up: every title already opens directly.", "g")
         return
-    say(f"Looking up {len(todo)} titles on Apple TV...\n", "c")
+    say(f"Looking up {len(todo)} titles on Apple TV (new titles and ones that open a search)...\n", "c")
     got = skipped = 0
-    for it in todo:
-        title = it["title"] or it["term"]
-        say(f"[{it['key']}] {title}" + (f" ({it['year']})" if it["year"] else ""))
-        sure, cands = best_for(it, title)
-        pick = sure
-        if sure:
-            say(f"   {describe(sure)}", "g")
-        elif cands and not yes:
-            say("   Not sure which one this is:", "y")
-            pick = ask(cands)
-        elif not cands:
-            say("   nothing found on Apple TV", "r")
-        else:
-            say(f"   not sure ({len(cands)} possible) - skipped", "y")
-        if pick:
-            links[it["key"]] = entry(pick, title)
-            save_json(APPLE_LINKS, links)  # save as we go, so stopping early keeps what was found
-            got += 1
-        else:
-            skipped += 1
+    log = []
+    logfile = os.path.join(covers_dir(folder), "apple-links-log.csv")
+    try:
+        for num, it in enumerate(todo, 1):
+            # stop early rather than grind through the list when Apple isn't giving this PC any results
+            if num == 4 and not any(r.startswith(("found", "not sure")) for _, _, r in log):
+                say("\nThe first 3 lookups found nothing, so Apple's search isn't working from this PC. Stopping here.", "r")
+                say("Run  python tools\\find_apple_links.py --test  and send Claude what it prints.", "y")
+                for it2 in todo[num - 1:]:
+                    log.append((it2["key"], it2["title"] or it2["term"], "not tried"))
+                skipped += len(todo) - num + 1
+                break
+            got, skipped = look_up(it, num, len(todo), links, yes, log, got, skipped)
+    finally:
+        if log:
+            os.makedirs(os.path.dirname(logfile), exist_ok=True)
+            with open(logfile, "w", encoding="utf-8", newline="") as f:
+                f.write("id,title,result\n" + "".join(f'{k},"{t.replace(chr(34), "")}",{r}\n' for k, t, r in log))
     say(f"\nDone. {got} direct links saved to tools/apple_links.json, {skipped} still open a search.", "c")
+    say(f"A list of what happened to each title is in {logfile}", "d")
     if skipped:
-        say("For those, find the title in the Apple TV app, tap Share > Copy Link, and run:", "d")
+        say("For the rest, find the title in the Apple TV app, tap Share > Copy Link, and run:", "d")
         say('   python tools/find_apple_links.py --set <id> "<link>"', "d")
+
+
+def look_up(it, num, total, links, yes, log, got, skipped):
+    title = it["title"] or it["term"]
+    say(f"[{num}/{total}] {it['key']} {title}" + (f" ({it['year']})" if it["year"] else ""))
+    sure, cands = best_for(it, title)
+    pick = sure
+    if sure:
+        say(f"   {describe(sure)}", "g")
+    elif cands and not yes:
+        say("   Not sure which one this is:", "y")
+        pick = ask(cands)
+    elif not cands:
+        say("   nothing found on Apple TV", "r")
+    else:
+        say(f"   not sure ({len(cands)} possible) - skipped", "y")
+    if pick:
+        links[it["key"]] = entry(pick, title)
+        save_json(APPLE_LINKS, links)  # save as we go, so stopping early keeps what was found
+        log.append((it["key"], title, "found " + pick["id"]))
+        return got + 1, skipped
+    log.append((it["key"], title, "not sure" if cands else "nothing found"))
+    return got, skipped + 1
 
 
 if __name__ == "__main__":

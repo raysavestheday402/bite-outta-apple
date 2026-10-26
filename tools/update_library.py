@@ -4,8 +4,8 @@ update_library.py - the whole library update in one go. Double-click "Update Lib
   python tools/update_library.py "C:\\path\\to\\Covers"   uses (and remembers) this Covers folder
 
 It runs, in order:
-  1. find_apple_links.py   direct Apple TV links for titles that still open a search (asks when it isn't sure)
-  2. get_covers.py         covers and details for titles that don't have a cover yet (keeps every cover you have)
+  1. get_covers.py         covers, details and Wikidata's Apple TV ids, only for titles with no cover yet
+  2. find_apple_links.py   searches Apple TV only for titles that still have no direct link after step 1
   3. build_data.py         rebuilds data.js and posters/
   4. check_data.py         checks everything before you push
 Then commit and push with GitHub Desktop.
@@ -24,8 +24,8 @@ def main():
     os.makedirs(folder, exist_ok=True)
     say(f"Covers folder: {folder}", "d")
     extra = ["--yes"] if "--yes" in sys.argv else []
-    run("find_apple_links.py", "--covers", folder, "--no-pause", *extra)
     run("get_covers.py", "--covers", folder, "--missing", "--no-pause")
+    run("find_apple_links.py", "--covers", folder, "--no-pause", *extra)
     if not run("build_data.py", folder):
         say("build_data.py stopped with an error (see above). Nothing to push yet.", "r")
         return
