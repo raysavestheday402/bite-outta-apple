@@ -1,0 +1,1234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Apple TV Library</title>
+<!-- raysavestheday icon integration -->
+<link rel="icon" href="icons/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+<link rel="manifest" href="icons/manifest.webmanifest">
+<meta name="theme-color" content="#07152f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TV Library">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Layout: luminous icon-blue scene (fixed layer) > transparent header with glowing icon > sticky frosted toolbar (search, Grid / Cover Flow toggle, emoji chips) > centered 1280px poster grid OR full-width Cover Flow stage > popcorn stripe + footer. One deliberate theme. */
+:root {
+  color-scheme: dark;
+
+  /* icon palette */
+  --navy: #07152F;
+  --navy-deep: #0A1B44;
+  --royal: #053288;
+  --sky-top: #1F5FD6;
+  --sky-mid: #0D3A9E;
+  --sky-bot: #071D5C;
+  --glow: #BDEBFB;
+  --glow-2: #79B2DA;
+  --gold: #FFC529;
+  --gold-hi: #FFD25A;
+  --orange: #FF9B24;
+  --red: #C8102E;
+  --red-dark: #9A272C;
+  --heart-red: #E63946;
+  --heart-red-hi: #FF6B78;
+  --play-blue: #1E6BFF;
+  --play-hi: #5E9BFF;
+  --play-lo: #0A3FB8;
+  --violet: #7B3FE4;
+  --teal: #0A8591;
+
+  /* neutrals and text */
+  --white: #FFFFFF;
+  --black: #000000;
+  --ink: #0B1B3F;
+  --muted: #5A6B8C;
+  --meta: #C7DCFF;
+  --line: #D8E2F5;
+  --sky-2: #E6EFFF;
+
+  /* translucent layers */
+  --glass-navy: rgba(7, 29, 92, .55);
+  --hairline: rgba(255, 255, 255, .14);
+  --hairline-2: rgba(255, 255, 255, .24);
+  --veil: rgba(255, 255, 255, .12);
+  --veil-14: rgba(255, 255, 255, .14);
+  --ray: rgba(255, 255, 255, .07);
+  --spot: rgba(189, 235, 251, .45);
+  --spot-0: rgba(189, 235, 251, 0);
+  --reflect: rgba(255, 255, 255, .28);
+  --floor: rgba(189, 235, 251, .16);
+  --cyan-line: rgba(189, 235, 251, .85);
+  --cyan-soft: rgba(121, 178, 218, .65);
+
+  /* gradients */
+  --grad-gold: linear-gradient(180deg, var(--gold-hi), var(--orange));
+  --grad-gold-d: linear-gradient(135deg, var(--gold-hi), var(--orange));
+  --scene:
+    radial-gradient(ellipse 50% 72px at 50% 0%, var(--spot) 0%, var(--spot-0) 100%),
+    linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 38%, var(--sky-bot) 100%);
+  --tile-1: linear-gradient(155deg, var(--play-blue), var(--navy));
+  --tile-2: linear-gradient(155deg, var(--heart-red), var(--violet));
+  --tile-3: linear-gradient(155deg, var(--violet), var(--play-blue));
+  --tile-4: linear-gradient(155deg, var(--teal), var(--play-blue));
+
+  /* shadows */
+  --shadow-poster: 0 10px 26px rgba(0, 0, 0, .38);
+  --shadow-lift: 0 16px 34px rgba(0, 0, 0, .45), 0 0 0 3px var(--cyan-line), 0 0 26px 4px var(--cyan-soft);
+  --shadow-bar: 0 10px 26px rgba(2, 10, 40, .4);
+  --shadow-btn: 0 8px 22px rgba(2, 10, 40, .45);
+  --shadow-chip: 0 2px 6px rgba(2, 10, 40, .3);
+  --shadow-text: 0 1px 3px rgba(2, 10, 40, .65);
+  --shadow-tile: 0 2px 8px rgba(7, 21, 47, .35);
+  --drop-ink: rgba(2, 10, 40, .45);
+
+  /* type */
+  --font-display: "Baloo 2", "Nunito", ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-body: "Nunito", ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-emoji: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+/* kid-proof touch: no long-press preview or selection, no tap flash, no double-tap zoom (pinch zoom stays) */
+* {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+input[type="search"] { -webkit-user-select: text; user-select: text; -webkit-touch-callout: default; }
+html, body { touch-action: manipulation; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background-color: var(--sky-bot);
+  color: var(--white);
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* the scene: spotlight + blue gradient, light rays, a sprinkle of stars (fixed layer; iOS ignores background-attachment:fixed) */
+#bg {
+  position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background-color: var(--sky-bot);
+  background-image: var(--scene);
+}
+#bg::before {
+  content: ""; position: absolute; inset: 0;
+  background: repeating-conic-gradient(from 0deg at 50% 0%, var(--ray) 0 4deg, transparent 4deg 12deg);
+  -webkit-mask-image: linear-gradient(to bottom, var(--black) 0, var(--black) 64px, transparent 128px);
+  mask-image: linear-gradient(to bottom, var(--black) 0, var(--black) 64px, transparent 128px);
+}
+#bg::after {
+  content: ""; position: absolute; inset: 0;
+  background:
+    radial-gradient(circle at .6% 24%, var(--gold-hi) 0 1.5px, transparent 2.5px),
+    radial-gradient(circle at 99.4% 16%, var(--white) 0 1.5px, transparent 2.5px),
+    radial-gradient(circle at .6% 62%, var(--white) 0 1px, transparent 2px),
+    radial-gradient(circle at 99.4% 48%, var(--gold-hi) 0 1.5px, transparent 2.5px),
+    radial-gradient(circle at .6% 86%, var(--gold-hi) 0 1px, transparent 2px),
+    radial-gradient(circle at 99.4% 78%, var(--white) 0 1.5px, transparent 2.5px),
+    radial-gradient(circle at 30% 10%, var(--white) 0 1px, transparent 2px),
+    radial-gradient(circle at 72% 8%, var(--gold-hi) 0 1px, transparent 2px),
+    radial-gradient(circle at .6% 94%, var(--white) 0 1px, transparent 2px),
+    radial-gradient(circle at 99.4% 92%, var(--gold-hi) 0 1.5px, transparent 2.5px);
+}
+
+/* paints the translucent iOS status-bar area with the same slice of the scene */
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10;
+  background-color: var(--sky-top);
+  background-image: var(--scene);
+  background-size: 100vw 100vh;
+  background-position: 0 0;
+  background-repeat: no-repeat;
+}
+
+.wrap {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+a:focus-visible, button:focus-visible, input:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
+
+/* ---------- header (transparent: the rays flow through it) ---------- */
+.top { padding: calc(env(safe-area-inset-top, 0px) + 16px) 0 18px; }
+.top-in { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; }
+.icon-wrap { position: relative; flex: none; width: 76px; height: 76px; }
+.icon-wrap::before {
+  content: ""; position: absolute; inset: -5px; border-radius: 23px;
+  box-shadow: 0 0 0 2px var(--cyan-line), 0 0 26px 6px var(--cyan-soft);
+  animation: pulse 2.8s ease-in-out infinite;
+}
+.app-icon {
+  position: relative; display: block; width: 100%; height: 100%;
+  border-radius: 18px; object-fit: cover; box-shadow: var(--shadow-btn);
+}
+@keyframes pulse {
+  0%, 100% { opacity: .5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+.brand { flex: 1 1 120px; min-width: 0; }
+.brand h1 {
+  margin: 0; padding: 0 .06em .12em 0;
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 800; font-size: 38px; line-height: 1.08;
+  text-wrap: balance; overflow-wrap: anywhere;
+  color: var(--gold-hi);
+  background: var(--grad-gold);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 0 var(--navy-deep)) drop-shadow(0 4px 8px var(--drop-ink));
+}
+.brand .tag {
+  display: inline-block; margin: 2px 0 0 -10px; padding: 3px 10px; border-radius: 999px;
+  background: var(--glass-navy);
+  font-weight: 700; font-size: 16px; line-height: 1.2; color: var(--meta);
+  text-shadow: var(--shadow-text);
+}
+.count-wrap { margin-left: auto; }
+.count {
+  display: inline-block; margin: 0; padding: 7px 14px; border-radius: 999px;
+  background: var(--glass-navy); color: var(--white); text-shadow: var(--shadow-text);
+  font-weight: 700; font-size: 15px; line-height: 1.2; white-space: nowrap;
+}
+
+/* ---------- toolbar: frosted glass ---------- */
+.toolbar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+  background: var(--glass-navy);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(14px) saturate(140%);
+  border-bottom: 1px solid var(--hairline);
+  transition: box-shadow .2s ease;
+}
+.toolbar.stuck { box-shadow: var(--shadow-bar); }
+.bar-in { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding-top: 12px; padding-bottom: 8px; }
+
+.search { position: relative; flex: 1 1 0; min-width: 0; }
+.search input {
+  display: block; width: 100%; min-height: 54px; margin: 0;
+  padding: 0 16px 0 52px;
+  border: 2px solid var(--white); border-radius: 999px;
+  background: var(--white); color: var(--ink);
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-weight: 700; font-size: 18px; line-height: 1.2;
+  -webkit-appearance: none; appearance: none;
+}
+.search.has-text input { padding-right: 54px; }
+.search input::placeholder { color: var(--muted); opacity: .9; }
+.search input::-webkit-search-decoration,
+.search input::-webkit-search-cancel-button,
+.search input::-webkit-search-results-button,
+.search input::-webkit-search-results-decoration { -webkit-appearance: none; display: none; }
+.search input:focus { border-color: var(--play-blue); }
+.mag { position: absolute; left: 18px; top: 50%; width: 22px; height: 22px; margin-top: -11px; color: var(--muted); pointer-events: none; }
+.clear {
+  position: absolute; right: 5px; top: 50%; width: 44px; height: 44px; margin-top: -22px; padding: 0;
+  display: grid; place-items: center; border: 0; background: none; color: var(--muted);
+  cursor: pointer; -webkit-appearance: none; appearance: none;
+}
+.clear span { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--sky-2); }
+.clear svg { width: 14px; height: 14px; }
+
+/* Grid / Cover Flow segmented toggle */
+.seg {
+  flex: none; display: inline-flex; align-items: stretch; height: 44px; padding: 1px;
+  border: 1px solid var(--hairline-2); border-radius: 999px; background: var(--veil);
+}
+.seg-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  min-height: 42px; margin: 0; padding: 0 14px; border: 0; border-radius: 999px;
+  background: transparent; color: var(--white);
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-weight: 800; font-size: 15px; line-height: 1; white-space: nowrap;
+  cursor: pointer; -webkit-appearance: none; appearance: none;
+}
+.seg-btn svg { width: 20px; height: 20px; fill: currentColor; flex: none; }
+.seg-btn[aria-pressed="true"] { background: var(--grad-gold-d); color: var(--navy); box-shadow: var(--shadow-chip); }
+
+/* chip row scrolls inside itself; padding / negative margin keeps focus rings and the count badge from being clipped */
+.chips {
+  position: relative; display: flex; gap: 6px; flex: 0 0 calc(100% + 12px); min-width: 0;
+  overflow-x: auto; overflow-y: hidden;
+  padding: 8px 6px; margin: -8px -6px;
+  scrollbar-width: none; -ms-overflow-style: none; -webkit-overflow-scrolling: touch;
+}
+.chips::-webkit-scrollbar { display: none; }
+.chip {
+  position: relative; flex: none; display: inline-flex; align-items: center; gap: 6px;
+  min-height: 44px; margin: 0; padding: 0 12px 0 9px;
+  border: 1px solid var(--hairline-2); border-radius: 999px;
+  background: var(--veil); color: var(--white);
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-weight: 800; font-size: 16px; line-height: 1; white-space: nowrap;
+  cursor: pointer; -webkit-appearance: none; appearance: none;
+}
+.chip .ico { font-family: var(--font-emoji), sans-serif; font-size: 20px; line-height: 1; }
+.chip[aria-pressed="true"] { background: var(--grad-gold-d); border-color: transparent; color: var(--navy); box-shadow: var(--shadow-chip); }
+.chip .n {
+  position: absolute; top: -6px; right: -3px;
+  display: grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px;
+  border-radius: 999px; background: var(--red); color: var(--white); border: 2px solid var(--white);
+  font-weight: 800; font-size: 12px; line-height: 1;
+}
+@media (hover: none) and (pointer: coarse) {
+  .chip { min-height: 48px; font-size: 17px; }
+  .chip .ico { font-size: 22px; }
+}
+@media (hover: hover) and (pointer: fine) {
+  .chip:not([aria-pressed="true"]):hover, .seg-btn[aria-pressed="false"]:hover { background: var(--hairline-2); }
+}
+
+@media (max-width: 599px) {
+  .icon-wrap { width: 56px; height: 56px; }
+  .icon-wrap::before { inset: -4px; border-radius: 21px; }
+  .brand h1 { font-size: 30px; }
+  .brand .tag { font-size: 14px; }
+  .count-wrap { margin-left: 0; }
+  .seg-btn { padding: 0; width: 40px; }
+  .seg-btn .lbl { display: none; }
+  .search input { font-size: 16px; padding-left: 46px; padding-right: 6px; }
+  .mag { left: 15px; }
+}
+@media (max-width: 380px) {
+  .brand h1 { font-size: 26px; }
+}
+
+/* ---------- content ---------- */
+main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
+.sec { margin-top: 26px; }
+.sec h2 {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin: 0 0 16px;
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 800; font-size: 26px; line-height: 1.15; color: var(--white);
+  text-shadow: var(--shadow-text);
+}
+.sec h2 .n {
+  padding: 3px 12px; border-radius: 999px; background: var(--grad-gold-d); color: var(--navy);
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-weight: 800; font-size: 14px; line-height: 1.4; text-shadow: none;
+}
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 24px 18px; }
+@media (min-width: 768px) {
+  .grid { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+}
+@media (max-width: 599px) {
+  .grid { grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 20px 12px; }
+  .sec h2 { font-size: 24px; }
+}
+
+.card { position: relative; min-width: 0; }
+/* two columns under the poster: text (flexible) + a fixed column the heart button sits in */
+.tap {
+  display: grid; grid-template-columns: minmax(0, 1fr) 34px; column-gap: 8px;
+  border-radius: 18px; color: inherit; text-decoration: none;
+}
+.name, .meta { grid-column: 1; }
+.poster {
+  grid-column: 1 / -1; min-width: 0;
+  position: relative; width: 100%; aspect-ratio: 2 / 3;
+  border-radius: 16px; overflow: hidden; background: var(--royal);
+  box-shadow: var(--shadow-poster);
+  container-type: inline-size;
+  transform: translateZ(0);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.poster img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.poster .play-disc { --disc: 64px; opacity: 0; transform: scale(.8); transition: opacity .18s ease, transform .18s ease; }
+@media (hover: hover) and (pointer: fine) {
+  .tap:hover .poster { transform: translateY(-4px); box-shadow: var(--shadow-lift); }
+  .tap:hover .poster .play-disc { opacity: 1; transform: scale(1); }
+}
+.tap:active .poster { transform: scale(.96); }
+
+.badge {
+  position: absolute; top: 8px; left: 8px; padding: 4px 9px; border-radius: 999px;
+  background: var(--grad-gold-d); color: var(--navy);
+  font-weight: 800; font-size: 11px; line-height: 1; letter-spacing: .06em; text-transform: uppercase;
+  box-shadow: var(--shadow-tile);
+}
+
+.name {
+  margin-top: 10px; color: var(--white); text-shadow: var(--shadow-text);
+  font-weight: 800; font-size: 15px; line-height: 1.25;
+  display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden; overflow-wrap: anywhere;
+}
+.meta { margin-top: 2px; color: var(--meta); text-shadow: var(--shadow-text); font-weight: 700; font-size: 13px; line-height: 1.3; }
+
+/* the round glowing play disc from the icon: blue disc, white triangle, thin white ring, cyan glow */
+.play-disc {
+  --disc: 64px;
+  position: absolute; left: 50%; top: 50%;
+  width: var(--disc); height: var(--disc); margin: calc(var(--disc) / -2) 0 0 calc(var(--disc) / -2);
+  border-radius: 50%; border: 2px solid var(--white); pointer-events: none;
+  background: radial-gradient(circle at 34% 26%, var(--play-hi) 0%, var(--play-blue) 52%, var(--play-lo) 100%);
+  box-shadow: 0 0 0 4px var(--cyan-soft), 0 0 22px 6px var(--cyan-line), 0 0 46px 12px var(--play-blue);
+}
+.play-disc::before {
+  content: ""; position: absolute; left: 50%; top: 50%; width: 34%; height: 38%;
+  transform: translate(-36%, -50%); background: var(--white);
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+
+/* fallback tile when a title has no poster */
+.ph {
+  position: absolute; inset: 0; display: grid; place-items: center; padding: 36px 12px;
+  text-align: center; color: var(--white); text-shadow: var(--shadow-tile);
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 800; font-size: 18px; font-size: clamp(16px, 12cqw, 26px); line-height: 1.1;
+}
+.ph span { display: -webkit-box; -webkit-line-clamp: 6; line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+.ph.g1 { background: var(--tile-1); }
+.ph.g2 { background: var(--tile-2); }
+.ph.g3 { background: var(--tile-3); }
+.ph.g4 { background: var(--tile-4); }
+
+/* heart: 44x44 tap target under the poster, right of the title; 34px visible circle.
+   margin-top % resolves against the card width, so 150% = poster height (2:3); the rest centers it on the first title line */
+.fav {
+  position: absolute; top: 0; right: -5px; width: 44px; height: 44px; padding: 0;
+  margin: calc(150% + 10px + (15px * 1.25) / 2 - 22px) 0 0;
+}
+.fav, .fav-flow {
+  display: grid; place-items: center; isolation: isolate;
+  border: 0; border-radius: 50%; background: none; color: var(--white);
+  cursor: pointer; -webkit-appearance: none; appearance: none;
+}
+.fav::before, .fav-flow::before {
+  content: ""; position: absolute; z-index: -1; left: 5px; top: 5px; width: 34px; height: 34px;
+  border: 1.5px solid var(--hairline-2); border-radius: 50%; background: var(--veil-14);
+}
+.fav svg, .fav-flow svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.3; stroke-linejoin: round; }
+.fav[aria-pressed="true"], .fav-flow[aria-pressed="true"] { color: var(--heart-red); }
+.fav[aria-pressed="true"]::before, .fav-flow[aria-pressed="true"]::before { background: var(--white); border-color: var(--white); }
+.fav[aria-pressed="true"] svg, .fav-flow[aria-pressed="true"] svg { fill: currentColor; }
+.fav:focus-visible, .fav-flow:focus-visible { outline: none; }
+.fav:focus-visible::before, .fav-flow:focus-visible::before { outline: 3px solid var(--gold); outline-offset: 3px; }
+.fav.pop, .fav-flow.pop { animation: pop .38s ease-out; }
+@keyframes pop {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.4); }
+  70% { transform: scale(.92); }
+  100% { transform: scale(1); }
+}
+
+/* ---------- empty states ---------- */
+.empty {
+  max-width: 520px; margin: 40px auto 32px; padding: 28px 24px 32px; text-align: center;
+  background: var(--glass-navy); border: 1px solid var(--hairline-2); border-radius: 24px;
+  color: var(--white); font-weight: 800; font-size: 20px; line-height: 1.35;
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+}
+.empty img { display: block; width: 96px; height: 96px; margin: 0 auto 16px; border-radius: 22px; box-shadow: 0 0 0 2px var(--cyan-line), 0 0 24px 4px var(--cyan-soft); }
+.empty .hrt { color: var(--heart-red-hi); }
+
+/* ---------- Cover Flow ---------- */
+.flow { --cf-h: min(46vh, 440px); --cf-w: calc(var(--cf-h) * 2 / 3); padding-top: 6px; }
+.stage {
+  position: relative; height: calc(var(--cf-h) * 1.14 + 22px); overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, var(--black) calc(100% - 70px), transparent);
+  mask-image: linear-gradient(to bottom, var(--black) calc(100% - 70px), transparent);
+  perspective: 1100px; perspective-origin: 50% 38%;
+  touch-action: pan-y; cursor: grab;
+}
+.stage:active { cursor: grabbing; }
+.stage::before {
+  content: ""; position: absolute; left: 0; right: 0; top: calc(var(--cf-h) + 15px); bottom: 0; z-index: 0;
+  border-top: 1px solid var(--hairline);
+  background: linear-gradient(180deg, var(--floor), transparent 75%);
+}
+.cf {
+  position: absolute; left: 50%; top: 14px; display: block;
+  width: var(--cf-w); height: var(--cf-h); margin-left: calc(var(--cf-w) / -2);
+  border-radius: 10px; overflow: hidden; background: var(--royal);
+  box-shadow: var(--shadow-poster);
+  -webkit-box-reflect: below 2px linear-gradient(transparent 62%, var(--reflect));
+  will-change: transform;
+  color: inherit; text-decoration: none; -webkit-user-drag: none;
+}
+.cf img { display: block; width: 100%; height: 100%; object-fit: cover; -webkit-user-drag: none; }
+.cf .shade { position: absolute; inset: 0; background: var(--black); opacity: 0; pointer-events: none; }
+.cf .play-disc { --disc: calc(var(--cf-w) * .3); top: auto; bottom: 7%; margin: 0 0 0 calc(var(--disc) / -2); opacity: 0; }
+
+.flow-info { padding-top: 4px; padding-bottom: 16px; text-align: center; }
+.flow-title {
+  min-height: 2.3em; margin: 0 auto; max-width: 760px;
+  display: flex; align-items: flex-end; justify-content: center;
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 800; font-size: 26px; line-height: 1.15; color: var(--white); text-shadow: var(--shadow-text);
+}
+.flow-title span {
+  display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere;
+}
+.flow-meta { margin: 4px 0 0; min-height: 1.4em; color: var(--meta); text-shadow: var(--shadow-text); font-weight: 700; font-size: 15px; }
+.flow-actions { display: flex; justify-content: center; align-items: center; gap: 14px; margin-top: 12px; }
+.fav-flow { position: relative; flex: none; width: 56px; height: 56px; padding: 0; }
+.fav-flow::before { left: 4px; top: 4px; width: 48px; height: 48px; }
+.fav-flow svg { width: 24px; height: 24px; }
+.play-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 52px; padding: 0 30px; border-radius: 999px;
+  background: var(--grad-gold-d); color: var(--navy); text-decoration: none;
+  font-family: var(--font-body), system-ui, sans-serif; font-weight: 800; font-size: 18px; line-height: 1;
+  box-shadow: var(--shadow-btn);
+}
+.play-btn svg { width: 18px; height: 18px; fill: currentColor; }
+.flow-scrub { display: flex; align-items: center; gap: 14px; max-width: 560px; margin: 14px auto 0; }
+.scrub {
+  -webkit-appearance: none; appearance: none; flex: 1 1 auto; min-width: 0; height: 36px; margin: 0;
+  background: transparent; cursor: pointer;
+}
+.scrub::-webkit-slider-runnable-track { height: 6px; border-radius: 3px; background: var(--hairline-2); }
+.scrub::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none; width: 28px; height: 28px; margin-top: -11px; border: 0; border-radius: 50%;
+  background: var(--white); box-shadow: var(--shadow-btn);
+}
+.scrub::-moz-range-track { height: 6px; border-radius: 3px; background: var(--hairline-2); }
+.scrub::-moz-range-thumb { width: 28px; height: 28px; border: 0; border-radius: 50%; background: var(--white); box-shadow: var(--shadow-btn); }
+.flow-count { flex: none; min-width: 84px; text-align: right; color: var(--meta); text-shadow: var(--shadow-text); font-weight: 800; font-size: 14px; font-variant-numeric: tabular-nums; }
+
+@media (max-width: 599px) {
+  .flow { --cf-h: min(40vh, 300px); }
+  .flow-title { font-size: 22px; }
+  .play-btn { padding: 0 22px; font-size: 17px; }
+}
+@media (min-width: 600px) and (max-height: 860px) {
+  .flow-title { font-size: 24px; }
+}
+
+/* ---------- footer ---------- */
+.stripe-wrap { margin-top: 28px; }
+.stripe {
+  height: 6px; border-radius: 3px;
+  background: repeating-linear-gradient(135deg, var(--red) 0 10px, var(--white) 10px 20px);
+}
+.foot {
+  margin-top: 0; padding: 22px 16px calc(28px + env(safe-area-inset-bottom, 0px));
+  text-align: center; color: var(--meta); font-size: 13px; line-height: 1.5;
+}
+.foot-brand {
+  display: inline-block; margin: 0 0 4px; padding: 0 .06em .1em 0;
+  font-family: var(--font-display), system-ui, sans-serif;
+  font-weight: 800; font-size: 20px; line-height: 1.2; color: var(--gold-hi);
+  background: var(--grad-gold); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.foot p { max-width: 460px; margin: 0 auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  .icon-wrap::before { opacity: .85; }
+  .tap:hover .poster, .tap:active .poster { transform: translateZ(0); }
+  .tap:active .poster { filter: brightness(.93); }
+}
+</style>
+</head>
+<body>
+<div id="bg" aria-hidden="true"></div>
+
+<header class="top" id="top">
+  <div class="wrap top-in">
+    <span class="icon-wrap"><img class="app-icon" src="icons/icon-192.png" alt="" width="76" height="76"></span>
+    <div class="brand">
+      <h1>Apple TV Library</h1>
+      <p class="tag">Movies &amp; shows</p>
+    </div>
+    <div class="count-wrap"><p class="count" id="count"></p></div>
+  </div>
+</header>
+
+<div class="toolbar" id="toolbar">
+  <div class="wrap bar-in">
+    <div class="search" id="searchBox">
+      <svg class="mag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5L21 21"></path></svg>
+      <input id="search" type="search" placeholder="Search movies and shows" aria-label="Search movies and shows" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="search">
+      <button class="clear" id="clear" type="button" aria-label="Clear search" hidden><span><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M2 2l10 10M12 2L2 12"></path></svg></span></button>
+    </div>
+    <div class="seg" id="seg" role="group" aria-label="View">
+      <button class="seg-btn" type="button" data-view="grid" aria-pressed="true" aria-label="Grid view"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="2"></rect><rect x="13" y="3" width="8" height="8" rx="2"></rect><rect x="3" y="13" width="8" height="8" rx="2"></rect><rect x="13" y="13" width="8" height="8" rx="2"></rect></svg><span class="lbl">Grid</span></button>
+      <button class="seg-btn" type="button" data-view="flow" aria-pressed="false" aria-label="Cover Flow view"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1.5 7.5l5-2v13l-5-2z"></path><rect x="8.5" y="3.5" width="7" height="17" rx="1.6"></rect><path d="M22.5 7.5l-5-2v13l5-2z"></path></svg><span class="lbl">Cover Flow</span></button>
+    </div>
+    <div class="chips" id="chips" role="group" aria-label="Filter">
+      <button class="chip" type="button" data-chip="all" aria-pressed="true"><span class="ico" aria-hidden="true">&#x2B50;&#xFE0F;</span>All</button>
+      <button class="chip" type="button" data-chip="movies" aria-pressed="false"><span class="ico" aria-hidden="true">&#x1F3AC;&#xFE0F;</span>Movies</button>
+      <button class="chip" type="button" data-chip="shows" aria-pressed="false"><span class="ico" aria-hidden="true">&#x1F4FA;&#xFE0F;</span>Shows</button>
+      <button class="chip" type="button" data-chip="disney" aria-pressed="false"><span class="ico" aria-hidden="true">&#x1F3F0;&#xFE0F;</span>Disney &amp; Pixar</button>
+      <button class="chip" type="button" data-chip="holidays" aria-pressed="false"><span class="ico" aria-hidden="true">&#x1F384;&#xFE0F;</span>Holidays</button>
+      <button class="chip" type="button" data-chip="favs" aria-pressed="false"><span class="ico" aria-hidden="true">&#x2764;&#xFE0F;</span>Favorites<span class="n" id="favCount" hidden>0</span></button>
+    </div>
+  </div>
+</div>
+
+<section class="flow" id="flow" aria-label="Cover Flow" hidden>
+  <div class="stage" id="stage" role="group" aria-roledescription="Cover Flow" aria-label="Cover Flow"></div>
+  <div class="flow-info wrap">
+    <h2 class="flow-title" id="flowTitle"><span></span></h2>
+    <p class="flow-meta" id="flowMeta"></p>
+    <div class="flow-actions">
+      <button class="fav-flow" id="flowFav" type="button" aria-pressed="false" aria-label="Add to favorites"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path></svg></button>
+      <a class="play-btn" id="flowPlay" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"></path></svg>Play in Apple TV</a>
+    </div>
+    <div class="flow-scrub">
+      <input class="scrub" id="flowScrub" type="range" min="0" max="0" step="1" value="0" aria-label="Scrub through titles">
+      <span class="flow-count" id="flowCount"></span>
+    </div>
+  </div>
+</section>
+
+<main class="wrap" id="results"><noscript><div class="empty"><img src="icons/icon-192.png" alt="" width="96" height="96"><p>Please turn on JavaScript to see the library.</p></div></noscript></main>
+<p class="sr-only" id="status" role="status" aria-live="polite"></p>
+<p class="sr-only" id="flowLive" aria-live="polite"></p>
+
+<div class="wrap stripe-wrap"><div class="stripe" aria-hidden="true"></div></div>
+<footer class="foot">
+  <div class="foot-brand">Apple TV Library</div>
+  <p>Posters and details from TMDB. This product uses the TMDB API but is not endorsed or certified by TMDB.</p>
+</footer>
+
+<script src="data.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var LIB = Array.isArray(window.LIBRARY) ? window.LIBRARY : [];
+
+  function $(id) { return document.getElementById(id); }
+  var resultsEl = $('results'), searchEl = $('search'), clearEl = $('clear'), chipsEl = $('chips'), searchBoxEl = $('searchBox');
+  var toolbarEl = $('toolbar'), headerEl = $('top'), countEl = $('count'), favCountEl = $('favCount'), statusEl = $('status'), segEl = $('seg');
+  var flowEl = $('flow'), stageEl = $('stage'), flowTitleEl = $('flowTitle'), flowMetaEl = $('flowMeta'), flowFavEl = $('flowFav');
+  var flowPlayEl = $('flowPlay'), scrubEl = $('flowScrub'), flowCountEl = $('flowCount'), flowLiveEl = $('flowLive');
+
+  /* ---------- storage (always optional) ---------- */
+  function lsGet(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { window.localStorage.setItem(k, v); } catch (e) { /* storage unavailable */ } }
+
+  /* ---------- text helpers ---------- */
+  var ESC = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return ESC[c]; }); }
+
+  // lower-case, accent-insensitive, curly apostrophes folded to straight (iPad "smart punctuation")
+  function norm(s) {
+    return String(s == null ? '' : s)
+      .normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .replace(/[‘’ʼ]/g, "'")
+      .toLowerCase().replace(/\s+/g, ' ').trim();
+  }
+  function sortKey(title) {
+    return norm(title).replace(/^(the|a|an) +/, '').replace(/^[^\p{L}\p{N}]+/u, '');
+  }
+  function hash(s) {
+    var h = 2166136261;
+    for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+    h ^= h >>> 15; h = Math.imul(h, 2246822507); h ^= h >>> 13;
+    return h >>> 0;
+  }
+  function plural(n, one, many) { return n + ' ' + (n === 1 ? one : many); }
+  function safeUrl(u) { return /^https?:\/\//i.test(String(u || '')) ? String(u) : '#'; }
+
+  /* ---------- library ---------- */
+  var collator = (typeof Intl !== 'undefined' && Intl.Collator) ? new Intl.Collator('en', { numeric: true, sensitivity: 'base' }) : null;
+  var items = LIB.map(function (d) {
+    var key = sortKey(d.title);
+    return {
+      d: d,
+      n: norm(d.title),
+      k: key,
+      dig: /^[0-9]/.test(key) ? 1 : 0,
+      tags: Array.isArray(d.tags) ? d.tags : [],
+      show: d.kind === 'tv'
+    };
+  });
+  items.sort(function (a, b) {
+    if (a.dig !== b.dig) return a.dig - b.dig;
+    var c = collator ? collator.compare(a.k, b.k) : (a.k < b.k ? -1 : a.k > b.k ? 1 : 0);
+    return c || (a.d.id < b.d.id ? -1 : a.d.id > b.d.id ? 1 : 0);
+  });
+  var byId = {};
+  items.forEach(function (it) { byId[String(it.d.id)] = it; });
+
+  var nShows = items.filter(function (i) { return i.show; }).length;
+  var nMovies = items.length - nShows;
+  var parts = [];
+  if (nMovies) parts.push(plural(nMovies, 'movie', 'movies'));
+  if (nShows) parts.push(plural(nShows, 'show', 'shows'));
+  countEl.textContent = parts.join(' · ');
+  if (!parts.length) countEl.parentNode.hidden = true;
+
+  /* ---------- state ---------- */
+  var LABELS = { all: 'All', movies: 'Movies', shows: 'Shows', disney: 'Disney & Pixar', holidays: 'Holidays', favs: 'Favorites' };
+  var chip = lsGet('rstd:chip');
+  if (!Object.prototype.hasOwnProperty.call(LABELS, chip)) chip = 'all';
+  var view = lsGet('rstd:view') === 'flow' ? 'flow' : 'grid';
+
+  var favs = new Set();
+  (function () {
+    var raw = lsGet('rstd:favs');
+    if (!raw) return;
+    try {
+      var arr = JSON.parse(raw);
+      if (Array.isArray(arr)) arr.forEach(function (id) { id = String(id); if (byId[id]) favs.add(id); });
+    } catch (e) { /* ignore bad data */ }
+  })();
+  function saveFavs() { lsSet('rstd:favs', JSON.stringify(Array.from(favs))); }
+  function toggleFav(id) {
+    var on = !favs.has(id);
+    if (on) favs.add(id); else favs.delete(id);
+    saveFavs();
+    syncFavCount();
+    return on;
+  }
+
+  function matchChip(it) {
+    switch (chip) {
+      case 'movies': return !it.show;
+      case 'shows': return it.show;
+      case 'disney': return it.tags.indexOf('disney') !== -1;
+      case 'holidays': return it.tags.indexOf('holiday') !== -1;
+      case 'favs': return favs.has(String(it.d.id));
+      default: return true;
+    }
+  }
+  // "All" with no search reads Movies A-Z then Shows A-Z; everything else is one A-Z list
+  function ordered(list, q) {
+    if (chip !== 'all' || q) return list;
+    return list.filter(function (i) { return !i.show; }).concat(list.filter(function (i) { return i.show; }));
+  }
+
+  /* ---------- markup ---------- */
+  var HEART = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path></svg>';
+
+  function tileHTML(d) {
+    return '<div class="ph g' + (hash(String(d.id)) % 4 + 1) + '" aria-hidden="true"><span>' + esc(d.title) + '</span></div>';
+  }
+
+  function cardHTML(it) {
+    var d = it.d, id = String(d.id), t = esc(d.title);
+    var meta = [d.year, d.rating].filter(function (x) { return x; }).join(' · ');
+    var media = d.poster
+      ? '<img src="' + esc(d.poster) + '" loading="lazy" decoding="async" alt="' + t + ' poster" width="600" height="900" draggable="false">'
+      : tileHTML(d);
+    return '<div class="card" role="listitem" data-id="' + esc(id) + '">' +
+      '<a class="tap" href="' + esc(safeUrl(d.link)) + '" target="_blank" rel="noopener" draggable="false" aria-label="Watch ' + t + ' in Apple TV">' +
+        '<div class="poster">' + media + (it.show ? '<span class="badge">SHOW</span>' : '') + '<span class="play-disc" aria-hidden="true"></span></div>' +
+        '<div class="name">' + t + '</div>' +
+        (meta ? '<div class="meta">' + esc(meta) + '</div>' : '') +
+      '</a>' +
+      '<button class="fav" type="button" aria-pressed="' + favs.has(id) + '" aria-label="Add ' + t + ' to favorites">' + HEART + '</button>' +
+    '</div>';
+  }
+
+  function sectionHTML(hid, title, list) {
+    return '<section class="sec" aria-labelledby="' + hid + '">' +
+      '<h2 id="' + hid + '"><span>' + esc(title) + '</span><span class="n">' + list.length + '</span></h2>' +
+      '<div class="grid" role="list">' + list.map(cardHTML).join('') + '</div>' +
+    '</section>';
+  }
+
+  function emptyHTML(inner) {
+    return '<div class="empty"><img src="icons/icon-192.png" alt="" width="96" height="96" draggable="false"><p>' + inner + '</p></div>';
+  }
+
+  function render() {
+    var rawQ = searchEl.value.trim();
+    var q = norm(rawQ);
+    var list = items.filter(function (it) { return matchChip(it) && (!q || it.n.indexOf(q) !== -1); });
+    var emptyFav = chip === 'favs' && favs.size === 0;
+
+    if (view === 'flow' && !emptyFav && list.length) {
+      resultsEl.innerHTML = '';
+      resultsEl.hidden = true;
+      var flowWasHidden = flowEl.hidden;
+      flowEl.hidden = false;
+      flowSetList(ordered(list, q));
+      if (flowWasHidden) flowReveal();
+      statusEl.textContent = plural(list.length, 'title', 'titles') + ' shown';
+      return;
+    }
+
+    flowStop();
+    flowEl.hidden = true;
+    resultsEl.hidden = false;
+    var html;
+    if (emptyFav) {
+      html = emptyHTML('Tap the <span class="hrt">♥</span> on any poster to save it here.');
+    } else if (!list.length) {
+      html = emptyHTML('No matches for “' + esc(rawQ) + '”. Try another word.');
+    } else if (chip === 'all' && !q) {
+      var movies = list.filter(function (i) { return !i.show; });
+      var shows = list.filter(function (i) { return i.show; });
+      html = (movies.length ? sectionHTML('h-movies', 'Movies', movies) : '') +
+             (shows.length ? sectionHTML('h-shows', 'Shows', shows) : '');
+    } else {
+      var title = q ? (chip === 'all' ? 'Search results' : 'Search results in ' + LABELS[chip]) : LABELS[chip];
+      html = sectionHTML('h-list', title, list);
+    }
+    resultsEl.innerHTML = html;
+    statusEl.textContent = plural(list.length, 'title', 'titles') + ' shown';
+  }
+
+  /* ---------- toolbar bits ---------- */
+  function syncChips() {
+    var btns = chipsEl.querySelectorAll('.chip');
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].setAttribute('aria-pressed', btns[i].getAttribute('data-chip') === chip ? 'true' : 'false');
+    }
+  }
+  function syncView() {
+    var btns = segEl.querySelectorAll('.seg-btn');
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].setAttribute('aria-pressed', btns[i].getAttribute('data-view') === view ? 'true' : 'false');
+    }
+  }
+  function syncFavCount() {
+    favCountEl.textContent = String(favs.size);
+    favCountEl.hidden = favs.size === 0;
+  }
+  function syncSearchBox() {
+    clearEl.hidden = !searchEl.value;
+    searchBoxEl.classList.toggle('has-text', !!searchEl.value);
+  }
+  function revealChip(btn) {
+    var c = chipsEl, l = btn.offsetLeft, r = l + btn.offsetWidth;
+    if (l < c.scrollLeft + 8) c.scrollLeft = Math.max(0, l - 8);
+    else if (r > c.scrollLeft + c.clientWidth - 8) c.scrollLeft = r - c.clientWidth + 8;
+  }
+
+  var stickTop = 0;
+  function measure() { stickTop = parseFloat(window.getComputedStyle(toolbarEl).top) || 0; }
+  function updateStuck() {
+    var stuck = window.pageYOffset > 0 && toolbarEl.getBoundingClientRect().top <= stickTop + 1;
+    toolbarEl.classList.toggle('stuck', stuck);
+  }
+  // Cover Flow on a short screen: scroll the header away (toolbar stays pinned) so the Play button and scrubber are visible
+  function flowReveal() {
+    if (view !== 'flow' || flowEl.hidden) return;
+    var over = flowEl.getBoundingClientRect().bottom - window.innerHeight;
+    if (over > 0) window.scrollTo(0, Math.min(Math.max(0, headerEl.offsetHeight - stickTop), Math.round(window.pageYOffset + over + 8)));
+  }
+  // after the list changes, start the results right under the toolbar if the page was scrolled past the header
+  function resultsToTop() {
+    var target = Math.max(0, headerEl.offsetHeight - stickTop);
+    if (window.pageYOffset > target) window.scrollTo(0, target);
+  }
+
+  /* ---------- Cover Flow ---------- */
+  var POOL = 23;        // reusable cover elements (window is +/-10 = 21)
+  var WIN = 10;
+  var DRAG_PX = 0.35;   // one cover per 0.35 * cover-width of drag
+  var fl = {
+    list: [], pos: 0, target: 0, W: 200, slots: [], probe: null, raf: 0, anim: null, drag: null,
+    dragged: false, center: -1, reduced: false, id: null, keep: null, paintQ: 0, liveT: 0, lastStep: 0
+  };
+
+  var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+  fl.reduced = !!(mq && mq.matches);
+  if (mq) {
+    var onMotion = function (e) {
+      fl.reduced = e.matches;
+      cancelAnim();
+      fl.pos = fl.target = Math.round(fl.pos);
+      flowPaint();
+    };
+    if (mq.addEventListener) mq.addEventListener('change', onMotion);
+    else if (mq.addListener) mq.addListener(onMotion);
+  }
+
+  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+  function clampPos(v) { return clamp(v, 0, Math.max(0, fl.list.length - 1)); }
+
+  function makeCover() {
+    var a = document.createElement('a');
+    a.className = 'cf';
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.draggable = false;
+    a.tabIndex = -1;
+    a.innerHTML = '<img alt="" draggable="false" decoding="async" width="600" height="900"><span class="shade"></span><span class="play-disc" aria-hidden="true"></span>';
+    a._img = a.firstChild;
+    a._shade = a.childNodes[1];
+    a._disc = a.childNodes[2];
+    a._i = -1;
+    a._tab = false;
+    return a;
+  }
+
+  function ensureSlots() {
+    if (fl.slots.length) return;
+    var probe = document.createElement('span');
+    probe.setAttribute('aria-hidden', 'true');
+    probe.style.cssText = 'position:absolute;left:0;top:0;width:var(--cf-w);height:1px;visibility:hidden;pointer-events:none';
+    stageEl.appendChild(probe);
+    fl.probe = probe;
+    for (var s = 0; s < POOL; s++) {
+      var a = makeCover();
+      a.hidden = true;
+      stageEl.appendChild(a);
+      fl.slots.push(a);
+    }
+  }
+
+  function flowMeasure() {
+    var w = fl.probe ? fl.probe.offsetWidth : 0;
+    if (w > 0) fl.W = w;
+  }
+
+  function bindCover(a, i) {
+    var d = fl.list[i].d, old = a.querySelector('.ph');
+    a._i = i;
+    a.href = safeUrl(d.link);
+    a.setAttribute('aria-label', 'Watch ' + d.title + ' in Apple TV');
+    if (old) old.parentNode.removeChild(old);
+    if (d.poster) {
+      a._img.hidden = false;
+      a._img.alt = d.title + ' poster';
+      if (a._img.getAttribute('src') !== d.poster) a._img.src = d.poster;
+    } else {
+      a._img.hidden = true;
+      a._img.removeAttribute('src');
+      a.insertAdjacentHTML('afterbegin', tileHTML(d));
+    }
+    a.hidden = false;
+  }
+
+  /* where every cover sits for a given (fractional) position */
+  function flowPaint() {
+    var n = fl.list.length;
+    if (!n || flowEl.hidden || !fl.slots.length) return;
+    var W = fl.W, pos = fl.pos, c = Math.round(pos), reduced = fl.reduced;
+    var lo = Math.max(0, c - WIN), hi = Math.min(n - 1, c + WIN), s, i, el;
+
+    for (s = 0; s < fl.slots.length; s++) {
+      el = fl.slots[s];
+      if (el._i >= 0 && (el._i < lo || el._i > hi)) { el._i = -1; el.hidden = true; }
+    }
+    for (i = lo; i <= hi; i++) {
+      el = fl.slots[i % POOL];
+      if (el._i !== i) bindCover(el, i);
+      var d = i - pos, a = Math.abs(d), t = a < 1 ? a : 1, sg = d < 0 ? -1 : 1, tr, shade;
+      if (reduced) {
+        tr = 'translate3d(' + (d * (W + 14)).toFixed(1) + 'px,0,0)';
+        shade = a < 0.5 ? 0 : 0.3;
+      } else {
+        var x = a < 1 ? sg * 0.62 * W * a : sg * (0.62 * W + (a - 1) * 0.22 * W);
+        tr = 'translate3d(' + x.toFixed(1) + 'px,0,' + (-0.6 * W * t).toFixed(1) + 'px) rotateY(' + (-sg * 70 * t).toFixed(2) + 'deg)';
+        shade = 0.28 * t;
+      }
+      el.style.transform = tr;
+      el.style.zIndex = String(1000 - Math.round(a * 20));
+      el.style.opacity = a > 7 ? String(Math.max(0, 1 - (a - 7) / 3.2).toFixed(2)) : '1';
+      el._shade.style.opacity = shade.toFixed(2);
+      el._disc.style.opacity = a < 0.5 ? (1 - a * 2).toFixed(2) : '0';
+      var isC = i === c;
+      if (el._tab !== isC) { el._tab = isC; el.tabIndex = isC ? 0 : -1; }
+    }
+    if (c !== fl.center) { fl.center = c; flowInfo(c); }
+  }
+  function schedulePaint() {
+    if (fl.paintQ) return;
+    fl.paintQ = window.requestAnimationFrame(function () { fl.paintQ = 0; flowPaint(); });
+  }
+
+  /* title, meta, links, heart and scrubber follow the centered cover */
+  function flowInfo(i) {
+    var it = fl.list[i];
+    if (!it) return;
+    var d = it.d, id = String(d.id), n = fl.list.length;
+    var bits = [d.year, d.rating].filter(function (x) { return x; });
+    if (it.show) bits.unshift('Show');
+    fl.id = id;
+    flowTitleEl.firstChild.textContent = d.title;
+    flowMetaEl.textContent = bits.join(' · ');
+    flowPlayEl.href = safeUrl(d.link);
+    flowPlayEl.setAttribute('aria-label', 'Play ' + d.title + ' in Apple TV');
+    flowFavEl.setAttribute('aria-pressed', favs.has(id) ? 'true' : 'false');
+    flowFavEl.setAttribute('aria-label', 'Add ' + d.title + ' to favorites');
+    flowCountEl.textContent = (i + 1) + ' of ' + n;
+    if (scrubEl.value !== String(i)) scrubEl.value = String(i);
+    window.clearTimeout(fl.liveT);
+    fl.liveT = window.setTimeout(function () {
+      flowLiveEl.textContent = d.title + ', ' + (i + 1) + ' of ' + n;
+    }, 350);
+  }
+
+  function flowSetList(list) {
+    var prev = fl.id, idx = 0, found = false;
+    fl.list = list;
+    ensureSlots();
+    for (var i = 0; i < list.length; i++) {
+      if (prev != null && String(list[i].d.id) === prev) { idx = i; found = true; break; }
+    }
+    if (!found && fl.keep != null) idx = clamp(fl.keep, 0, list.length - 1);
+    fl.keep = null;
+    fl.slots.forEach(function (el) { el._i = -1; el.hidden = true; });
+    cancelAnim();
+    fl.center = -1;
+    fl.pos = fl.target = idx;
+    scrubEl.min = '0';
+    scrubEl.max = String(list.length - 1);
+    scrubEl.value = String(idx);
+    flowMeasure();
+    flowPaint();
+  }
+  function flowStop() { cancelAnim(); }
+
+  /* ---------- motion ---------- */
+  function cancelAnim() {
+    fl.anim = null;
+    if (fl.raf) { window.cancelAnimationFrame(fl.raf); fl.raf = 0; }
+  }
+  function flowGoto(target, ms) {
+    var n = fl.list.length;
+    if (!n) return;
+    target = clamp(Math.round(target), 0, n - 1);
+    fl.target = target;
+    cancelAnim();
+    if (fl.reduced || !ms || Math.abs(target - fl.pos) < 0.001) { fl.pos = target; flowPaint(); return; }
+    fl.anim = { from: fl.pos, to: target, t0: window.performance.now(), dur: ms };
+    fl.raf = window.requestAnimationFrame(tick);
+  }
+  function tick(now) {
+    fl.raf = 0;
+    var an = fl.anim;
+    if (!an) return;
+    var p = clamp((now - an.t0) / an.dur, 0, 1), e = 1 - Math.pow(1 - p, 3);
+    fl.pos = an.from + (an.to - an.from) * e;
+    flowPaint();
+    if (p < 1) { fl.raf = window.requestAnimationFrame(tick); }
+    else { fl.anim = null; fl.pos = an.to; flowPaint(); }
+  }
+
+  /* ---------- Cover Flow input ---------- */
+  stageEl.addEventListener('pointerdown', function (e) {
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    fl.dragged = false;
+    cancelAnim();
+    fl.drag = { id: e.pointerId, x0: e.clientX, pos0: fl.pos, moved: false, samples: [] };
+  });
+  stageEl.addEventListener('pointermove', function (e) {
+    var dr = fl.drag;
+    if (!dr || e.pointerId !== dr.id) return;
+    if (!dr.moved) {
+      if (Math.abs(e.clientX - dr.x0) < 6) return;
+      dr.moved = true;
+      dr.x0 = e.clientX;
+      dr.pos0 = fl.pos;
+      try { stageEl.setPointerCapture(e.pointerId); } catch (_) { /* not capturable */ }
+    }
+    fl.pos = clampPos(dr.pos0 - (e.clientX - dr.x0) / (DRAG_PX * fl.W));
+    dr.samples.push({ t: e.timeStamp, p: fl.pos });
+    while (dr.samples.length > 2 && e.timeStamp - dr.samples[0].t > 100) dr.samples.shift();
+    schedulePaint();
+  });
+  function endDrag(e) {
+    var dr = fl.drag;
+    if (!dr || e.pointerId !== dr.id) return;
+    fl.drag = null;
+    try { stageEl.releasePointerCapture(e.pointerId); } catch (_) { /* nothing captured */ }
+    if (!dr.moved) {
+      if (Math.abs(fl.pos - Math.round(fl.pos)) > 0.001) flowGoto(Math.round(fl.pos), 160);
+      return;
+    }
+    fl.dragged = true;
+    var carry = 0, s = dr.samples;
+    if (s.length > 1) {
+      var a = s[0], b = s[s.length - 1], dt = b.t - a.t;
+      if (dt > 8 && e.timeStamp - b.t < 80) carry = clamp((b.p - a.p) / dt * 200, -2, 2);
+    }
+    flowGoto(Math.round(fl.pos + carry), 300);
+  }
+  stageEl.addEventListener('pointerup', endDrag);
+  stageEl.addEventListener('pointercancel', endDrag);
+
+  // a tap on a side cover brings it to the middle; only the middle cover opens Apple TV
+  stageEl.addEventListener('click', function (e) {
+    var a = e.target.closest ? e.target.closest('a.cf') : null;
+    if (!a) return;
+    if (fl.dragged) { e.preventDefault(); return; }
+    if (a._i !== fl.center) { e.preventDefault(); flowGoto(a._i, 320); }
+  });
+  stageEl.addEventListener('dragstart', function (e) { e.preventDefault(); });
+
+  stageEl.addEventListener('wheel', function (e) {
+    if (!fl.list.length) return;
+    var dx = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+    if (!dx) return;
+    e.preventDefault();
+    var now = e.timeStamp;
+    if (now - fl.lastStep < 70) return;
+    if (Math.abs(dx) < 4) return;
+    fl.lastStep = now;
+    flowGoto(Math.round(fl.target) + (dx > 0 ? 1 : -1), 280);
+  }, { passive: false });
+
+  document.addEventListener('keydown', function (e) {
+    if (view !== 'flow' || flowEl.hidden || !fl.list.length) return;
+    fl.dragged = false;
+    var t = e.target, tag = t && t.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;   // search box and scrubber keep their own keys
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === 'ArrowRight') { e.preventDefault(); flowGoto(Math.round(fl.target) + 1, 280); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); flowGoto(Math.round(fl.target) - 1, 280); }
+    else if (e.key === 'Enter' && tag !== 'A' && tag !== 'BUTTON') {
+      var el = fl.slots[fl.center % POOL];
+      if (el && el._i === fl.center) { e.preventDefault(); el.click(); }
+    }
+  });
+
+  scrubEl.addEventListener('input', function () {
+    cancelAnim();
+    fl.pos = fl.target = clampPos(Number(scrubEl.value) || 0);
+    flowPaint();
+  });
+
+  flowFavEl.addEventListener('click', function () {
+    var it = fl.list[fl.center];
+    if (!it) return;
+    var id = String(it.d.id), on = toggleFav(id);
+    if (chip === 'favs' && !on) { fl.keep = fl.center; render(); return; }
+    flowFavEl.setAttribute('aria-pressed', on ? 'true' : 'false');
+    flowFavEl.classList.remove('pop');
+    void flowFavEl.offsetWidth;
+    flowFavEl.classList.add('pop');
+  });
+  flowFavEl.addEventListener('animationend', function () { flowFavEl.classList.remove('pop'); });
+
+  /* ---------- toolbar and grid events ---------- */
+  chipsEl.addEventListener('click', function (e) {
+    var btn = e.target.closest ? e.target.closest('.chip') : null;
+    if (!btn) return;
+    chip = btn.getAttribute('data-chip');
+    lsSet('rstd:chip', chip);
+    syncChips();
+    revealChip(btn);
+    render();
+    resultsToTop();
+    updateStuck();
+  });
+
+  segEl.addEventListener('click', function (e) {
+    var btn = e.target.closest ? e.target.closest('.seg-btn') : null;
+    if (!btn) return;
+    var v = btn.getAttribute('data-view') === 'flow' ? 'flow' : 'grid';
+    if (v === view) return;
+    view = v;
+    lsSet('rstd:view', view);
+    syncView();
+    render();
+    resultsToTop();
+    flowReveal();
+    updateStuck();
+  });
+
+  searchEl.addEventListener('input', function () {
+    syncSearchBox();
+    render();
+    resultsToTop();
+    updateStuck();
+  });
+  searchEl.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') searchEl.blur();
+  });
+  clearEl.addEventListener('click', function () {
+    searchEl.value = '';
+    syncSearchBox();
+    render();
+    resultsToTop();
+    updateStuck();
+    searchEl.focus();
+  });
+
+  resultsEl.addEventListener('click', function (e) {
+    var btn = e.target.closest ? e.target.closest('.fav') : null;
+    if (!btn) return;
+    var card = btn.closest('.card');
+    var id = card ? card.getAttribute('data-id') : null;
+    if (!id) return;
+    var on = toggleFav(id);
+    if (chip === 'favs') { render(); return; }
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    btn.classList.remove('pop');
+    void btn.offsetWidth;
+    btn.classList.add('pop');
+  });
+  resultsEl.addEventListener('animationend', function (e) {
+    if (e.target && e.target.classList) e.target.classList.remove('pop');
+  });
+
+  // a poster that fails to load turns into the colorful title tile
+  resultsEl.addEventListener('error', function (e) {
+    var img = e.target;
+    if (!img || img.tagName !== 'IMG' || !img.closest) return;
+    var card = img.closest('.card'), it = card ? byId[card.getAttribute('data-id')] : null;
+    if (it && img.parentNode && img.closest('.poster')) {
+      img.insertAdjacentHTML('beforebegin', tileHTML(it.d));
+      img.parentNode.removeChild(img);
+    }
+  }, true);
+  stageEl.addEventListener('error', function (e) {
+    var img = e.target, a = img && img.closest ? img.closest('a.cf') : null;
+    if (!a || img.tagName !== 'IMG' || a._i < 0 || !fl.list[a._i]) return;
+    img.hidden = true;
+    if (!a.querySelector('.ph')) a.insertAdjacentHTML('afterbegin', tileHTML(fl.list[a._i].d));
+  }, true);
+
+  var ticking = false;
+  window.addEventListener('scroll', function () {
+    if (ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(function () { ticking = false; updateStuck(); });
+  }, { passive: true });
+  function onResize() {
+    measure();
+    updateStuck();
+    if (!flowEl.hidden) { flowMeasure(); flowPaint(); }
+  }
+  window.addEventListener('resize', onResize);
+  window.addEventListener('orientationchange', onResize);
+  // lets :active press feedback fire on older iOS Safari
+  document.addEventListener('touchstart', function () {}, { passive: true });
+
+  /* ---------- start ---------- */
+  syncSearchBox();
+  syncChips();
+  syncView();
+  syncFavCount();
+  render();
+  measure();
+  updateStuck();
+  var startBtn = chipsEl.querySelector('.chip[data-chip="' + chip + '"]');
+  if (startBtn) revealChip(startBtn);
+  flowReveal();
+})();
+</script>
+</body>
+</html>

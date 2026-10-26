@@ -1,0 +1,9 @@
+# never commit API keys
+keys.txt
+**/keys.txt
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+site_check/
+Covers/
