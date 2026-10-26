@@ -18,7 +18,7 @@ def load_rows(include_skipped=False):
 def items(rows=None):
     """One entry per title on the site. A row with "choices" (a collection or a group) becomes
     one title per choice, keyed 010a, 010b, ... Each entry is a dict with key, n, row, choice (or None),
-    label, title (None means build_data names it), kind, term, year, names, wiki, apple, tags."""
+    label, title (None means build_data names it), kind, term, year, names, wiki, apple, link, tags."""
     out = []
     for r in rows if rows is not None else load_rows():
         n3 = f"{r['n']:03d}"
@@ -29,12 +29,12 @@ def items(rows=None):
                 wiki = [r["wiki"][i]] if i < len(r.get("wiki", [])) else []
                 out.append(dict(key=f"{n3}{chr(97 + i)}", n=r["n"], row=r, choice=ch, label=r["label"],
                                 title=ch.get("title"), kind=ch["kind"], term=ch["term"], year=ch.get("year", ""),
-                                names=[ch["term"]] + ch.get("alts", []), wiki=wiki, apple=ch.get("apple") or ch.get("title") or ch["term"],
+                                names=[ch["term"]] + ch.get("alts", []), wiki=wiki, apple=ch.get("apple") or ch.get("title") or ch["term"], link=ch.get("link"),
                                 tags=list(r.get("tags", [])) + [t for t in ch.get("tags", []) if t not in r.get("tags", [])]))
         else:
             out.append(dict(key=n3, n=r["n"], row=r, choice=None, label=r["label"], title=r.get("title"), kind=r["kind"],
                             term=r["term"], year=r.get("year", ""), names=[r["term"]] + r.get("alts", []),
-                            wiki=r.get("wiki", []), apple=r.get("apple") or r["term"], tags=list(r.get("tags", []))))
+                            wiki=r.get("wiki", []), apple=r.get("apple") or r["term"], link=r.get("link"), tags=list(r.get("tags", []))))
     return out
 
 
