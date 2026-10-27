@@ -21,8 +21,9 @@
 
 ## Features
 - **Two views:** a poster **Grid**, or iPod-style **Cover Flow** with a toggle, swiping, a scrubber, and a Play in Apple TV button.
-- **Look:** bright icon-blue background, a header with the icon art blended in and a bold gold "Movie Library" title that hides while scrolling. No search, filters or favorites; she just taps a cover.
-- **Link check:** a 🔗 button under each title lets Ray flag broken links on the device.
+- **Look:** deep-space night with neon glow, matching the superhero "MOVIES" icon; neon-rimmed posters, big text and buttons for a five-year-old. 🎲 picks a surprise movie. No search, filters or favorites; she just taps a cover.
+- **Offline:** a full-screen "No Wi‑Fi" cover with Open Downloads and Try again buttons.
+- **Link check:** a small 🔗 on each title lets Ray flag broken links on the device (one switch in the script removes it).
 - **Kid-proof:** no long-press popups, no text selection, no double-tap zoom.
 
 ## How to update the library
