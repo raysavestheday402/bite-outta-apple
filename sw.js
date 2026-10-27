@@ -1,17 +1,17 @@
 /* Offline support: keeps the app, the library and every poster on the device so TV Library opens without Wi-Fi.
    The page and data.js are fetched fresh when online (falling back to the saved copy); posters, icons and fonts
    come from the saved copy first and refresh in the background. Bump VERSION only to force-clear old caches. */
-var VERSION = 'v1';
+var VERSION = 'v3';
 var SHELL = 'shell-' + VERSION, ART = 'art-' + VERSION, FONTS = 'fonts-' + VERSION;
 var SHELL_FILES = [
   './', 'data.js', 'icons/icon-192.png', 'icons/apple-touch-icon.png',
-  'icons/favicon.ico', 'icons/favicon-32x32.png', 'icons/favicon-16x16.png', 'icons/manifest.webmanifest'
+  'icons/header-art.jpg', 'icons/favicon.ico', 'icons/favicon-32x32.png', 'icons/favicon-16x16.png', 'icons/manifest.webmanifest'
 ];
 
-// every poster named in data.js, saved one at a time; a poster that fails is simply tried again next time
+// every thumbnail and poster named in data.js, saved one at a time; a poster that fails is simply tried again next time
 function savePosters() {
   return fetch('data.js', { cache: 'no-store' }).then(function (r) { return r.text(); }).then(function (js) {
-    var paths = [], re = /"poster":\s*"(posters\/[^"]+)"/g, m;
+    var paths = [], re = /"(?:thumb|poster)":\s*"((?:thumbs|posters)\/[^"]+)"/g, m;
     while ((m = re.exec(js))) paths.push(m[1]);
     return caches.open(ART).then(function (cache) {
       return paths.reduce(function (p, path) {
@@ -70,7 +70,7 @@ self.addEventListener('fetch', function (e) {
     var path = url.pathname.replace(/^\//, '');
     if (req.mode === 'navigate' || path === '' || path === 'index.html') e.respondWith(networkFirst(req, './'));
     else if (path === 'data.js') e.respondWith(networkFirst(req, 'data.js'));
-    else if (/^(posters|icons)\//.test(path)) e.respondWith(savedFirst(req, /^posters\//.test(path) ? ART : SHELL));
+    else if (/^(posters|thumbs|icons)\//.test(path)) e.respondWith(savedFirst(req, /^(posters|thumbs)\//.test(path) ? ART : SHELL));
   } else if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
     e.respondWith(savedFirst(req, FONTS));
   }

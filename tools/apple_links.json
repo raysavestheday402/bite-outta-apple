@@ -11,6 +11,13 @@
   "id": "umc.cmc.8sc2ssrggcjdu1ergite1e3d",
   "kind": "tv"
  },
+ "005": {
+  "for": "Animaniacs",
+  "found": "pasted by hand",
+  "id": "umc.cmc.1h3klqv0gz7ioo1pzghp5gjo6",
+  "kind": "tv",
+  "url": "https://tv.apple.com/us/show/animaniacs/umc.cmc.1h3klqv0gz7ioo1pzghp5gjo6"
+ },
  "006": {
   "for": "Baby Einstein Classics",
   "found": "pasted by hand",
@@ -52,7 +59,8 @@
   "for": "Pinky and the Brain",
   "found": "pasted by hand",
   "id": "umc.cmc.6s37w8j0y778k8ucyw5pw0goq",
-  "kind": "tv"
+  "kind": "tv",
+  "url": "https://tv.apple.com/us/show/pinky-and-the-brain/umc.cmc.6s37w8j0y778k8ucyw5pw0goq"
  },
  "017": {
   "art": "https://is1-ssl.mzstatic.com/image/thumb/Video124/v4/59/e1/19/59e11949-13cf-8cca-091e-a391d159d26c/pr_source.lsr/600x900bb.jpg",
@@ -60,6 +68,48 @@
   "found": "Tom and Jerry (2020) - show",
   "id": "umc.cmc.4cn8ixz0zpcr6n93cygbmauac",
   "kind": "tv"
+ },
+ "040": {
+  "for": "Charlotte's Web (2006)",
+  "found": "pasted by hand",
+  "id": "umc.cmc.53eklh0aphvssib15c5h6a5i",
+  "kind": "movie",
+  "url": "https://tv.apple.com/us/movie/charlottes-web/umc.cmc.53eklh0aphvssib15c5h6a5i"
+ },
+ "041": {
+  "for": "Charlotte's Web (1973)",
+  "found": "pasted by hand",
+  "id": "umc.cmc.wt0ormc49xbff1q7qr0p43fs",
+  "kind": "movie",
+  "url": "https://tv.apple.com/us/movie/charlottes-web/umc.cmc.wt0ormc49xbff1q7qr0p43fs"
+ },
+ "101": {
+  "for": "PAW Patrol: The Dino Movie",
+  "found": "pasted by hand",
+  "id": "umc.cmc.169m29z3ilzmgb7j4upkq7cmr",
+  "kind": "movie",
+  "url": "https://tv.apple.com/us/movie/paw-patrol-the-dino-movie/umc.cmc.169m29z3ilzmgb7j4upkq7cmr"
+ },
+ "113": {
+  "for": "Rumble",
+  "found": "pasted by hand",
+  "id": "umc.cmc.3x2aqc3f5gcn9686mpbin2xrn",
+  "kind": "movie",
+  "url": "https://tv.apple.com/us/movie/rumble/umc.cmc.3x2aqc3f5gcn9686mpbin2xrn"
+ },
+ "119": {
+  "for": "A Scooby-Doo! Valentine Bouquet",
+  "found": "pasted by hand",
+  "id": "umc.cmc.6ol6fq20zqve6a3u6i858kehr",
+  "kind": "movie",
+  "url": "https://tv.apple.com/us/movie/a-scooby-doo-valentine-bouquet/umc.cmc.6ol6fq20zqve6a3u6i858kehr"
+ },
+ "120": {
+  "for": "Scooby-Doo! and the Legend of the Vampire",
+  "found": "pasted by hand",
+  "id": "umc.cmc.5yx2yldbd0yyvs97ftldmwnky",
+  "kind": "movie",
+  "url": "https://tv.apple.com/us/movie/scooby-doo-and-the-legend-of-the-vampire/umc.cmc.5yx2yldbd0yyvs97ftldmwnky"
  },
  "151": {
   "for": "A Charlie Brown Christmas",
@@ -444,5 +494,33 @@
   "found": "from Ray's list (not yet tap-tested)",
   "id": "umc.cmc.6a8qdw6e76cba2l0rkgzfbocl",
   "kind": "tv"
+ },
+ "225": {
+  "for": "The Goonies",
+  "found": "pasted by hand",
+  "id": "umc.cmc.2qrqq24aa4jjhqmdl0kr3b6d0",
+  "kind": "movie",
+  "url": "https://tv.apple.com/us/movie/the-goonies/umc.cmc.2qrqq24aa4jjhqmdl0kr3b6d0"
+ },
+ "226": {
+  "for": "The Simpsons Movie",
+  "found": "pasted by hand",
+  "id": "umc.cmc.4vj36o9vty1w21p5yzj43zmf9",
+  "kind": "movie",
+  "url": "https://tv.apple.com/us/movie/the-simpsons-movie/umc.cmc.4vj36o9vty1w21p5yzj43zmf9"
+ },
+ "227": {
+  "for": "Family Guy",
+  "found": "pasted by hand",
+  "id": "umc.cmc.19tw0rz87wtuskutsuzcqo8z9",
+  "kind": "tv",
+  "url": "https://tv.apple.com/us/show/family-guy/umc.cmc.19tw0rz87wtuskutsuzcqo8z9"
+ },
+ "228": {
+  "for": "Tiny Toon Adventures",
+  "found": "pasted by hand",
+  "id": "umc.cmc.3t2lt0ljau4p28wriviy6h9ez",
+  "kind": "tv",
+  "url": "https://tv.apple.com/us/show/tiny-toon-adventures/umc.cmc.3t2lt0ljau4p28wriviy6h9ez"
  }
 }

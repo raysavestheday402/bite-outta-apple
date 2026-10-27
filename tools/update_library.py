@@ -2,6 +2,7 @@
 update_library.py - the whole library update in one go. Double-click "Update Library.bat", or run:
   python tools/update_library.py                         uses the Covers folder from last time (or tools/Covers)
   python tools/update_library.py "C:\\path\\to\\Covers"   uses (and remembers) this Covers folder
+  python tools/update_library.py --redo 010a 010b        downloads these ids' covers again (replacing the ones on the site), then rebuilds
 
 It runs, in order:
   1. get_covers.py         covers, details and Wikidata's Apple TV ids, only for titles with no cover yet
@@ -10,7 +11,7 @@ It runs, in order:
   4. check_data.py         checks everything before you push
 Then commit and push with GitHub Desktop.
 """
-import os, subprocess, sys
+import os, re, subprocess, sys
 from libtools import HERE, covers_dir, say, pause
 
 
@@ -31,11 +32,18 @@ def pillow():
 
 def main():
     folder = covers_dir(sys.argv[1] if len(sys.argv) > 1 and not sys.argv[1].startswith("-") else None)
+    redo = []
+    if "--redo" in sys.argv:  # ids after --redo, e.g. 010a 010b
+        redo = [a for a in sys.argv[sys.argv.index("--redo") + 1:] if re.fullmatch(r"\d{3}[a-z]?", a)]
     os.makedirs(folder, exist_ok=True)
     say("Update Library - version 4 (looks up only new titles and search links)", "c")
     say(f"Covers folder: {folder}", "d")
     extra = ["--yes"] if "--yes" in sys.argv else []
-    run("get_covers.py", "--covers", folder, "--missing", "--no-pause")
+    if redo:
+        say("Getting these covers again: " + " ".join(redo), "c")
+        run("get_covers.py", "--covers", folder, "--no-pause", *redo)
+    else:
+        run("get_covers.py", "--covers", folder, "--missing", "--no-pause")
     run("find_apple_links.py", "--covers", folder, "--no-pause", *extra)
     if not pillow():
         say("Couldn't install Pillow. Open Command Prompt and run:  python -m pip install pillow  then run this again.", "r")

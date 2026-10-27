@@ -1,10 +1,10 @@
 {
-  "name": "Apple TV Library",
-  "short_name": "TV Library",
+  "name": "Movie Library",
+  "short_name": "Movies",
   "start_url": "../",
   "display": "standalone",
-  "background_color": "#07152f",
-  "theme_color": "#07152f",
+  "background_color": "#0b0524",
+  "theme_color": "#0b0524",
   "icons": [
     {
       "src": "icon-192.png",

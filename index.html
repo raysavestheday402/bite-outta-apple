@@ -3,620 +3,357 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Apple TV Library</title>
+<title>Movie Library</title>
 <!-- raysavestheday icon integration -->
 <link rel="icon" href="icons/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
 <link rel="manifest" href="icons/manifest.webmanifest">
-<meta name="theme-color" content="#07152f">
+<meta name="theme-color" content="#04020d">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="TV Library">
+<meta name="apple-mobile-web-app-title" content="Movies">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
 <style>
-/* Layout: luminous icon-blue scene (fixed layer) > transparent header with glowing icon > sticky frosted toolbar (search, Grid / Cover Flow toggle, emoji chips) > centered 1280px poster grid OR full-width Cover Flow stage > popcorn stripe + footer. One deliberate theme. */
+/* Layout: a deep-space night scene with neon glow (matches the hero icon) > one banner header with the Grid / Cover Flow / Surprise buttons that tucks away on scroll down > big neon-rimmed posters in a grid OR a full-width Cover Flow > footer. Offline: a full-screen "No Wi-Fi" cover. */
 :root {
   color-scheme: dark;
 
-  /* icon palette */
-  --navy: #07152F;
-  --navy-deep: #0A1B44;
-  --royal: #053288;
-  --sky-top: #1F5FD6;
-  --sky-mid: #0D3A9E;
-  --sky-bot: #071D5C;
-  --glow: #BDEBFB;
-  --glow-2: #79B2DA;
-  --gold: #FFC529;
-  --gold-hi: #FFD25A;
-  --orange: #FF9B24;
-  --red: #C8102E;
-  --red-dark: #9A272C;
-  --heart-red: #E63946;
-  --heart-red-hi: #FF6B78;
-  --play-blue: #1E6BFF;
-  --play-hi: #5E9BFF;
-  --play-lo: #0A3FB8;
-  --violet: #7B3FE4;
-  --teal: #0A8591;
-  --go-green: #1FAA4B;
-  --go-green-hi: #45D873;
-  --go-green-lo: #10783A;
-  --amber: #F59E0B;
-
-  /* neutrals and text */
+  /* neon palette, taken from the icon */
+  --space: #04020d;          /* banner edge colour, so the header melts into the page */
+  --night-1: #0d0830;
+  --night-2: #1a0a4a;
+  --night-3: #0a1a55;
+  --pink: #FF3D9A;
+  --blue: #29B6FF;
+  --violet: #9A4DFF;
+  --orange: #FF9F1C;
+  --green: #35F0A0;
+  --yellow: #FFE14D;
   --white: #FFFFFF;
-  --black: #000000;
-  --ink: #0B1B3F;
-  --muted: #5A6B8C;
-  --meta: #C7DCFF;
-  --line: #D8E2F5;
-  --sky-2: #E6EFFF;
+  --ink: #0A0626;
+  --meta: #C9C2FF;
 
-  /* translucent layers */
-  --glass-navy: rgba(7, 29, 92, .55);
-  --hairline: rgba(255, 255, 255, .14);
-  --hairline-2: rgba(255, 255, 255, .24);
-  --veil: rgba(255, 255, 255, .12);
-  --veil-14: rgba(255, 255, 255, .14);
-  --ray: rgba(255, 255, 255, .07);
-  --spot: rgba(189, 235, 251, .45);
-  --spot-0: rgba(189, 235, 251, 0);
-  --reflect: rgba(255, 255, 255, .28);
-  --floor: rgba(189, 235, 251, .16);
-  --cyan-line: rgba(189, 235, 251, .85);
-  --cyan-soft: rgba(121, 178, 218, .65);
+  --glass: rgba(10, 6, 38, .72);
+  --hairline: rgba(255, 255, 255, .22);
+  --red: #FF3B5C;
 
-  /* gradients */
-  --grad-gold: linear-gradient(180deg, var(--gold-hi), var(--orange));
-  --grad-gold-d: linear-gradient(135deg, var(--gold-hi), var(--orange));
+  --grad-hot: linear-gradient(135deg, var(--pink), var(--orange));
+  --grad-cool: linear-gradient(135deg, var(--blue), var(--violet));
+  --grad-go: linear-gradient(135deg, #46FFB0, #12B87A);
   --scene:
-    radial-gradient(ellipse 50% 72px at 50% 0%, var(--spot) 0%, var(--spot-0) 100%),
-    linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 38%, var(--sky-bot) 100%);
-  --tile-1: linear-gradient(155deg, var(--play-blue), var(--navy));
-  --tile-2: linear-gradient(155deg, var(--heart-red), var(--violet));
-  --tile-3: linear-gradient(155deg, var(--violet), var(--play-blue));
-  --tile-4: linear-gradient(155deg, var(--teal), var(--play-blue));
+    radial-gradient(ellipse 60% 38% at 12% 8%, rgba(255, 61, 154, .30), transparent 70%),
+    radial-gradient(ellipse 60% 38% at 90% 14%, rgba(41, 182, 255, .30), transparent 70%),
+    radial-gradient(ellipse 80% 40% at 50% 105%, rgba(154, 77, 255, .35), transparent 70%),
+    linear-gradient(180deg, var(--night-2) 0%, var(--night-1) 45%, var(--space) 100%);
 
-  /* shadows */
-  --shadow-poster: 0 10px 26px rgba(0, 0, 0, .38);
-  --shadow-lift: 0 16px 34px rgba(0, 0, 0, .45), 0 0 0 3px var(--cyan-line), 0 0 26px 4px var(--cyan-soft);
-  --shadow-bar: 0 10px 26px rgba(2, 10, 40, .4);
-  --shadow-btn: 0 8px 22px rgba(2, 10, 40, .45);
-  --shadow-chip: 0 2px 6px rgba(2, 10, 40, .3);
-  --shadow-text: 0 1px 3px rgba(2, 10, 40, .65);
-  --shadow-tile: 0 2px 8px rgba(7, 21, 47, .35);
-  --drop-ink: rgba(2, 10, 40, .45);
+  --shadow-poster: 0 8px 18px rgba(0, 0, 0, .6);
+  --shadow-text: 0 2px 4px rgba(0, 0, 0, .8);
+  --shadow-btn: 0 8px 22px rgba(0, 0, 0, .55);
 
-  /* type */
-  --font-display: "Baloo 2", "Nunito", ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Anton", Impact, Haettenschweiler, "Arial Narrow Bold", "Arial Black", sans-serif;
   --font-body: "Nunito", ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-emoji: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+
+  /* banner height: scales with the screen in either orientation */
+  --hd: calc(env(safe-area-inset-top, 0px) + clamp(72px, min(12vw, 13vh), 120px));
 }
 
 *, *::before, *::after { box-sizing: border-box; }
 [hidden] { display: none !important; }
 
-/* kid-proof touch: no long-press preview or selection, no tap flash, no double-tap zoom (pinch zoom stays) */
+/* kid-proof touch: no long-press preview or selection, no tap flash, no double-tap zoom */
 * {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
-input[type="search"] { -webkit-user-select: text; user-select: text; -webkit-touch-callout: default; }
 html, body { touch-action: manipulation; }
-
-html {
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
-}
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 
 body {
   margin: 0;
   min-height: 100vh;
   min-height: 100dvh;
-  background-color: var(--sky-bot);
+  background-color: var(--space);
   color: var(--white);
-  font-family: var(--font-body), system-ui, sans-serif;
-  font-size: 16px;
-  line-height: 1.4;
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.35;
   -webkit-font-smoothing: antialiased;
 }
+body.is-offline { overflow: hidden; }
 
-/* the scene: spotlight + blue gradient, light rays, a sprinkle of stars (fixed layer; iOS ignores background-attachment:fixed) */
-#bg {
-  position: fixed; inset: 0; z-index: -1; pointer-events: none;
-  background-color: var(--sky-bot);
-  background-image: var(--scene);
-}
-#bg::before {
-  content: ""; position: absolute; inset: 0;
-  background: repeating-conic-gradient(from 0deg at 50% 0%, var(--ray) 0 4deg, transparent 4deg 12deg);
-  -webkit-mask-image: linear-gradient(to bottom, var(--black) 0, var(--black) 64px, transparent 128px);
-  mask-image: linear-gradient(to bottom, var(--black) 0, var(--black) 64px, transparent 128px);
-}
-#bg::after {
-  content: ""; position: absolute; inset: 0;
-  background:
-    radial-gradient(circle at .6% 24%, var(--gold-hi) 0 1.5px, transparent 2.5px),
-    radial-gradient(circle at 99.4% 16%, var(--white) 0 1.5px, transparent 2.5px),
-    radial-gradient(circle at .6% 62%, var(--white) 0 1px, transparent 2px),
-    radial-gradient(circle at 99.4% 48%, var(--gold-hi) 0 1.5px, transparent 2.5px),
-    radial-gradient(circle at .6% 86%, var(--gold-hi) 0 1px, transparent 2px),
-    radial-gradient(circle at 99.4% 78%, var(--white) 0 1.5px, transparent 2.5px),
-    radial-gradient(circle at 30% 10%, var(--white) 0 1px, transparent 2px),
-    radial-gradient(circle at 72% 8%, var(--gold-hi) 0 1px, transparent 2px),
-    radial-gradient(circle at .6% 94%, var(--white) 0 1px, transparent 2px),
-    radial-gradient(circle at 99.4% 92%, var(--gold-hi) 0 1.5px, transparent 2.5px);
-}
-
-/* paints the translucent iOS status-bar area with the same slice of the scene */
-body::before {
-  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10;
-  background-color: var(--sky-top);
-  background-image: var(--scene);
-  background-size: 100vw 100vh;
-  background-position: 0 0;
-  background-repeat: no-repeat;
+#bg { position: fixed; inset: 0; z-index: -1; pointer-events: none; background-color: var(--space); background-image: var(--scene); }
+body::before {   /* paints the iPad status-bar area */
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--space);
 }
 
 .wrap {
-  width: 100%;
-  max-width: 1280px;
-  margin: 0 auto;
+  width: 100%; max-width: 1400px; margin: 0 auto;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
 }
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+a:focus-visible, button:focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
 
-.sr-only {
-  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0;
-  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+/* ---------- header: the banner art, with the big buttons on top ---------- */
+.top {
+  position: sticky; top: 0; z-index: 30;
+  background: var(--space);
+  transition: transform .3s ease, box-shadow .2s ease;
 }
-
-a:focus-visible, button:focus-visible, input:focus-visible {
-  outline: 3px solid var(--gold);
-  outline-offset: 3px;
+.top.lift { box-shadow: 0 8px 24px rgba(0, 0, 0, .7); }
+.top.away { transform: translateY(-110%); visibility: hidden; transition: transform .3s ease, visibility 0s .3s; }
+.hero { position: relative; height: var(--hd); overflow: hidden; }
+.art {
+  position: absolute; inset: 0;
+  background: url(icons/header-art.jpg) 50% 50% / auto 100% no-repeat;
+  -webkit-mask-image: radial-gradient(ellipse 50% 90% at 50% 50%, #000 45%, transparent 100%);
+  mask-image: radial-gradient(ellipse 50% 90% at 50% 50%, #000 45%, transparent 100%);
 }
-
-/* ---------- header (transparent: the rays flow through it) ---------- */
-.top { padding: calc(env(safe-area-inset-top, 0px) + 16px) 0 18px; }
-.top-in { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; }
-.icon-wrap { position: relative; flex: none; width: 76px; height: 76px; }
-.icon-wrap::before {
-  content: ""; position: absolute; inset: -5px; border-radius: 23px;
-  box-shadow: 0 0 0 2px var(--cyan-line), 0 0 26px 6px var(--cyan-soft);
-  animation: pulse 2.8s ease-in-out infinite;
-}
-.app-icon {
-  position: relative; display: block; width: 100%; height: 100%;
-  border-radius: 18px; object-fit: cover; box-shadow: var(--shadow-btn);
-}
-@keyframes pulse {
-  0%, 100% { opacity: .5; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.05); }
-}
-.brand { flex: 1 1 120px; min-width: 0; }
-.brand h1 {
-  margin: 0; padding: 0 .06em .12em 0;
-  font-family: var(--font-display), system-ui, sans-serif;
-  font-weight: 800; font-size: 38px; line-height: 1.08;
-  text-wrap: balance; overflow-wrap: anywhere;
-  color: var(--gold-hi);
-  background: var(--grad-gold);
-  -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 0 var(--navy-deep)) drop-shadow(0 4px 8px var(--drop-ink));
-}
-.count-wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-left: auto; }
-.count {
-  display: inline-block; margin: 0; padding: 7px 14px; border-radius: 999px;
-  background: var(--glass-navy); color: var(--white); text-shadow: var(--shadow-text);
-  font-weight: 700; font-size: 15px; line-height: 1.2; white-space: nowrap;
+.hero::after {   /* thin neon line under the banner */
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px;
+  background: linear-gradient(90deg, var(--pink), var(--violet), var(--blue));
 }
 
-/* ---------- toolbar: frosted glass ---------- */
-.toolbar {
-  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
-  background: var(--glass-navy);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
-  backdrop-filter: blur(14px) saturate(140%);
-  border-bottom: 1px solid var(--hairline);
-  transition: box-shadow .2s ease;
-}
-.toolbar.stuck { box-shadow: var(--shadow-bar); }
-.bar-in { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding-top: 12px; padding-bottom: 8px; }
-
-.search { position: relative; flex: 1 1 0; min-width: 0; }
-.search input {
-  display: block; width: 100%; min-height: 54px; margin: 0;
-  padding: 0 16px 0 52px;
-  border: 2px solid var(--white); border-radius: 999px;
-  background: var(--white); color: var(--ink);
-  font-family: var(--font-body), system-ui, sans-serif;
-  font-weight: 700; font-size: 18px; line-height: 1.2;
-  -webkit-appearance: none; appearance: none;
-}
-.search.has-text input { padding-right: 54px; }
-.search input::placeholder { color: var(--muted); opacity: .9; }
-.search input::-webkit-search-decoration,
-.search input::-webkit-search-cancel-button,
-.search input::-webkit-search-results-button,
-.search input::-webkit-search-results-decoration { -webkit-appearance: none; display: none; }
-.search input:focus { border-color: var(--play-blue); }
-.mag { position: absolute; left: 18px; top: 50%; width: 22px; height: 22px; margin-top: -11px; color: var(--muted); pointer-events: none; }
-.clear {
-  position: absolute; right: 5px; top: 50%; width: 44px; height: 44px; margin-top: -22px; padding: 0;
-  display: grid; place-items: center; border: 0; background: none; color: var(--muted);
-  cursor: pointer; -webkit-appearance: none; appearance: none;
-}
-.clear span { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--sky-2); }
-.clear svg { width: 14px; height: 14px; }
-
-/* Grid / Cover Flow segmented toggle */
+/* the three big buttons: Surprise, Grid, Cover Flow */
 .seg {
-  flex: none; display: inline-flex; align-items: stretch; height: 44px; padding: 1px;
-  border: 1px solid var(--hairline-2); border-radius: 999px; background: var(--veil);
+  position: absolute; z-index: 2; top: calc(env(safe-area-inset-top, 0px) + 8px); right: max(10px, env(safe-area-inset-right, 0px));
+  display: inline-flex; align-items: stretch; gap: 4px; padding: 4px;
+  border: 2px solid var(--hairline); border-radius: 999px; background: var(--glass);
 }
 .seg-btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
-  min-height: 42px; margin: 0; padding: 0 14px; border: 0; border-radius: 999px;
-  background: transparent; color: var(--white);
-  font-family: var(--font-body), system-ui, sans-serif;
-  font-weight: 800; font-size: 15px; line-height: 1; white-space: nowrap;
+  display: grid; place-items: center; width: 56px; height: 48px; margin: 0; padding: 0; border: 0; border-radius: 999px;
+  background: transparent; color: var(--white); font-size: 26px; line-height: 1;
   cursor: pointer; -webkit-appearance: none; appearance: none;
 }
-.seg-btn svg { width: 20px; height: 20px; fill: currentColor; flex: none; }
-.seg-btn[aria-pressed="true"] { background: var(--grad-gold-d); color: var(--navy); box-shadow: var(--shadow-chip); }
-
-/* chip row scrolls inside itself; padding / negative margin keeps focus rings and the count badge from being clipped */
-.chips {
-  position: relative; display: flex; gap: 6px; flex: 0 0 calc(100% + 12px); min-width: 0;
-  overflow-x: auto; overflow-y: hidden;
-  padding: 8px 6px; margin: -8px -6px;
-  scrollbar-width: none; -ms-overflow-style: none; -webkit-overflow-scrolling: touch;
-}
-.chips::-webkit-scrollbar { display: none; }
-.chip {
-  position: relative; flex: none; display: inline-flex; align-items: center; gap: 6px;
-  min-height: 44px; margin: 0; padding: 0 12px 0 9px;
-  border: 1px solid var(--hairline-2); border-radius: 999px;
-  background: var(--veil); color: var(--white);
-  font-family: var(--font-body), system-ui, sans-serif;
-  font-weight: 800; font-size: 16px; line-height: 1; white-space: nowrap;
-  cursor: pointer; -webkit-appearance: none; appearance: none;
-}
-.chip .ico { font-family: var(--font-emoji), sans-serif; font-size: 20px; line-height: 1; }
-.chip[aria-pressed="true"] { background: var(--grad-gold-d); border-color: transparent; color: var(--navy); box-shadow: var(--shadow-chip); }
-.chip .n {
-  position: absolute; top: -6px; right: -3px;
-  display: grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px;
-  border-radius: 999px; background: var(--red); color: var(--white); border: 2px solid var(--white);
-  font-weight: 800; font-size: 12px; line-height: 1;
-}
-@media (hover: none) and (pointer: coarse) {
-  .chip { min-height: 48px; font-size: 17px; }
-  .chip .ico { font-size: 22px; }
-}
-@media (hover: hover) and (pointer: fine) {
-  .chip:not([aria-pressed="true"]):hover, .seg-btn[aria-pressed="false"]:hover { background: var(--hairline-2); }
-}
-
-@media (max-width: 599px) {
-  .icon-wrap { width: 56px; height: 56px; }
-  .icon-wrap::before { inset: -4px; border-radius: 21px; }
-  .brand h1 { font-size: 30px; }
-  .count-wrap { margin-left: 0; }
-  .seg-btn { padding: 0; width: 40px; }
-  .seg-btn .lbl { display: none; }
-  .search input { font-size: 16px; padding-left: 46px; padding-right: 6px; }
-  .mag { left: 15px; }
-}
-@media (max-width: 380px) {
-  .brand h1 { font-size: 26px; }
-}
+.seg-btn svg { width: 28px; height: 28px; fill: currentColor; }
+.seg-btn[aria-pressed="true"] { background: var(--grad-hot); color: var(--white); box-shadow: 0 0 14px var(--pink); }
+.seg-btn:active { transform: scale(.92); }
+.seg-btn.dice { background: var(--grad-cool); box-shadow: 0 0 12px var(--blue); }
 
 /* ---------- content ---------- */
-main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
-.sec { margin-top: 26px; }
-.sec h2 {
-  display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin: 0 0 16px;
-  font-family: var(--font-display), system-ui, sans-serif;
-  font-weight: 800; font-size: 26px; line-height: 1.15; color: var(--white);
-  text-shadow: var(--shadow-text);
-}
-.sec h2 .n {
-  padding: 3px 12px; border-radius: 999px; background: var(--grad-gold-d); color: var(--navy);
-  font-family: var(--font-body), system-ui, sans-serif;
-  font-weight: 800; font-size: 14px; line-height: 1.4; text-shadow: none;
-}
+main.wrap { padding-top: 22px; padding-bottom: 20px; min-height: 50vh; }
 
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 24px 18px; }
-@media (min-width: 768px) {
-  .grid { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
-}
-@media (max-width: 599px) {
-  .grid { grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 20px 12px; }
-  .sec h2 { font-size: 24px; }
-}
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 28px 20px; }
+@media (min-width: 768px) { .grid { grid-template-columns: repeat(auto-fill, minmax(205px, 1fr)); gap: 32px 24px; } }
+@media (max-width: 599px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 14px; } }
 
-.card { position: relative; min-width: 0; }
-/* two columns under the poster: text (flexible) + a fixed column the broken-link and heart buttons sit in */
-.tap {
-  display: grid; grid-template-columns: minmax(0, 1fr) 72px; column-gap: 8px;
-  border-radius: 18px; color: inherit; text-decoration: none;
-}
-.name, .meta { grid-column: 1; }
+.card { position: relative; min-width: 0; --rim: var(--pink); }
+.card.r2, .cf.r2 { --rim: var(--blue); }
+.card.r3, .cf.r3 { --rim: var(--green); }
+.card.r4, .cf.r4 { --rim: var(--orange); }
+.card.r5, .cf.r5 { --rim: var(--violet); }
+.tap { display: block; border-radius: 20px; color: inherit; text-decoration: none; }
 .poster {
-  grid-column: 1 / -1; min-width: 0;
   position: relative; width: 100%; aspect-ratio: 2 / 3;
-  border-radius: 16px; overflow: hidden; background: var(--royal);
-  box-shadow: var(--shadow-poster);
-  container-type: inline-size;
-  transform: translateZ(0);
-  transition: transform .18s ease, box-shadow .18s ease;
+  border-radius: 18px; overflow: hidden; background: var(--night-3);
+  box-shadow: 0 0 0 4px var(--rim), var(--shadow-poster);   /* a neon rim in a rotating colour */
+  transition: transform .15s ease, box-shadow .15s ease;
 }
 .poster img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.poster .play-disc { --disc: 64px; opacity: 0; transform: scale(.8); transition: opacity .18s ease, transform .18s ease; }
+.tap:active .poster { transform: scale(.94); box-shadow: 0 0 0 4px var(--white), 0 0 22px 6px var(--rim); }
 @media (hover: hover) and (pointer: fine) {
-  .tap:hover .poster { transform: translateY(-4px); box-shadow: var(--shadow-lift); }
-  .tap:hover .poster .play-disc { opacity: 1; transform: scale(1); }
+  .tap:hover .poster { transform: translateY(-4px); box-shadow: 0 0 0 4px var(--rim), 0 0 26px 6px var(--rim); }
 }
-.tap:active .poster { transform: scale(.96); }
-
-.badge {
-  position: absolute; top: 8px; left: 8px; padding: 4px 9px; border-radius: 999px;
-  background: var(--grad-gold-d); color: var(--navy);
-  font-weight: 800; font-size: 11px; line-height: 1; letter-spacing: .06em; text-transform: uppercase;
-  box-shadow: var(--shadow-tile);
-}
-
 .name {
-  margin-top: 10px; color: var(--white); text-shadow: var(--shadow-text);
-  font-weight: 800; font-size: 15px; line-height: 1.25;
+  margin: 12px 4px 0; text-shadow: var(--shadow-text);
+  font-weight: 900; font-size: 19px; line-height: 1.2;
   display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical;
-  overflow: hidden; overflow-wrap: anywhere;
+  overflow: hidden; overflow-wrap: break-word; hyphens: manual;
 }
-.meta { margin-top: 2px; color: var(--meta); text-shadow: var(--shadow-text); font-weight: 700; font-size: 13px; line-height: 1.3; }
-
-/* the round glowing play disc from the icon: blue disc, white triangle, thin white ring, cyan glow */
-.play-disc {
-  --disc: 64px;
-  position: absolute; left: 50%; top: 50%;
-  width: var(--disc); height: var(--disc); margin: calc(var(--disc) / -2) 0 0 calc(var(--disc) / -2);
-  border-radius: 50%; border: 2px solid var(--white); pointer-events: none;
-  background: radial-gradient(circle at 34% 26%, var(--play-hi) 0%, var(--play-blue) 52%, var(--play-lo) 100%);
-  box-shadow: 0 0 0 4px var(--cyan-soft), 0 0 22px 6px var(--cyan-line), 0 0 46px 12px var(--play-blue);
-}
-.play-disc::before {
-  content: ""; position: absolute; left: 50%; top: 50%; width: 34%; height: 38%;
-  transform: translate(-36%, -50%); background: var(--white);
-  clip-path: polygon(0 0, 100% 50%, 0 100%);
-}
+.meta { margin: 2px 4px 0; color: var(--meta); text-shadow: var(--shadow-text); font-weight: 800; font-size: 15px; }
 
 /* fallback tile when a title has no poster */
 .ph {
   position: absolute; inset: 0; display: grid; place-items: center; padding: 36px 12px;
-  text-align: center; color: var(--white); text-shadow: var(--shadow-tile);
-  font-family: var(--font-display), system-ui, sans-serif;
-  font-weight: 800; font-size: 18px; font-size: clamp(16px, 12cqw, 26px); line-height: 1.1;
+  text-align: center; color: var(--white); text-shadow: var(--shadow-text);
+  font-family: var(--font-display); font-size: 24px; line-height: 1.1; letter-spacing: .02em; text-transform: uppercase;
 }
 .ph span { display: -webkit-box; -webkit-line-clamp: 6; line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
-.ph.g1 { background: var(--tile-1); }
-.ph.g2 { background: var(--tile-2); }
-.ph.g3 { background: var(--tile-3); }
-.ph.g4 { background: var(--tile-4); }
+.ph.g1 { background: linear-gradient(155deg, var(--pink), var(--violet)); }
+.ph.g2 { background: linear-gradient(155deg, var(--blue), var(--violet)); }
+.ph.g3 { background: linear-gradient(155deg, var(--green), var(--blue)); }
+.ph.g4 { background: linear-gradient(155deg, var(--orange), var(--pink)); }
 
-/* heart: 44x44 tap target under the poster, right of the title; 34px visible circle.
-   margin-top % resolves against the card width, so 150% = poster height (2:3); the rest centers it on the first title line */
-.fav {
-  position: absolute; top: 0; right: -5px; width: 44px; height: 44px; padding: 0;
-  margin: calc(150% + 10px + (15px * 1.25) / 2 - 22px) 0 0;
+/* big glowing play disc (Cover Flow centre cover) */
+.play-disc {
+  position: absolute; left: 50%; top: 50%; width: var(--disc, 72px); height: var(--disc, 72px);
+  margin: calc(var(--disc, 72px) / -2) 0 0 calc(var(--disc, 72px) / -2);
+  border-radius: 50%; border: 3px solid var(--white); pointer-events: none;
+  background: var(--grad-hot);
+  box-shadow: 0 0 0 5px rgba(255, 255, 255, .25), 0 0 26px 6px var(--pink);
 }
+.play-disc::before {
+  content: ""; position: absolute; left: 50%; top: 50%; width: 34%; height: 38%;
+  transform: translate(-36%, -50%); background: var(--white); clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+
+/* ---------- broken-link button (grown-ups testing links). Remove it all by setting BROKEN_LINK_BUTTON = false in the script. ---------- */
 .brk {
-  position: absolute; top: 0; right: 33px; width: 44px; height: 44px; padding: 0;
-  margin: calc(150% + 10px + (15px * 1.25) / 2 - 22px) 0 0;
-}
-.fav, .fav-flow, .brk {
+  position: absolute; right: -4px; top: -10px; z-index: 3; width: 48px; height: 48px; padding: 0;
   display: grid; place-items: center; isolation: isolate;
   border: 0; border-radius: 50%; background: none; color: var(--white);
   cursor: pointer; -webkit-appearance: none; appearance: none;
 }
-.fav::before, .fav-flow::before, .brk::before {
-  content: ""; position: absolute; z-index: -1; left: 5px; top: 5px; width: 34px; height: 34px;
-  border: 1.5px solid var(--hairline-2); border-radius: 50%; background: var(--veil-14);
+.brk::before {
+  content: ""; position: absolute; z-index: -1; left: 6px; top: 6px; width: 36px; height: 36px;
+  border: 2px solid var(--hairline); border-radius: 50%; background: var(--glass);
 }
-.brk svg { width: 18px; height: 18px; }
-.brk[aria-pressed="true"] { color: var(--red); }
-.brk[aria-pressed="true"]::before { background: var(--white); border-color: var(--white); }
-.brk:focus-visible { outline: none; }
-.brk:focus-visible::before { outline: 3px solid var(--gold); outline-offset: 3px; }
-.fav svg, .fav-flow svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.3; stroke-linejoin: round; }
-.fav[aria-pressed="true"], .fav-flow[aria-pressed="true"] { color: var(--heart-red); }
-.fav[aria-pressed="true"]::before, .fav-flow[aria-pressed="true"]::before { background: var(--white); border-color: var(--white); }
-.fav[aria-pressed="true"] svg, .fav-flow[aria-pressed="true"] svg { fill: currentColor; }
-.fav:focus-visible, .fav-flow:focus-visible { outline: none; }
-.fav:focus-visible::before, .fav-flow:focus-visible::before { outline: 3px solid var(--gold); outline-offset: 3px; }
-.fav.pop, .fav-flow.pop { animation: pop .38s ease-out; }
-@keyframes pop {
-  0% { transform: scale(1); }
-  35% { transform: scale(1.4); }
-  70% { transform: scale(.92); }
-  100% { transform: scale(1); }
+.brk svg { width: 20px; height: 20px; }
+.brk[aria-pressed="true"] { color: var(--white); }
+.brk[aria-pressed="true"]::before { background: var(--red); border-color: var(--white); }
+.link-flag {
+  position: absolute; left: 8px; bottom: 8px; width: 38px; height: 38px;
+  display: grid; place-items: center; border-radius: 50%; border: 3px solid var(--white); background: var(--red); color: var(--white);
+}
+.link-flag svg { width: 20px; height: 20px; }
+.mark {
+  flex: none; min-height: 56px; margin: 0; padding: 0 22px; border-radius: 999px;
+  border: 2px solid var(--hairline); background: var(--glass); color: var(--white);
+  font-family: var(--font-body); font-weight: 900; font-size: 16px; white-space: nowrap;
+  cursor: pointer; -webkit-appearance: none; appearance: none;
+}
+.mark[aria-pressed="true"] { background: var(--red); border-color: var(--white); }
+.broken-note {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 14px; margin: 18px auto 0;
+  color: var(--meta); font-weight: 800; font-size: 15px;
+}
+.broken-note button {
+  min-height: 44px; padding: 0 18px; border-radius: 999px; border: 2px solid var(--hairline); background: var(--glass); color: var(--white);
+  font-family: var(--font-body); font-weight: 900; font-size: 15px; cursor: pointer; -webkit-appearance: none; appearance: none;
 }
 
-/* ---------- empty states ---------- */
-.empty {
-  max-width: 520px; margin: 40px auto 32px; padding: 28px 24px 32px; text-align: center;
-  background: var(--glass-navy); border: 1px solid var(--hairline-2); border-radius: 24px;
-  color: var(--white); font-weight: 800; font-size: 20px; line-height: 1.35;
-  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
-}
-.empty img { display: block; width: 96px; height: 96px; margin: 0 auto 16px; border-radius: 22px; box-shadow: 0 0 0 2px var(--cyan-line), 0 0 24px 4px var(--cyan-soft); }
-.empty .hrt { color: var(--heart-red-hi); }
+/* ---------- empty state ---------- */
+.empty { max-width: 520px; margin: 40px auto; padding: 28px 24px; text-align: center; background: var(--glass); border: 2px solid var(--hairline); border-radius: 24px; font-weight: 900; font-size: 22px; }
+.empty img { display: block; width: 96px; height: 96px; margin: 0 auto 16px; border-radius: 22px; }
 
 /* ---------- Cover Flow ---------- */
-.flow { --cf-h: min(46vh, 440px); --cf-w: calc(var(--cf-h) * 2 / 3); padding-top: 6px; }
+.flow { --cf-h: min(56vh, 600px); --cf-w: calc(var(--cf-h) * 2 / 3); padding-top: 8px; }
+@supports (height: 100dvh) {
+  .flow { --cf-h: max(190px, min(64vh, 680px, 92vw, calc((100dvh - var(--hd) - 236px) / 1.14))); }
+}
 .stage {
   position: relative; height: calc(var(--cf-h) * 1.14 + 22px); overflow: hidden;
-  -webkit-mask-image: linear-gradient(to bottom, var(--black) calc(100% - 70px), transparent);
-  mask-image: linear-gradient(to bottom, var(--black) calc(100% - 70px), transparent);
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 70px), transparent);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 70px), transparent);
   perspective: 1100px; perspective-origin: 50% 38%;
-  touch-action: none; cursor: grab;   /* swipes on the covers move the covers, never the page */
+  touch-action: none; cursor: grab;
 }
 .stage:active { cursor: grabbing; }
 .stage::before {
   content: ""; position: absolute; left: 0; right: 0; top: calc(var(--cf-h) + 15px); bottom: 0; z-index: 0;
-  border-top: 1px solid var(--hairline);
-  background: linear-gradient(180deg, var(--floor), transparent 75%);
+  border-top: 2px solid rgba(255, 61, 154, .55);
+  background: linear-gradient(180deg, rgba(154, 77, 255, .28), transparent 75%);
 }
 .cf {
+  --rim: var(--pink);
   position: absolute; left: 50%; top: 14px; display: block;
   width: var(--cf-w); height: var(--cf-h); margin-left: calc(var(--cf-w) / -2);
-  border-radius: 10px; overflow: hidden; background: var(--royal);
-  box-shadow: var(--shadow-poster);
-  -webkit-box-reflect: below 2px linear-gradient(transparent 62%, var(--reflect));
-  will-change: transform;
-  color: inherit; text-decoration: none; -webkit-user-drag: none;
+  border-radius: 12px; overflow: hidden; background: var(--night-3);
+  box-shadow: 0 0 0 4px var(--rim), var(--shadow-poster);
+  -webkit-box-reflect: below 2px linear-gradient(transparent 62%, rgba(255, 255, 255, .28));
+  will-change: transform; color: inherit; text-decoration: none; -webkit-user-drag: none;
 }
 .cf img { display: block; width: 100%; height: 100%; object-fit: cover; -webkit-user-drag: none; }
-.cf .shade { position: absolute; inset: 0; background: var(--black); opacity: 0; pointer-events: none; }
-.cf .play-disc { --disc: calc(var(--cf-w) * .3); top: auto; bottom: 7%; margin: 0 0 0 calc(var(--disc) / -2); opacity: 0; }
+.cf .shade { position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; }
+.cf .play-disc { --disc: max(84px, calc(var(--cf-w) * .4)); top: auto; bottom: 7%; margin: 0 0 0 calc(var(--disc) / -2); opacity: 0; }
 
-.flow-info { padding-top: 4px; padding-bottom: 16px; text-align: center; }
+.flow-info { padding-top: 2px; padding-bottom: 14px; text-align: center; }
 .flow-title {
-  min-height: 2.3em; margin: 0 auto; max-width: 760px;
+  min-height: 1.15em; margin: 0 auto; max-width: 820px;
   display: flex; align-items: flex-end; justify-content: center;
-  font-family: var(--font-display), system-ui, sans-serif;
-  font-weight: 800; font-size: 26px; line-height: 1.15; color: var(--white); text-shadow: var(--shadow-text);
+  font-family: var(--font-display); font-weight: 400; letter-spacing: .03em; text-transform: uppercase;
+  font-size: 36px; line-height: 1.12; color: var(--white);
+  text-shadow: 0 0 18px var(--pink), 0 3px 4px rgba(0, 0, 0, .8);
 }
-.flow-title span {
-  display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere;
-}
-.flow-meta { margin: 4px 0 0; min-height: 1.4em; color: var(--meta); text-shadow: var(--shadow-text); font-weight: 700; font-size: 15px; }
-.flow-actions { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 14px; margin-top: 12px; }
-.fav-flow { position: relative; flex: none; width: 56px; height: 56px; padding: 0; }
-.fav-flow::before { left: 4px; top: 4px; width: 48px; height: 48px; }
-.fav-flow svg { width: 24px; height: 24px; }
+.flow-title span { display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: break-word; }
+.flow-meta { margin: 4px 0 0; min-height: 1.4em; color: var(--meta); font-weight: 800; font-size: 17px; }
+.flow-actions { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 14px; margin-top: 10px; }
 .play-btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-  min-height: 52px; padding: 0 30px; border-radius: 999px;
-  background: var(--grad-gold-d); color: var(--navy); text-decoration: none;
-  font-family: var(--font-body), system-ui, sans-serif; font-weight: 800; font-size: 18px; line-height: 1;
-  box-shadow: var(--shadow-btn);
+  display: inline-flex; align-items: center; justify-content: center; gap: 12px;
+  min-height: 72px; padding: 0 44px; border-radius: 999px; border: 3px solid var(--white);
+  background: var(--grad-hot); color: var(--white); text-decoration: none; text-shadow: var(--shadow-text);
+  font-family: var(--font-body); font-weight: 900; font-size: 26px; line-height: 1;
+  box-shadow: 0 0 22px var(--pink), var(--shadow-btn);
 }
-.play-btn svg { width: 18px; height: 18px; fill: currentColor; }
-.flow-scrub { display: flex; align-items: center; gap: 14px; max-width: 560px; margin: 14px auto 0; }
-.scrub {
-  -webkit-appearance: none; appearance: none; flex: 1 1 auto; min-width: 0; height: 36px; margin: 0;
-  background: transparent; cursor: pointer;
-}
-.scrub::-webkit-slider-runnable-track { height: 6px; border-radius: 3px; background: var(--hairline-2); }
-.scrub::-webkit-slider-thumb {
-  -webkit-appearance: none; appearance: none; width: 28px; height: 28px; margin-top: -11px; border: 0; border-radius: 50%;
-  background: var(--white); box-shadow: var(--shadow-btn);
-}
-.scrub::-moz-range-track { height: 6px; border-radius: 3px; background: var(--hairline-2); }
-.scrub::-moz-range-thumb { width: 28px; height: 28px; border: 0; border-radius: 50%; background: var(--white); box-shadow: var(--shadow-btn); }
-.flow-count { flex: none; min-width: 84px; text-align: right; color: var(--meta); text-shadow: var(--shadow-text); font-weight: 800; font-size: 14px; font-variant-numeric: tabular-nums; }
+.play-btn svg { width: 30px; height: 30px; fill: currentColor; }
+.play-btn:active { transform: scale(.95); }
+.flow-scrub { display: flex; align-items: center; gap: 14px; max-width: 640px; margin: 16px auto 0; }
+.scrub { -webkit-appearance: none; appearance: none; flex: 1 1 auto; min-width: 0; height: 48px; margin: 0; background: transparent; cursor: pointer; }
+.scrub::-webkit-slider-runnable-track { height: 10px; border-radius: 5px; background: linear-gradient(90deg, var(--pink), var(--violet), var(--blue)); }
+.scrub::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 42px; height: 42px; margin-top: -16px; border: 4px solid var(--white); border-radius: 50%; background: var(--yellow); box-shadow: var(--shadow-btn); }
+.scrub::-moz-range-track { height: 10px; border-radius: 5px; background: linear-gradient(90deg, var(--pink), var(--violet), var(--blue)); }
+.scrub::-moz-range-thumb { width: 36px; height: 36px; border: 4px solid var(--white); border-radius: 50%; background: var(--yellow); }
+.flow-count { flex: none; min-width: 90px; text-align: right; color: var(--meta); font-weight: 900; font-size: 16px; font-variant-numeric: tabular-nums; }
 
 @media (max-width: 599px) {
-  .flow { --cf-h: min(40vh, 300px); }
-  .flow-title { font-size: 22px; }
-  .play-btn { padding: 0 22px; font-size: 17px; }
-}
-@media (min-width: 600px) and (max-height: 860px) {
-  .flow-title { font-size: 24px; }
-}
-
-/* ---------- no Wi-Fi alert (pinned in the toolbar while offline) ---------- */
-.off-wrap { padding-top: 12px; }
-.offline {
-  display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 18px;
-  padding: 10px 14px; border-radius: 24px; border: 2px solid var(--white);
-  background: linear-gradient(180deg, var(--heart-red), var(--red));
-  box-shadow: var(--shadow-btn);
-}
-.off-msg {
-  display: inline-flex; align-items: center; gap: 10px; margin: 0;
-  font-family: var(--font-display), system-ui, sans-serif; font-weight: 800; font-size: 26px; line-height: 1.1;
-  color: var(--white); text-shadow: var(--shadow-text);
-}
-.off-msg svg { flex: none; width: 42px; height: 42px; }
-.dl-btn {
-  display: inline-flex; align-items: center; gap: 10px;
-  min-height: 58px; padding: 0 26px 0 14px; border-radius: 999px; border: 2px solid var(--white);
-  background: linear-gradient(180deg, var(--go-green-hi), var(--go-green-lo)); color: var(--white);
-  font-family: var(--font-body), system-ui, sans-serif; font-weight: 800; font-size: 20px; line-height: 1;
-  text-decoration: none; text-shadow: var(--shadow-text); box-shadow: var(--shadow-btn);
-  -webkit-user-drag: none; transition: transform .12s ease;
-}
-.dl-btn svg { flex: none; width: 32px; height: 32px; }
-.dl-btn:active { transform: scale(.95); }
-@media (max-width: 599px) {
-  .off-msg { font-size: 22px; }
-  .dl-btn { font-size: 18px; }
+  :root { --hd: calc(env(safe-area-inset-top, 0px) + 72px); }
+  .art { background-position: 8px 50%; background-size: auto 100%;
+    -webkit-mask-image: radial-gradient(ellipse 60% 90% at 30% 50%, #000 45%, transparent 100%); mask-image: radial-gradient(ellipse 60% 90% at 30% 50%, #000 45%, transparent 100%); }
+  .seg-btn { width: 52px; height: 44px; }
+  .flow-title { font-size: 30px; }
+  .play-btn { min-height: 66px; padding: 0 34px; font-size: 24px; }
 }
 
-/* ---------- link check (grown-ups only: on with ?test=1, off with ?test=0) ---------- */
-.test-bar {
-  display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; padding-top: 2px; padding-bottom: 10px;
-  color: var(--white); font-weight: 800; font-size: 15px; line-height: 1.3; text-shadow: var(--shadow-text);
+/* ---------- jump-to-top rocket ---------- */
+.to-top {
+  position: fixed; z-index: 25; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+  width: 68px; height: 68px; padding: 0; display: grid; place-items: center;
+  border: 3px solid var(--white); border-radius: 50%; background: var(--grad-cool); color: var(--white); font-size: 34px; line-height: 1;
+  box-shadow: 0 0 20px var(--blue), var(--shadow-btn); cursor: pointer; -webkit-appearance: none; appearance: none;
+  transition: opacity .2s ease, transform .2s ease;
 }
-.test-sum { flex: 1 1 240px; margin: 0; }
-.t-btn {
-  min-height: 40px; margin: 0; padding: 0 16px; border-radius: 999px;
-  border: 1px solid var(--hairline-2); background: var(--veil); color: var(--white);
-  font-family: var(--font-body), system-ui, sans-serif; font-weight: 800; font-size: 15px;
-  cursor: pointer; -webkit-appearance: none; appearance: none;
+.to-top:active { transform: scale(.9); }
+.to-top.hide { opacity: 0; pointer-events: none; transform: translateY(20px); }
+
+/* ---------- OFFLINE: a full-screen cover, so nothing else can be tapped ---------- */
+.off {
+  position: fixed; inset: 0; z-index: 100; overflow-y: auto; -webkit-overflow-scrolling: touch;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; text-align: center;
+  padding: calc(24px + env(safe-area-inset-top, 0px)) max(24px, env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) max(24px, env(safe-area-inset-left, 0px));
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 30%, rgba(255, 61, 154, .5), transparent 70%),
+    radial-gradient(ellipse 80% 50% at 50% 100%, rgba(41, 182, 255, .4), transparent 70%),
+    var(--night-1);
 }
-.link-flag {
-  position: absolute; top: 8px; right: 8px; width: 36px; height: 36px;
-  display: grid; place-items: center; border-radius: 50%; border: 2px solid currentColor;
-  background: var(--white); box-shadow: var(--shadow-tile);
+.off-icon { width: min(46vw, 36vh, 260px); height: auto; filter: drop-shadow(0 0 24px var(--pink)); animation: bob 2.4s ease-in-out infinite; }
+@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+.off-title {
+  margin: 0; font-family: var(--font-display); font-weight: 400; letter-spacing: .04em; text-transform: uppercase;
+  font-size: clamp(54px, 11vw, 110px); line-height: 1.05; color: var(--white);
+  text-shadow: 0 0 26px var(--pink), 0 4px 6px rgba(0, 0, 0, .8);
 }
-.link-flag svg { width: 20px; height: 20px; }
-.link-flag.bad { color: var(--red); }
-.link-flag.search { color: var(--amber); }
-.marks { display: flex; gap: 6px; margin-top: 8px; }
-.mark {
-  flex: 1 1 0; min-height: 38px; margin: 0; padding: 0 8px; border-radius: 999px;
-  border: 1px solid var(--hairline-2); background: var(--veil); color: var(--white);
-  font-family: var(--font-body), system-ui, sans-serif; font-weight: 800; font-size: 14px; line-height: 1; white-space: nowrap;
-  cursor: pointer; -webkit-appearance: none; appearance: none;
+.off-sub { margin: -8px 0 0; color: var(--meta); font-weight: 800; font-size: clamp(18px, 3vw, 26px); }
+.off-btns { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; }
+.big-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 14px;
+  min-height: 84px; padding: 0 38px; border-radius: 999px; border: 4px solid var(--white);
+  color: var(--white); text-decoration: none; text-shadow: var(--shadow-text);
+  font-family: var(--font-body); font-weight: 900; font-size: 28px; line-height: 1;
+  box-shadow: var(--shadow-btn); cursor: pointer; -webkit-appearance: none; appearance: none; -webkit-user-drag: none;
 }
-.mark.bad[aria-pressed="true"] { background: var(--red); border-color: var(--white); }
-.flow-marks { flex: none; width: 200px; margin-top: 0; }
-.flow-marks .mark { min-height: 48px; }
+.big-btn svg { flex: none; width: 40px; height: 40px; }
+.big-btn:active { transform: scale(.95); }
+.big-btn.go { background: var(--grad-go); box-shadow: 0 0 24px #1fe69a, var(--shadow-btn); }
+.big-btn.again { background: var(--grad-cool); box-shadow: 0 0 24px var(--blue), var(--shadow-btn); }
+.big-btn.spin svg { animation: spin .9s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.off-note { margin: 0; min-height: 1.4em; color: var(--yellow); font-weight: 900; font-size: 20px; }
 
 /* ---------- footer ---------- */
-.stripe-wrap { margin-top: 28px; }
-.stripe {
-  height: 6px; border-radius: 3px;
-  background: repeating-linear-gradient(135deg, var(--red) 0 10px, var(--white) 10px 20px);
-}
-.foot {
-  margin-top: 0; padding: 22px 16px calc(28px + env(safe-area-inset-bottom, 0px));
-  text-align: center; color: var(--meta); font-size: 13px; line-height: 1.5;
-}
-.foot-brand {
-  display: inline-block; margin: 0 0 4px; padding: 0 .06em .1em 0;
-  font-family: var(--font-display), system-ui, sans-serif;
-  font-weight: 800; font-size: 20px; line-height: 1.2; color: var(--gold-hi);
-  background: var(--grad-gold); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-}
-.foot p { max-width: 460px; margin: 0 auto; }
-.foot-btn { margin-top: 14px; min-height: 36px; font-size: 13px; color: var(--meta); }
+.stripe-wrap { margin-top: 24px; }
+.stripe { height: 5px; border-radius: 4px; background: linear-gradient(90deg, var(--pink), var(--orange), var(--green), var(--blue), var(--violet)); }
+.foot { padding: 14px 16px calc(22px + env(safe-area-inset-bottom, 0px)); text-align: center; color: rgba(201, 194, 255, .55); font-size: 10.5px; line-height: 1.4; }
+.foot p { max-width: 520px; margin: 0 auto; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
-  .icon-wrap::before { opacity: .85; }
-  .tap:hover .poster, .tap:active .poster { transform: translateZ(0); }
-  .tap:active .poster { filter: brightness(.93); }
+  .tap:hover .poster, .tap:active .poster { transform: none; }
 }
 </style>
 </head>
@@ -624,62 +361,24 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
 <div id="bg" aria-hidden="true"></div>
 
 <header class="top" id="top">
-  <div class="wrap top-in">
-    <span class="icon-wrap"><img class="app-icon" src="icons/icon-192.png" alt="" width="76" height="76"></span>
-    <div class="brand">
-      <h1>Apple TV Library</h1>
-    </div>
-    <div class="count-wrap">
-      <p class="count" id="count"></p>
+  <div class="hero">
+    <div class="art" aria-hidden="true"></div>
+    <h1 class="sr-only">Movie Library</h1>
+    <div class="seg" id="seg" role="group" aria-label="Choose how to look">
+      <button class="seg-btn dice" type="button" data-act="surprise" aria-label="Surprise me with a movie">&#x1F3B2;</button>
+      <button class="seg-btn" type="button" data-view="grid" aria-pressed="true" aria-label="Grid view"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="2"></rect><rect x="13" y="3" width="8" height="8" rx="2"></rect><rect x="3" y="13" width="8" height="8" rx="2"></rect><rect x="13" y="13" width="8" height="8" rx="2"></rect></svg></button>
+      <button class="seg-btn" type="button" data-view="flow" aria-pressed="false" aria-label="Cover Flow view"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1.5 7.5l5-2v13l-5-2z"></path><rect x="8.5" y="3.5" width="7" height="17" rx="1.6"></rect><path d="M22.5 7.5l-5-2v13l5-2z"></path></svg></button>
     </div>
   </div>
 </header>
-
-<div class="toolbar" id="toolbar">
-  <div class="wrap off-wrap" id="offline" role="alert" hidden>
-    <div class="offline">
-      <p class="off-msg"><svg viewBox="0 0 42 42" aria-hidden="true" focusable="false"><circle cx="21" cy="21" r="20" fill="#FFFFFF"></circle><g fill="none" stroke="#C8102E" stroke-width="3.2" stroke-linecap="round"><path d="M9 17.5a17 17 0 0 1 24 0"></path><path d="M13.5 22a10.5 10.5 0 0 1 15 0"></path><path d="M18 26.5a4 4 0 0 1 6 0"></path><path d="M10 10l22 22"></path></g><circle cx="21" cy="30.5" r="2" fill="#C8102E"></circle></svg>No Wi&#8209;Fi</p>
-      <a class="dl-btn" id="dlBtn" href="videos://" draggable="false" aria-label="Open downloads in the Apple TV app"><svg viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="15" fill="#FFFFFF"></circle><g fill="none" stroke="#10783A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8v11"></path><path d="M11 14.5l5 5 5-5"></path><path d="M9.5 23.5h13"></path></g></svg>Open Downloads</a>
-    </div>
-  </div>
-  <div class="wrap bar-in">
-    <div class="search" id="searchBox">
-      <svg class="mag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="M15.5 15.5L21 21"></path></svg>
-      <input id="search" type="search" placeholder="Search movies and shows" aria-label="Search movies and shows" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="search">
-      <button class="clear" id="clear" type="button" aria-label="Clear search" hidden><span><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M2 2l10 10M12 2L2 12"></path></svg></span></button>
-    </div>
-    <div class="seg" id="seg" role="group" aria-label="View">
-      <button class="seg-btn" type="button" data-view="grid" aria-pressed="true" aria-label="Grid view"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="2"></rect><rect x="13" y="3" width="8" height="8" rx="2"></rect><rect x="3" y="13" width="8" height="8" rx="2"></rect><rect x="13" y="13" width="8" height="8" rx="2"></rect></svg><span class="lbl">Grid</span></button>
-      <button class="seg-btn" type="button" data-view="flow" aria-pressed="false" aria-label="Cover Flow view"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1.5 7.5l5-2v13l-5-2z"></path><rect x="8.5" y="3.5" width="7" height="17" rx="1.6"></rect><path d="M22.5 7.5l-5-2v13l5-2z"></path></svg><span class="lbl">Cover Flow</span></button>
-    </div>
-    <div class="chips" id="chips" role="group" aria-label="Filter">
-      <button class="chip" type="button" data-chip="all" aria-pressed="true"><span class="ico" aria-hidden="true">&#x2B50;&#xFE0F;</span>All</button>
-      <button class="chip" type="button" data-chip="recent" aria-pressed="false"><span class="ico" aria-hidden="true">&#x1F552;&#xFE0F;</span>Recent</button>
-      <button class="chip" type="button" data-chip="movies" aria-pressed="false"><span class="ico" aria-hidden="true">&#x1F3AC;&#xFE0F;</span>Movies</button>
-      <button class="chip" type="button" data-chip="shows" aria-pressed="false"><span class="ico" aria-hidden="true">&#x1F4FA;&#xFE0F;</span>Shows</button>
-      <button class="chip" type="button" data-chip="disney" aria-pressed="false"><span class="ico" aria-hidden="true">&#x1F3F0;&#xFE0F;</span>Disney &amp; Pixar</button>
-      <button class="chip" type="button" data-chip="holidays" aria-pressed="false"><span class="ico" aria-hidden="true">&#x1F384;&#xFE0F;</span>Holidays</button>
-      <button class="chip" type="button" data-chip="plus" aria-pressed="false" hidden><span class="ico" aria-hidden="true">&#x2795;&#xFE0F;</span>Apple TV+</button>
-      <button class="chip" type="button" data-chip="favs" aria-pressed="false"><span class="ico" aria-hidden="true">&#x2764;&#xFE0F;</span>Favorites<span class="n" id="favCount" hidden>0</span></button>
-      <button class="chip" type="button" data-chip="check" aria-pressed="false" hidden><span class="ico" aria-hidden="true">&#x1F517;&#xFE0F;</span>Check links</button>
-    </div>
-  </div>
-  <div class="wrap test-bar" id="testBar" hidden>
-    <p class="test-sum" id="testSum"></p>
-    <button class="t-btn" id="testCopy" type="button">Copy results</button>
-    <button class="t-btn" id="testExit" type="button">Done checking</button>
-  </div>
-</div>
 
 <section class="flow" id="flow" aria-label="Cover Flow" hidden>
   <div class="stage" id="stage" role="group" aria-roledescription="Cover Flow" aria-label="Cover Flow"></div>
   <div class="flow-info wrap">
     <h2 class="flow-title" id="flowTitle"><span></span></h2>
-    <p class="flow-meta" id="flowMeta"></p>
     <div class="flow-actions">
-      <button class="fav-flow" id="flowFav" type="button" aria-pressed="false" aria-label="Add to favorites"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path></svg></button>
-      <a class="play-btn" id="flowPlay" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"></path></svg>Play in Apple TV</a>
-      <span class="marks flow-marks" id="flowMarks"><button class="mark bad" type="button" data-mark="bad" aria-pressed="false">&#x1F517; Mark broken</button></span>
+      <a class="play-btn" id="flowPlay" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"></path></svg>Play</a>
+      <button class="mark" id="flowMark" type="button" aria-pressed="false" data-broken-ui>&#x1F517; Mark broken</button>
     </div>
     <div class="flow-scrub">
       <input class="scrub" id="flowScrub" type="range" min="0" max="0" step="1" value="0" aria-label="Scrub through titles">
@@ -692,68 +391,80 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
 <p class="sr-only" id="status" role="status" aria-live="polite"></p>
 <p class="sr-only" id="flowLive" aria-live="polite"></p>
 
+<button class="to-top hide" id="toTop" type="button" aria-label="Back to the top">&#x1F680;</button>
+
 <div class="wrap stripe-wrap"><div class="stripe" aria-hidden="true"></div></div>
 <footer class="foot">
-  <div class="foot-brand">Apple TV Library</div>
-  <p>Posters and details from TMDB. This product uses the TMDB API but is not endorsed or certified by TMDB.</p>
-  <button class="t-btn foot-btn" id="testToggle" type="button">&#x1F527; Link check</button>
+  <p>Posters from TMDB. This product uses the TMDB API but is not endorsed or certified by TMDB.</p>
+  <div class="broken-note" id="brokenNote" data-broken-ui hidden><span id="brokenCount"></span><button id="brokenCopy" type="button">Copy list</button><button id="brokenClear" type="button">Clear</button></div>
 </footer>
+
+<!-- shown only while offline: covers the whole screen -->
+<div class="off" id="offline" role="alertdialog" aria-modal="true" aria-labelledby="offTitle" hidden>
+  <svg class="off-icon" viewBox="0 0 120 120" aria-hidden="true" focusable="false"><circle cx="60" cy="60" r="56" fill="#FFFFFF"></circle><g fill="none" stroke="#FF3D9A" stroke-width="9" stroke-linecap="round"><path d="M22 48a54 54 0 0 1 76 0"></path><path d="M35 62a36 36 0 0 1 50 0"></path><path d="M48 76a18 18 0 0 1 24 0"></path><path d="M26 26l68 68" stroke="#0A0626" stroke-width="10"></path></g><circle cx="60" cy="90" r="6" fill="#FF3D9A"></circle></svg>
+  <h2 class="off-title" id="offTitle">No Wi&#8209;Fi</h2>
+  <p class="off-sub">Downloaded movies still play in the Apple TV app.</p>
+  <div class="off-btns">
+    <a class="big-btn go" id="dlBtn" href="videos://" draggable="false"><svg viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="15" fill="#FFFFFF"></circle><g fill="none" stroke="#12B87A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8v11"></path><path d="M11 14.5l5 5 5-5"></path><path d="M9.5 23.5h13"></path></g></svg>Open Downloads</a>
+    <button class="big-btn again" id="retry" type="button"><svg viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="15" fill="#FFFFFF"></circle><g fill="none" stroke="#5A3DE0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M23 11a8.5 8.5 0 1 0 1.5 7"></path><path d="M23.5 5.5V11H18"></path></g></svg><span id="retryLabel">Try again</span></button>
+  </div>
+  <p class="off-note" id="offNote" role="status"></p>
+</div>
 
 <script src="data.js"></script>
 <script>
 (function () {
   'use strict';
 
+  /* Set to false to remove every broken-link button, flag and note (the marks already saved on a device stay unused). */
+  var BROKEN_LINK_BUTTON = true;
+
   var LIB = Array.isArray(window.LIBRARY) ? window.LIBRARY : [];
 
   function $(id) { return document.getElementById(id); }
-  var resultsEl = $('results'), searchEl = $('search'), clearEl = $('clear'), chipsEl = $('chips'), searchBoxEl = $('searchBox');
-  var toolbarEl = $('toolbar'), headerEl = $('top'), countEl = $('count'), favCountEl = $('favCount'), statusEl = $('status'), segEl = $('seg');
-  var flowEl = $('flow'), stageEl = $('stage'), flowTitleEl = $('flowTitle'), flowMetaEl = $('flowMeta'), flowFavEl = $('flowFav');
+  var resultsEl = $('results'), headerEl = $('top'), statusEl = $('status'), segEl = $('seg');
+  var flowEl = $('flow'), stageEl = $('stage'), flowTitleEl = $('flowTitle');
   var flowPlayEl = $('flowPlay'), scrubEl = $('flowScrub'), flowCountEl = $('flowCount'), flowLiveEl = $('flowLive');
-  var offlineEl = $('offline'), dlBtnEl = $('dlBtn'), flowMarksEl = $('flowMarks');
-  var testBarEl = $('testBar'), testSumEl = $('testSum'), testCopyEl = $('testCopy'), testExitEl = $('testExit');
+  var offlineEl = $('offline'), dlBtnEl = $('dlBtn'), retryEl = $('retry'), retryLabelEl = $('retryLabel'), offNoteEl = $('offNote');
+  var flowMarkEl = $('flowMark'), toTopEl = $('toTop');
+  var noteEl = $('brokenNote'), noteCountEl = $('brokenCount'), noteCopyEl = $('brokenCopy'), noteClearEl = $('brokenClear');
+
+  if (!BROKEN_LINK_BUTTON) {
+    Array.prototype.forEach.call(document.querySelectorAll('[data-broken-ui]'), function (el) { el.parentNode.removeChild(el); });
+    flowMarkEl = null; noteEl = null;
+  }
 
   /* ---------- storage (always optional) ---------- */
   function lsGet(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
   function lsSet(k, v) { try { window.localStorage.setItem(k, v); } catch (e) { /* storage unavailable */ } }
+  function lsDel(k) { try { window.localStorage.removeItem(k); } catch (e) { /* storage unavailable */ } }
+  ['rstd:favs', 'rstd:recent', 'rstd:chip', 'rstd:test'].forEach(lsDel);   // features that no longer exist
 
   /* ---------- text helpers ---------- */
   var ESC = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return ESC[c]; }); }
-
-  // lower-case, accent-insensitive, curly apostrophes folded to straight (iPad "smart punctuation")
   function norm(s) {
     return String(s == null ? '' : s)
       .normalize('NFD').replace(/[̀-ͯ]/g, '')
       .replace(/[‘’ʼ]/g, "'")
       .toLowerCase().replace(/\s+/g, ' ').trim();
   }
-  function sortKey(title) {
-    return norm(title).replace(/^(the|a|an) +/, '').replace(/^[^\p{L}\p{N}]+/u, '');
-  }
+  function sortKey(title) { return norm(title).replace(/^(the|a|an) +/, '').replace(/^[^\p{L}\p{N}]+/u, ''); }
   function hash(s) {
     var h = 2166136261;
     for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
     h ^= h >>> 15; h = Math.imul(h, 2246822507); h ^= h >>> 13;
     return h >>> 0;
   }
-  function plural(n, one, many) { return n + ' ' + (n === 1 ? one : many); }
   function safeUrl(u) { return /^https?:\/\//i.test(String(u || '')) ? String(u) : '#'; }
+  function rim(id) { return 'r' + (hash('rim' + id) % 5 + 1); }
 
-  /* ---------- library ---------- */
+  /* ---------- library: one A to Z list, movies and shows mixed ---------- */
+  // numeric collation keeps "Halloweentown 1, 2, 3, 4" in order; a "sort" field in data.js keeps related titles side by side
   var collator = (typeof Intl !== 'undefined' && Intl.Collator) ? new Intl.Collator('en', { numeric: true, sensitivity: 'base' }) : null;
   var items = LIB.map(function (d) {
-    var key = sortKey(d.title);
-    return {
-      d: d,
-      n: norm(d.title),
-      k: key,
-      dig: /^[0-9]/.test(key) ? 1 : 0,
-      tags: Array.isArray(d.tags) ? d.tags : [],
-      show: d.kind === 'tv',
-      plus: Array.isArray(d.tags) && d.tags.indexOf('plus') !== -1
-    };
+    var key = d.sort ? norm(d.sort) : sortKey(d.title);
+    return { d: d, k: key, dig: /^[0-9]/.test(key) ? 1 : 0 };
   });
   items.sort(function (a, b) {
     if (a.dig !== b.dig) return a.dig - b.dig;
@@ -763,280 +474,151 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
   var byId = {};
   items.forEach(function (it) { byId[String(it.d.id)] = it; });
 
-  // Apple TV+ titles need a subscription. true mixes them into every chip and the count;
-  // false shows them only under their own chip, Favorites, Recent and search
-  var PLUS_EVERYWHERE = true;
-  // the header count matches what's on screen: the chip and search shown right now
-  function syncCount(list) {
-    var nShows = list.filter(function (i) { return i.show; }).length;
-    var nMovies = list.length - nShows;
-    var parts = [];
-    if (nMovies) parts.push(plural(nMovies, 'movie', 'movies'));
-    if (nShows) parts.push(plural(nShows, 'show', 'shows'));
-    countEl.textContent = parts.join(' · ');
-    countEl.hidden = !parts.length;
-  }
-
-  // the Open Downloads button only shows on iPhone / iPad, where videos:// opens the Apple TV app
-  // (iPadOS reports itself as a Mac, so a touch screen gives it away)
-  var appleTouch = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  dlBtnEl.hidden = !appleTouch;
-
-  // no Wi-Fi: a red alert with a green button into the Apple TV app, where downloaded titles still play
-  function syncOnline() {
-    var off = navigator.onLine === false;
-    if (offlineEl.hidden !== off) return;
-    offlineEl.hidden = !off;
-    onResize();
-    flowReveal();
-  }
-
   /* ---------- state ---------- */
-  var LABELS = { all: 'All', recent: 'Recently Watched', movies: 'Movies', shows: 'Shows', disney: 'Disney & Pixar', holidays: 'Holidays', plus: 'Apple TV+', favs: 'Favorites' };
-  var hasPlus = items.some(function (i) { return i.plus; });
-  if (!hasPlus) delete LABELS.plus;
-  else chipsEl.querySelector('.chip[data-chip="plus"]').hidden = false;
-  // link check, for grown-ups testing links: ?test=1 turns it on for this device, ?test=0 turns it off
-  var testMode = (function () {
-    var m = /[?&]test=([01])\b/.exec(window.location.search);
-    if (m) lsSet('rstd:test', m[1]);
-    return lsGet('rstd:test') === '1';
-  })();
-  // the Check links chip shows once a title is marked broken (or always in link check mode)
-  LABELS.check = 'Links to check';
-  var checkChipEl = chipsEl.querySelector('.chip[data-chip="check"]');
-  var chip = lsGet('rstd:chip');
-  if (!Object.prototype.hasOwnProperty.call(LABELS, chip)) chip = 'all';
   var view = lsGet('rstd:view') === 'flow' ? 'flow' : 'grid';
 
-  var favs = new Set();
-  (function () {
-    var raw = lsGet('rstd:favs');
-    if (!raw) return;
-    try {
-      var arr = JSON.parse(raw);
-      if (Array.isArray(arr)) arr.forEach(function (id) { id = String(id); if (byId[id]) favs.add(id); });
-    } catch (e) { /* ignore bad data */ }
-  })();
-  function loadIds(key) {
-    try {
-      var arr = JSON.parse(lsGet(key) || '[]');
-      return Array.isArray(arr) ? arr.map(String).filter(function (id) { return byId[id]; }) : [];
-    } catch (e) { return []; }
-  }
-
-  // Recently Watched: ids of the titles last opened in Apple TV, newest first
-  var recent = loadIds('rstd:recent');
-  function addRecent(id) {
-    id = String(id);
-    if (!byId[id]) return;
-    recent = [id].concat(recent.filter(function (x) { return x !== id; })).slice(0, 24);
-    lsSet('rstd:recent', JSON.stringify(recent));
-  }
-
-  // link check marks: id -> 'bad' (broken). Older 'ok' marks are ignored
+  // broken-link marks: id -> 'bad'
   var marks = {};
-  (function () {
+  if (BROKEN_LINK_BUTTON) {
     try {
-      var o = JSON.parse(lsGet('rstd:marks') || '{}');
-      Object.keys(o || {}).forEach(function (id) { if (byId[id] && o[id] === 'bad') marks[id] = 'bad'; });
+      var saved = JSON.parse(lsGet('rstd:marks') || '{}');
+      Object.keys(saved || {}).forEach(function (id) { if (byId[id] && saved[id] === 'bad') marks[id] = 'bad'; });
     } catch (e) { /* ignore bad data */ }
-  })();
-  function setMark(id, val) {
-    if (marks[id] === val) delete marks[id]; else marks[id] = val;
+  }
+  function markCount() { return Object.keys(marks).length; }
+  function setMark(id) {
+    if (marks[id]) delete marks[id]; else marks[id] = 'bad';
     lsSet('rstd:marks', JSON.stringify(marks));
-    syncTestBar();
+    syncNote();
   }
-  // marked broken first, then search links (no direct Apple TV link)
-  function checkRank(it) { return marks[String(it.d.id)] === 'bad' ? 0 : 1; }
-
-  function saveFavs() { lsSet('rstd:favs', JSON.stringify(Array.from(favs))); }
-  function toggleFav(id) {
-    var on = !favs.has(id);
-    if (on) favs.add(id); else favs.delete(id);
-    saveFavs();
-    syncFavCount();
-    return on;
+  function syncNote() {
+    if (!noteEl) return;
+    var n = markCount();
+    noteEl.hidden = n === 0;
+    noteCountEl.textContent = n + (n === 1 ? ' link marked broken' : ' links marked broken');
   }
-
-  function matchChip(it, q) {
-    if (it.plus && !PLUS_EVERYWHERE && !q && chip !== 'plus' && chip !== 'favs' && chip !== 'recent' && chip !== 'check') return false;
-    switch (chip) {
-      case 'movies': return !it.show;
-      case 'shows': return it.show;
-      case 'disney': return it.tags.indexOf('disney') !== -1;
-      case 'holidays': return it.tags.indexOf('holiday') !== -1;
-      case 'plus': return it.plus;
-      case 'favs': return favs.has(String(it.d.id));
-      case 'recent': return recent.indexOf(String(it.d.id)) !== -1;
-      case 'check': return marks[String(it.d.id)] === 'bad' || !it.d.direct;
-      default: return true;
-    }
-  }
-  // "All" with no search reads Movies A-Z then Shows A-Z; Recent is newest first; everything else is one A-Z list
-  function ordered(list, q) {
-    if (chip === 'recent') {
-      return list.slice().sort(function (a, b) { return recent.indexOf(String(a.d.id)) - recent.indexOf(String(b.d.id)); });
-    }
-    if (chip === 'check') {
-      return list.map(function (it, i) { return { it: it, i: i, r: checkRank(it) }; })
-        .sort(function (a, b) { return a.r - b.r || a.i - b.i; })
-        .map(function (x) { return x.it; });
-    }
-    return list;  // A to Z, movies and shows together
+  function brokenReport() {
+    var lines = items.filter(function (it) { return marks[String(it.d.id)]; })
+      .map(function (it) { return it.d.title + ' [' + it.d.id + ']'; });
+    return 'Movie Library: links marked broken (' + lines.length + ')\n\n' + (lines.join('\n') || '-') + '\n';
   }
 
   /* ---------- markup ---------- */
-  var HEART = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path></svg>';
-
   function tileHTML(d) {
     return '<div class="ph g' + (hash(String(d.id)) % 4 + 1) + '" aria-hidden="true"><span>' + esc(d.title) + '</span></div>';
   }
-
   var LINK_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M10 14.5l-1.8 1.8a3.2 3.2 0 0 1-4.5-4.5L6 9.5"></path><path d="M14 9.5l1.8-1.8a3.2 3.2 0 0 1 4.5 4.5L18 14.5"></path><path d="M8.5 3v2.5M3 8.5h2.5M15.5 21v-2.5M21 15.5h-2.5"></path></svg>';
 
-  // link check only: a broken-link flag on titles marked broken (red) or that open a search (amber)
-  function flagHTML(d) {
-    var m = marks[String(d.id)];
-    if (m === 'bad') return '<span class="link-flag bad" title="Broken">' + LINK_ICON + '</span>';
-    return d.direct || !testMode ? '' : '<span class="link-flag search" title="Opens a search, not the title">' + LINK_ICON + '</span>';
-  }
-  // broken-link button next to the heart: red when marked, listed under the Check links chip
-  function marksHTML(id, t) {
-    return '<button class="brk" type="button" data-mark="bad" aria-pressed="' + (marks[id] === 'bad') + '" aria-label="Mark ' + t + ' as a broken link">' + LINK_ICON + '</button>';
+  function flagHTML(id) { return BROKEN_LINK_BUTTON && marks[id] ? '<span class="link-flag" title="Broken">' + LINK_ICON + '</span>' : ''; }
+  function brkHTML(id, t) {
+    return BROKEN_LINK_BUTTON
+      ? '<button class="brk" type="button" aria-pressed="' + (!!marks[id]) + '" aria-label="Mark ' + t + ' as a broken link">' + LINK_ICON + '</button>'
+      : '';
   }
 
   function cardHTML(it) {
     var d = it.d, id = String(d.id), t = esc(d.title);
-    var meta = [d.year, d.rating].filter(function (x) { return x; }).join(' · ');
-    var media = d.poster
-      ? '<img src="' + esc(d.poster) + '" loading="lazy" decoding="async" alt="' + t + ' poster" width="600" height="900" draggable="false">'
-      : tileHTML(d);
-    return '<div class="card" role="listitem" data-id="' + esc(id) + '">' +
+    var src = d.thumb || d.poster;   // the grid uses the small copy; it loads when it scrolls near (see watchPosters)
+    var media = src ? '<img data-src="' + esc(src) + '" alt="" decoding="async" width="420" height="630" draggable="false">' : tileHTML(d);
+    return '<div class="card ' + rim(id) + '" role="listitem" data-id="' + esc(id) + '">' +
       '<a class="tap" href="' + esc(safeUrl(d.link)) + '" target="_blank" rel="noopener" draggable="false" aria-label="Watch ' + t + ' in Apple TV">' +
-        '<div class="poster">' + media + (it.show ? '<span class="badge">SHOW</span>' : '') + flagHTML(d) + '<span class="play-disc" aria-hidden="true"></span></div>' +
+        '<div class="poster">' + media + flagHTML(id) + '</div>' +
         '<div class="name">' + t + '</div>' +
-        (meta ? '<div class="meta">' + esc(meta) + '</div>' : '') +
+        (d.year ? '<div class="meta">' + esc(d.year) + '</div>' : '') +
       '</a>' +
-      '<button class="fav" type="button" aria-pressed="' + favs.has(id) + '" aria-label="Add ' + t + ' to favorites">' + HEART + '</button>' +
-      marksHTML(id, t) +
+      brkHTML(id, t) +
     '</div>';
   }
 
-  function sectionHTML(hid, title, list) {
-    return '<section class="sec" aria-labelledby="' + hid + '">' +
-      '<h2 id="' + hid + '"><span>' + esc(title) + '</span><span class="n">' + list.length + '</span></h2>' +
-      '<div class="grid" role="list">' + list.map(cardHTML).join('') + '</div>' +
-    '</section>';
+  /* ---------- posters load as they scroll near, and are let go when they scroll far ----------
+     Hundreds of decoded posters is what crashed iOS Safari on a long scroll. Only the screen plus about one screen each way holds pictures. */
+  var io = null;
+  function loadImg(img) { var s = img.getAttribute('data-src'); if (s && img.getAttribute('src') !== s) img.setAttribute('src', s); }
+  function dropImg(img) { if (img.hasAttribute('src')) img.removeAttribute('src'); }
+  function watchPosters() {
+    if (io) { io.disconnect(); io = null; }
+    var imgs = resultsEl.querySelectorAll('img[data-src]');
+    if (!imgs.length) return;
+    if (!('IntersectionObserver' in window)) { for (var i = 0; i < imgs.length; i++) loadImg(imgs[i]); return; }
+    io = new IntersectionObserver(function (entries) {
+      for (var e = 0; e < entries.length; e++) {
+        var img = entries[e].target.querySelector('img[data-src]');
+        if (!img) continue;
+        if (entries[e].isIntersecting) loadImg(img); else dropImg(img);
+      }
+    }, { rootMargin: '120% 0px 120% 0px' });
+    var boxes = resultsEl.querySelectorAll('.poster');
+    for (var b = 0; b < boxes.length; b++) io.observe(boxes[b]);
   }
-
-  function emptyHTML(inner) {
-    return '<div class="empty"><img src="icons/icon-192.png" alt="" width="96" height="96" draggable="false"><p>' + inner + '</p></div>';
-  }
+  function stopWatching() { if (io) { io.disconnect(); io = null; } }
 
   function render() {
-    var rawQ = searchEl.value.trim();
-    var q = norm(rawQ);
-    var list = items.filter(function (it) { return matchChip(it, q) && (!q || it.n.indexOf(q) !== -1); });
-    var emptyMsg = chip === 'favs' && favs.size === 0 ? 'Tap the <span class="hrt">♥</span> on any poster to save it here.'
-      : chip === 'recent' && !recent.length ? '&#x1F552; Movies and shows you watch will show up here.'
-      : chip === 'check' && !list.length && !q ? '&#x2705; No broken links. Tap the &#x1F517; next to the heart on any title that doesn&#39;t open right.'
-      : '';
-    syncCount(emptyMsg ? [] : list);
-
-    if (view === 'flow' && !emptyMsg && list.length) {
+    if (view === 'flow' && items.length) {
+      stopWatching();
       resultsEl.innerHTML = '';
       resultsEl.hidden = true;
-      var flowWasHidden = flowEl.hidden;
+      var wasHidden = flowEl.hidden;
       flowEl.hidden = false;
-      flowSetList(ordered(list, q));
-      if (flowWasHidden) flowReveal();
-      statusEl.textContent = plural(list.length, 'title', 'titles') + ' shown';
+      flowSetList(items);
+      if (wasHidden) flowReveal();
       return;
     }
-
-    flowStop();
+    cancelAnim();
     flowEl.hidden = true;
     resultsEl.hidden = false;
-    var html;
-    if (emptyMsg) {
-      html = emptyHTML(emptyMsg);
-    } else if (!list.length) {
-      html = emptyHTML('No matches for “' + esc(rawQ) + '”. Try another word.');
-    } else {
-      var title = q ? (chip === 'all' ? 'Search results' : 'Search results in ' + LABELS[chip]) : LABELS[chip];
-      html = sectionHTML('h-list', title, ordered(list, q));
-    }
-    resultsEl.innerHTML = html;
-    statusEl.textContent = plural(list.length, 'title', 'titles') + ' shown';
+    resultsEl.innerHTML = items.length
+      ? '<div class="grid" role="list">' + items.map(cardHTML).join('') + '</div>'
+      : '<div class="empty"><img src="icons/icon-192.png" alt="" width="96" height="96" draggable="false"><p>The library is empty.</p></div>';
+    watchPosters();
+    statusEl.textContent = items.length + ' titles';
   }
 
-  /* ---------- toolbar bits ---------- */
-  function syncChips() {
-    var btns = chipsEl.querySelectorAll('.chip');
-    for (var i = 0; i < btns.length; i++) {
-      btns[i].setAttribute('aria-pressed', btns[i].getAttribute('data-chip') === chip ? 'true' : 'false');
-    }
-  }
   function syncView() {
-    var btns = segEl.querySelectorAll('.seg-btn');
-    for (var i = 0; i < btns.length; i++) {
-      btns[i].setAttribute('aria-pressed', btns[i].getAttribute('data-view') === view ? 'true' : 'false');
-    }
-  }
-  function syncFavCount() {
-    favCountEl.textContent = String(favs.size);
-    favCountEl.hidden = favs.size === 0;
-  }
-  function syncSearchBox() {
-    clearEl.hidden = !searchEl.value;
-    searchBoxEl.classList.toggle('has-text', !!searchEl.value);
-  }
-  function revealChip(btn) {
-    var c = chipsEl, l = btn.offsetLeft, r = l + btn.offsetWidth;
-    if (l < c.scrollLeft + 8) c.scrollLeft = Math.max(0, l - 8);
-    else if (r > c.scrollLeft + c.clientWidth - 8) c.scrollLeft = r - c.clientWidth + 8;
+    var btns = segEl.querySelectorAll('[data-view]');
+    for (var i = 0; i < btns.length; i++) btns[i].setAttribute('aria-pressed', btns[i].getAttribute('data-view') === view ? 'true' : 'false');
   }
 
-  var stickTop = 0;
-  function measure() { stickTop = parseFloat(window.getComputedStyle(toolbarEl).top) || 0; }
-  function updateStuck() {
-    var stuck = window.pageYOffset > 0 && toolbarEl.getBoundingClientRect().top <= stickTop + 1;
-    toolbarEl.classList.toggle('stuck', stuck);
+  /* ---------- header tucks away on the way down, comes back on any scroll up ---------- */
+  var lastY = 0, away = false, scrollTick = false;
+  function setAway(on) { if (on === away) return; away = on; headerEl.classList.toggle('away', on); }
+  function onScroll() {
+    scrollTick = false;
+    var y = window.pageYOffset || 0;
+    var maxY = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    if (y < 0 || y > maxY) return;   // the rubber-band bounce shouldn't flip it
+    var dy = y - lastY;
+    if (y <= 4) setAway(false);
+    else if (dy > 8 && y > 32) setAway(true);
+    else if (dy < -8) setAway(false);
+    headerEl.classList.toggle('lift', y > 4);
+    toTopEl.classList.toggle('hide', y < 700);
+    if (Math.abs(dy) > 8 || y <= 4) lastY = y;
   }
-  // Cover Flow on a short screen: scroll the header away (toolbar stays pinned) so the Play button and scrubber are visible
+  window.addEventListener('scroll', function () {
+    if (scrollTick) return;
+    scrollTick = true;
+    window.requestAnimationFrame(onScroll);
+  }, { passive: true });
+  function toTop() { setAway(false); window.scrollTo(0, 0); lastY = 0; }
+  toTopEl.addEventListener('click', function () { setAway(false); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+
+  // Cover Flow on a short screen: scroll a little so the Play button and scrubber are visible
   function flowReveal() {
     if (view !== 'flow' || flowEl.hidden) return;
     var over = flowEl.getBoundingClientRect().bottom - window.innerHeight;
-    if (over > 0) window.scrollTo(0, Math.min(Math.max(0, headerEl.offsetHeight - stickTop), Math.round(window.pageYOffset + over + 8)));
-  }
-  // after the list changes, start the results right under the toolbar if the page was scrolled past the header
-  function resultsToTop() {
-    var target = Math.max(0, headerEl.offsetHeight - stickTop);
-    if (window.pageYOffset > target) window.scrollTo(0, target);
+    if (over > 0) window.scrollTo(0, Math.round(window.pageYOffset + over + 8));
   }
 
   /* ---------- Cover Flow ---------- */
-  var POOL = 23;        // reusable cover elements (window is +/-10 = 21)
-  var WIN = 10;
-  var DRAG_PX = 0.35;   // one cover per 0.35 * cover-width of drag
-  var fl = {
-    list: [], pos: 0, target: 0, W: 200, slots: [], probe: null, raf: 0, anim: null, drag: null,
-    dragged: false, center: -1, reduced: false, id: null, keep: null, paintQ: 0, liveT: 0, lastStep: 0
-  };
+  var POOL = 17, WIN = 8, DRAG_PX = 0.35;
+  var fl = { list: [], pos: 0, target: 0, W: 200, slots: [], probe: null, raf: 0, anim: null, drag: null,
+    dragged: false, center: -1, reduced: false, id: null, paintQ: 0, liveT: 0, lastStep: 0 };
 
   var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
   fl.reduced = !!(mq && mq.matches);
   if (mq) {
-    var onMotion = function (e) {
-      fl.reduced = e.matches;
-      cancelAnim();
-      fl.pos = fl.target = Math.round(fl.pos);
-      flowPaint();
-    };
-    if (mq.addEventListener) mq.addEventListener('change', onMotion);
-    else if (mq.addListener) mq.addListener(onMotion);
+    var onMotion = function (e) { fl.reduced = e.matches; cancelAnim(); fl.pos = fl.target = Math.round(fl.pos); flowPaint(); };
+    if (mq.addEventListener) mq.addEventListener('change', onMotion); else if (mq.addListener) mq.addListener(onMotion);
   }
 
   function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
@@ -1045,19 +627,12 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
   function makeCover() {
     var a = document.createElement('a');
     a.className = 'cf';
-    a.target = '_blank';
-    a.rel = 'noopener';
-    a.draggable = false;
-    a.tabIndex = -1;
+    a.target = '_blank'; a.rel = 'noopener'; a.draggable = false; a.tabIndex = -1;
     a.innerHTML = '<img alt="" draggable="false" decoding="async" width="600" height="900"><span class="shade"></span><span class="play-disc" aria-hidden="true"></span>';
-    a._img = a.firstChild;
-    a._shade = a.childNodes[1];
-    a._disc = a.childNodes[2];
-    a._i = -1;
-    a._tab = false;
+    a._img = a.firstChild; a._shade = a.childNodes[1]; a._disc = a.childNodes[2];
+    a._i = -1; a._tab = false; a._rim = '';
     return a;
   }
-
   function ensureSlots() {
     if (fl.slots.length) return;
     var probe = document.createElement('span');
@@ -1065,44 +640,34 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
     probe.style.cssText = 'position:absolute;left:0;top:0;width:var(--cf-w);height:1px;visibility:hidden;pointer-events:none';
     stageEl.appendChild(probe);
     fl.probe = probe;
-    for (var s = 0; s < POOL; s++) {
-      var a = makeCover();
-      a.hidden = true;
-      stageEl.appendChild(a);
-      fl.slots.push(a);
-    }
+    for (var s = 0; s < POOL; s++) { var a = makeCover(); a.hidden = true; stageEl.appendChild(a); fl.slots.push(a); }
   }
-
-  function flowMeasure() {
-    var w = fl.probe ? fl.probe.offsetWidth : 0;
-    if (w > 0) fl.W = w;
-  }
+  function flowMeasure() { var w = fl.probe ? fl.probe.offsetWidth : 0; if (w > 0) fl.W = w; }
 
   function bindCover(a, i) {
     var d = fl.list[i].d, old = a.querySelector('.ph');
     a._i = i;
     a.href = safeUrl(d.link);
     a.setAttribute('aria-label', 'Watch ' + d.title + ' in Apple TV');
+    var r = rim(String(d.id));
+    if (a._rim !== r) { if (a._rim) a.classList.remove(a._rim); a.classList.add(r); a._rim = r; }
     if (old) old.parentNode.removeChild(old);
     if (d.poster) {
       a._img.hidden = false;
       a._img.alt = d.title + ' poster';
       if (a._img.getAttribute('src') !== d.poster) a._img.src = d.poster;
     } else {
-      a._img.hidden = true;
-      a._img.removeAttribute('src');
+      a._img.hidden = true; a._img.removeAttribute('src');
       a.insertAdjacentHTML('afterbegin', tileHTML(d));
     }
     a.hidden = false;
   }
 
-  /* where every cover sits for a given (fractional) position */
   function flowPaint() {
     var n = fl.list.length;
     if (!n || flowEl.hidden || !fl.slots.length) return;
     var W = fl.W, pos = fl.pos, c = Math.round(pos), reduced = fl.reduced;
     var lo = Math.max(0, c - WIN), hi = Math.min(n - 1, c + WIN), s, i, el;
-
     for (s = 0; s < fl.slots.length; s++) {
       el = fl.slots[s];
       if (el._i >= 0 && (el._i < lo || el._i > hi)) { el._i = -1; el.hidden = true; }
@@ -1121,7 +686,7 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
       }
       el.style.transform = tr;
       el.style.zIndex = String(1000 - Math.round(a * 20));
-      el.style.opacity = a > 7 ? String(Math.max(0, 1 - (a - 7) / 3.2).toFixed(2)) : '1';
+      el.style.opacity = a > 5.5 ? String(Math.max(0, 1 - (a - 5.5) / 2.5).toFixed(2)) : '1';
       el._shade.style.opacity = shade.toFixed(2);
       el._disc.style.opacity = a < 0.5 ? (1 - a * 2).toFixed(2) : '0';
       var isC = i === c;
@@ -1134,56 +699,36 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
     fl.paintQ = window.requestAnimationFrame(function () { fl.paintQ = 0; flowPaint(); });
   }
 
-  /* title, meta, links, heart and scrubber follow the centered cover */
   function flowInfo(i) {
     var it = fl.list[i];
     if (!it) return;
     var d = it.d, id = String(d.id), n = fl.list.length;
-    var bits = [d.year, d.rating].filter(function (x) { return x; });
-    if (it.show) bits.unshift('Show');
-    if (testMode && !d.direct) bits.push('Search link');
     fl.id = id;
     flowTitleEl.firstChild.textContent = d.title;
-    flowMetaEl.textContent = bits.join(' · ');
     flowPlayEl.href = safeUrl(d.link);
     flowPlayEl.setAttribute('aria-label', 'Play ' + d.title + ' in Apple TV');
-    flowFavEl.setAttribute('aria-pressed', favs.has(id) ? 'true' : 'false');
-    flowFavEl.setAttribute('aria-label', 'Add ' + d.title + ' to favorites');
-    syncFlowMarks();
+    syncFlowMark();
     flowCountEl.textContent = (i + 1) + ' of ' + n;
     if (scrubEl.value !== String(i)) scrubEl.value = String(i);
     window.clearTimeout(fl.liveT);
-    fl.liveT = window.setTimeout(function () {
-      flowLiveEl.textContent = d.title + ', ' + (i + 1) + ' of ' + n;
-    }, 350);
+    fl.liveT = window.setTimeout(function () { flowLiveEl.textContent = d.title + ', ' + (i + 1) + ' of ' + n; }, 350);
   }
 
   function flowSetList(list) {
-    var prev = fl.id, idx = 0, found = false;
+    var prev = fl.id, idx = 0;
     fl.list = list;
     ensureSlots();
-    for (var i = 0; i < list.length; i++) {
-      if (prev != null && String(list[i].d.id) === prev) { idx = i; found = true; break; }
-    }
-    if (!found && fl.keep != null) idx = clamp(fl.keep, 0, list.length - 1);
-    fl.keep = null;
+    for (var i = 0; i < list.length; i++) { if (prev != null && String(list[i].d.id) === prev) { idx = i; break; } }
     fl.slots.forEach(function (el) { el._i = -1; el.hidden = true; });
     cancelAnim();
     fl.center = -1;
     fl.pos = fl.target = idx;
-    scrubEl.min = '0';
-    scrubEl.max = String(list.length - 1);
-    scrubEl.value = String(idx);
+    scrubEl.min = '0'; scrubEl.max = String(list.length - 1); scrubEl.value = String(idx);
     flowMeasure();
     flowPaint();
   }
-  function flowStop() { cancelAnim(); }
 
-  /* ---------- motion ---------- */
-  function cancelAnim() {
-    fl.anim = null;
-    if (fl.raf) { window.cancelAnimationFrame(fl.raf); fl.raf = 0; }
-  }
+  function cancelAnim() { fl.anim = null; if (fl.raf) { window.cancelAnimationFrame(fl.raf); fl.raf = 0; } }
   function flowGoto(target, ms) {
     var n = fl.list.length;
     if (!n) return;
@@ -1201,8 +746,7 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
     var p = clamp((now - an.t0) / an.dur, 0, 1), e = 1 - Math.pow(1 - p, 3);
     fl.pos = an.from + (an.to - an.from) * e;
     flowPaint();
-    if (p < 1) { fl.raf = window.requestAnimationFrame(tick); }
-    else { fl.anim = null; fl.pos = an.to; flowPaint(); }
+    if (p < 1) fl.raf = window.requestAnimationFrame(tick); else { fl.anim = null; fl.pos = an.to; flowPaint(); }
   }
 
   /* ---------- Cover Flow input ---------- */
@@ -1217,9 +761,7 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
     if (!dr || e.pointerId !== dr.id) return;
     if (!dr.moved) {
       if (Math.abs(e.clientX - dr.x0) < 6) return;
-      dr.moved = true;
-      dr.x0 = e.clientX;
-      dr.pos0 = fl.pos;
+      dr.moved = true; dr.x0 = e.clientX; dr.pos0 = fl.pos;
       try { stageEl.setPointerCapture(e.pointerId); } catch (_) { /* not capturable */ }
     }
     fl.pos = clampPos(dr.pos0 - (e.clientX - dr.x0) / (DRAG_PX * fl.W));
@@ -1232,10 +774,7 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
     if (!dr || e.pointerId !== dr.id) return;
     fl.drag = null;
     try { stageEl.releasePointerCapture(e.pointerId); } catch (_) { /* nothing captured */ }
-    if (!dr.moved) {
-      if (Math.abs(fl.pos - Math.round(fl.pos)) > 0.001) flowGoto(Math.round(fl.pos), 160);
-      return;
-    }
+    if (!dr.moved) { if (Math.abs(fl.pos - Math.round(fl.pos)) > 0.001) flowGoto(Math.round(fl.pos), 160); return; }
     fl.dragged = true;
     var carry = 0, s = dr.samples;
     if (s.length > 1) {
@@ -1252,25 +791,7 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
     var a = e.target.closest ? e.target.closest('a.cf') : null;
     if (!a) return;
     if (fl.dragged) { e.preventDefault(); return; }
-    if (a._i !== fl.center) { e.preventDefault(); flowGoto(a._i, 320); return; }
-    if (fl.list[a._i]) addRecent(fl.list[a._i].d.id);
-  });
-  flowPlayEl.addEventListener('click', function () { if (fl.id) addRecent(fl.id); });
-
-  function syncFlowMarks() {
-    var btns = flowMarksEl.querySelectorAll('.mark');
-    for (var i = 0; i < btns.length; i++) {
-      var on = marks[fl.id] === btns[i].getAttribute('data-mark');
-      btns[i].setAttribute('aria-pressed', on ? 'true' : 'false');
-      btns[i].innerHTML = on ? '&#x274C; Broken' : '&#x1F517; Mark broken';
-    }
-  }
-  flowMarksEl.addEventListener('click', function (e) {
-    var btn = e.target.closest ? e.target.closest('.mark') : null;
-    if (!btn || !fl.id) return;
-    setMark(fl.id, btn.getAttribute('data-mark'));
-    if (chip === 'check') { fl.keep = fl.center; render(); return; }
-    syncFlowMarks();
+    if (a._i !== fl.center) { e.preventDefault(); flowGoto(a._i, 320); }
   });
   stageEl.addEventListener('dragstart', function (e) { e.preventDefault(); });
 
@@ -1280,8 +801,7 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
     if (!dx) return;
     e.preventDefault();
     var now = e.timeStamp;
-    if (now - fl.lastStep < 70) return;
-    if (Math.abs(dx) < 4) return;
+    if (now - fl.lastStep < 70 || Math.abs(dx) < 4) return;
     fl.lastStep = now;
     flowGoto(Math.round(fl.target) + (dx > 0 ? 1 : -1), 280);
   }, { passive: false });
@@ -1290,7 +810,7 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
     if (view !== 'flow' || flowEl.hidden || !fl.list.length) return;
     fl.dragged = false;
     var t = e.target, tag = t && t.tagName;
-    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;   // search box and scrubber keep their own keys
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     if (e.key === 'ArrowRight') { e.preventDefault(); flowGoto(Math.round(fl.target) + 1, 280); }
     else if (e.key === 'ArrowLeft') { e.preventDefault(); flowGoto(Math.round(fl.target) - 1, 280); }
@@ -1299,96 +819,55 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
       if (el && el._i === fl.center) { e.preventDefault(); el.click(); }
     }
   });
+  scrubEl.addEventListener('input', function () { cancelAnim(); fl.pos = fl.target = clampPos(Number(scrubEl.value) || 0); flowPaint(); });
 
-  scrubEl.addEventListener('input', function () {
-    cancelAnim();
-    fl.pos = fl.target = clampPos(Number(scrubEl.value) || 0);
-    flowPaint();
-  });
+  function syncFlowMark() {
+    if (!flowMarkEl) return;
+    var on = !!marks[fl.id];
+    flowMarkEl.setAttribute('aria-pressed', on ? 'true' : 'false');
+    flowMarkEl.innerHTML = on ? '&#x274C; Broken' : '&#x1F517; Mark broken';
+  }
+  if (flowMarkEl) flowMarkEl.addEventListener('click', function () { if (fl.id) { setMark(fl.id); syncFlowMark(); } });
 
-  flowFavEl.addEventListener('click', function () {
-    var it = fl.list[fl.center];
-    if (!it) return;
-    var id = String(it.d.id), on = toggleFav(id);
-    if (chip === 'favs' && !on) { fl.keep = fl.center; render(); return; }
-    flowFavEl.setAttribute('aria-pressed', on ? 'true' : 'false');
-    flowFavEl.classList.remove('pop');
-    void flowFavEl.offsetWidth;
-    flowFavEl.classList.add('pop');
-  });
-  flowFavEl.addEventListener('animationend', function () { flowFavEl.classList.remove('pop'); });
-
-  /* ---------- toolbar and grid events ---------- */
-  chipsEl.addEventListener('click', function (e) {
-    var btn = e.target.closest ? e.target.closest('.chip') : null;
-    if (!btn) return;
-    chip = btn.getAttribute('data-chip');
-    lsSet('rstd:chip', chip);
-    syncChips();
-    syncTestBar();
-    revealChip(btn);
-    render();
-    resultsToTop();
-    updateStuck();
-  });
-
+  /* ---------- the three big buttons ---------- */
   segEl.addEventListener('click', function (e) {
-    var btn = e.target.closest ? e.target.closest('.seg-btn') : null;
+    var btn = e.target.closest ? e.target.closest('button') : null;
     if (!btn) return;
-    var v = btn.getAttribute('data-view') === 'flow' ? 'flow' : 'grid';
-    if (v === view) return;
-    view = v;
-    lsSet('rstd:view', view);
-    syncView();
-    render();
-    resultsToTop();
-    flowReveal();
-    updateStuck();
-  });
-
-  searchEl.addEventListener('input', function () {
-    syncSearchBox();
-    render();
-    resultsToTop();
-    updateStuck();
-  });
-  searchEl.addEventListener('keydown', function (e) {
-    if (e.key === 'Enter') searchEl.blur();
-  });
-  clearEl.addEventListener('click', function () {
-    searchEl.value = '';
-    syncSearchBox();
-    render();
-    resultsToTop();
-    updateStuck();
-    searchEl.focus();
-  });
-
-  resultsEl.addEventListener('click', function (e) {
-    if (!e.target.closest) return;
-    var tap = e.target.closest('.tap'), mark = e.target.closest('[data-mark]');
-    if (tap || mark) {
-      var c = (tap || mark).closest('.card');
-      if (!c) return;
-      if (tap) addRecent(c.getAttribute('data-id'));
-      else { setMark(c.getAttribute('data-id'), mark.getAttribute('data-mark')); render(); }
+    if (btn.getAttribute('data-act') === 'surprise') {   // jump to Cover Flow on a random title
+      view = 'flow'; lsSet('rstd:view', view); syncView(); render(); toTop();
+      flowGoto(Math.floor(Math.random() * fl.list.length), 700);
+      flowReveal();
       return;
     }
-    var btn = e.target.closest('.fav');
+    var v = btn.getAttribute('data-view') === 'flow' ? 'flow' : 'grid';
+    if (v === view) return;
+    view = v; lsSet('rstd:view', view); syncView(); render(); toTop(); flowReveal();
+  });
+
+  // the 🔗 under a poster marks it broken
+  resultsEl.addEventListener('click', function (e) {
+    if (!BROKEN_LINK_BUTTON || !e.target.closest) return;
+    var btn = e.target.closest('.brk');
     if (!btn) return;
-    var card = btn.closest('.card');
-    var id = card ? card.getAttribute('data-id') : null;
-    if (!id) return;
-    var on = toggleFav(id);
-    if (chip === 'favs') { render(); return; }
-    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
-    btn.classList.remove('pop');
-    void btn.offsetWidth;
-    btn.classList.add('pop');
+    var card = btn.closest('.card'), id = card ? card.getAttribute('data-id') : null;
+    if (!id || !byId[id]) return;
+    setMark(id);
+    btn.setAttribute('aria-pressed', marks[id] ? 'true' : 'false');
+    var poster = card.querySelector('.poster'), old = poster && poster.querySelector('.link-flag');
+    if (old) old.parentNode.removeChild(old);
+    if (poster) poster.insertAdjacentHTML('beforeend', flagHTML(id));
   });
-  resultsEl.addEventListener('animationend', function (e) {
-    if (e.target && e.target.classList) e.target.classList.remove('pop');
-  });
+  if (noteEl) {
+    noteCopyEl.addEventListener('click', function () {
+      var text = brokenReport();
+      var done = function () { noteCopyEl.textContent = 'Copied!'; window.setTimeout(function () { noteCopyEl.textContent = 'Copy list'; }, 1800); };
+      var fallback = function () { window.prompt('Copy the list of broken links:', text); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback); else fallback();
+    });
+    noteClearEl.addEventListener('click', function () {
+      marks = {}; lsSet('rstd:marks', '{}'); syncNote(); render();
+    });
+  }
 
   // a poster that fails to load turns into the colorful title tile
   resultsEl.addEventListener('error', function (e) {
@@ -1407,81 +886,65 @@ main.wrap { padding-top: 6px; padding-bottom: 16px; min-height: 50vh; }
     if (!a.querySelector('.ph')) a.insertAdjacentHTML('afterbegin', tileHTML(fl.list[a._i].d));
   }, true);
 
-  var ticking = false;
-  window.addEventListener('scroll', function () {
-    if (ticking) return;
-    ticking = true;
-    window.requestAnimationFrame(function () { ticking = false; updateStuck(); });
-  }, { passive: true });
-  function onResize() {
-    measure();
-    updateStuck();
-    if (!flowEl.hidden) { flowMeasure(); flowPaint(); }
-  }
+  function onResize() { if (!flowEl.hidden) { flowMeasure(); flowPaint(); } }
   window.addEventListener('resize', onResize);
   window.addEventListener('orientationchange', onResize);
-  // lets :active press feedback fire on older iOS Safari
-  document.addEventListener('touchstart', function () {}, { passive: true });
+  document.addEventListener('touchstart', function () {}, { passive: true });   // lets :active press feedback fire on older iOS Safari
 
-  // coming back from the Apple TV app: Recent picks up what was just opened
-  document.addEventListener('visibilitychange', function () {
-    if (!document.hidden && chip === 'recent') render();
-  });
-  window.addEventListener('online', syncOnline);
-  window.addEventListener('offline', syncOnline);
+  /* ---------- OFFLINE: a full-screen cover ----------
+     navigator.onLine only knows about the Wi-Fi link, not the internet, so when it says "online" we also ask ping.txt (a tiny file the
+     service worker never saves). If that request can't get any answer, we're offline. */
+  // the Open Downloads button only shows on iPhone / iPad, where videos:// opens the Apple TV app (iPadOS reports itself as a Mac)
+  var appleTouch = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  dlBtnEl.hidden = !appleTouch;
 
-  /* ---------- link check bar ---------- */
-  function syncTestBar() {
-    checkChipEl.hidden = !(testMode || chip === 'check' || Object.keys(marks).length);
-    testBarEl.hidden = !(testMode || chip === 'check');
-    var bad = 0, search = 0;
-    items.forEach(function (it) {
-      if (marks[String(it.d.id)] === 'bad') bad++; else if (!it.d.direct) search++;
+  var offline = false, checking = null;
+  var coverEls = [headerEl, flowEl, resultsEl, toTopEl, document.querySelector('.stripe-wrap'), document.querySelector('.foot')];
+  function setOffline(on) {
+    if (on === offline) return;
+    offline = on;
+    offlineEl.hidden = !on;
+    document.body.classList.toggle('is-offline', on);
+    coverEls.forEach(function (el) { if (!el) return; if (on) el.setAttribute('inert', ''); else el.removeAttribute('inert'); });
+    if (on) { offNoteEl.textContent = ''; window.scrollTo(0, 0); } else { window.requestAnimationFrame(onScroll); }
+  }
+  function ping() {
+    return new Promise(function (resolve) {
+      var done = false;
+      var timer = window.setTimeout(function () { if (!done) { done = true; resolve(false); } }, 5000);
+      var finish = function (ok) { if (!done) { done = true; window.clearTimeout(timer); resolve(ok); } };
+      try { window.fetch('ping.txt?t=' + Date.now(), { cache: 'no-store' }).then(function () { finish(true); }, function () { finish(false); }); }
+      catch (e) { finish(true); }   // no fetch at all: trust the browser
     });
-    testSumEl.textContent = 'Link check: tap the \u{1F517} next to the heart on any title that opens the wrong page. ' +
-      bad + ' marked broken · ' + search + ' more open a search.';
   }
-  function testReport() {
-    var bad = [], search = [];
-    items.forEach(function (it) {
-      var line = it.d.title + (it.show ? ' (show)' : '') + ' [' + it.d.id + ']';
-      if (marks[String(it.d.id)] === 'bad') bad.push(line); else if (!it.d.direct) search.push(line);
+  function check() {
+    if (checking) return checking;
+    if (navigator.onLine === false) { setOffline(true); return Promise.resolve(false); }
+    checking = ping().then(function (ok) { setOffline(!ok); checking = null; return ok; });
+    return checking;
+  }
+  retryEl.addEventListener('click', function () {
+    retryEl.classList.add('spin'); retryLabelEl.textContent = 'Checking…'; offNoteEl.textContent = '';
+    var started = Date.now();
+    check().then(function (ok) {
+      window.setTimeout(function () {   // keep the spinner visible long enough to be seen
+        retryEl.classList.remove('spin'); retryLabelEl.textContent = 'Try again';
+        if (!ok) offNoteEl.textContent = 'Still no Wi‑Fi. Check the Wi‑Fi and try again.';
+      }, Math.max(0, 700 - (Date.now() - started)));
     });
-    return 'TV Library link check\n\n' +
-      'Marked broken (' + bad.length + '):\n' + (bad.join('\n') || '-') + '\n\n' +
-      'Open a search instead of the title (' + search.length + '):\n' + (search.join('\n') || '-') + '\n';
-  }
-  testCopyEl.addEventListener('click', function () {
-    var text = testReport();
-    var done = function () { testCopyEl.textContent = 'Copied!'; window.setTimeout(function () { testCopyEl.textContent = 'Copy results'; }, 1800); };
-    var fallback = function () { window.prompt('Copy the link check results:', text); };
-    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback);
-    else fallback();
   });
-  function setTestMode(on) {
-    lsSet('rstd:test', on ? '1' : '0');
-    window.location.href = window.location.pathname;
-  }
-  testExitEl.addEventListener('click', function () { lsSet('rstd:chip', 'all'); setTestMode(false); });
-  var testToggleEl = $('testToggle');
-  if (testMode) testToggleEl.innerHTML = '&#x1F527; Turn off link check';
-  testToggleEl.addEventListener('click', function () {
-    setTestMode(!testMode);
-  });
+  window.addEventListener('online', check);
+  window.addEventListener('offline', function () { setOffline(true); });
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') check(); });
+  window.setInterval(function () { if (document.visibilityState === 'visible') check(); }, offline ? 5000 : 30000);
+  window.setInterval(function () { if (offline && document.visibilityState === 'visible') check(); }, 5000);
 
   /* ---------- start ---------- */
-  syncOnline();
-  syncTestBar();
-  syncSearchBox();
-  syncChips();
+  syncNote();
   syncView();
-  syncFavCount();
   render();
-  measure();
-  updateStuck();
-  var startBtn = chipsEl.querySelector('.chip[data-chip="' + chip + '"]');
-  if (startBtn) revealChip(startBtn);
   flowReveal();
+  check();
 
   // offline support: sw.js keeps the app and every poster on the device
   if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost')) {

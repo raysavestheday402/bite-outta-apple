@@ -1,7 +1,7 @@
 # Bite Outta Apple: project brief
 
 ## What it is
-**Apple TV Library** is a kid-friendly web portal for our family's purchased Apple TV / iTunes **kids** movies and shows. It's saved to the kids' iPad home screen as **TV Library**, using the raysavestheday icon. Tapping a poster opens that title in the Apple TV app.
+**Movie Library** is a kid-friendly web portal for our family's purchased Apple TV / iTunes **kids** movies and shows. It's saved to the kids' iPad home screen as **TV Library**, using the raysavestheday icon. Tapping a poster opens that title in the Apple TV app.
 
 ## Where things live
 - **Live site:** https://raysavesthedaylibrary.netlify.app (Netlify, deployed from GitHub)
@@ -13,7 +13,7 @@
 - The empty public repo `bite-out-of-appl` on GitHub is unused and can be deleted.
 
 ## Library
-- **152 titles:** 134 movies and 18 shows.
+- **227 titles:** 164 movies and 63 shows.
 - **Kids titles only:** animated, plus kids live-action such as the Rocky & Bullwinkle and Sonic movies.
 - **Covers:** every one was checked against its title. They come from TMDB at 600px, with two added by hand (The Land of Sometimes, A Scooby-Doo! Valentine Bouquet).
 - **Apple TV links:** 130 open the title directly. The other 22 open an Apple TV search.
@@ -21,8 +21,9 @@
 
 ## Features
 - **Two views:** a poster **Grid**, or iPod-style **Cover Flow** with a toggle, swiping, a scrubber, and a Play in Apple TV button.
-- **Picture filters for a non-reader:** ⭐ All · 🎬 Movies · 📺 Shows · 🏰 Disney & Pixar · 🎄 Holidays · ❤️ Favorites. Favorites are saved per device.
-- **Look:** bright icon-blue background with light rays, the icon in the header, a gold "Apple TV Library" wordmark, and no child's name anywhere.
+- **Look:** deep-space night with neon glow, matching the superhero "MOVIES" icon; neon-rimmed posters, big text and buttons for a five-year-old. 🎲 picks a surprise movie. No search, filters or favorites; she just taps a cover.
+- **Offline:** a full-screen "No Wi‑Fi" cover with Open Downloads and Try again buttons.
+- **Link check:** a small 🔗 on each title lets Ray flag broken links on the device (one switch in the script removes it).
 - **Kid-proof:** no long-press popups, no text selection, no double-tap zoom.
 
 ## How to update the library

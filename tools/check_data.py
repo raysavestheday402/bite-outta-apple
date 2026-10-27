@@ -5,8 +5,7 @@ from libtools import items
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SITE = os.path.join(HERE, "..")
-RATINGS = {"G", "PG", "TV-Y", "TV-Y7", "TV-G", "TV-PG", "NR", ""}  # NR = unrated kids titles
-ALLOWED_PG13 = {"My Life as a Zucchini"}  # kept on purpose
+# ratings are not checked or shown (Ray, Oct 2026): the library is whatever he owns
 BANNED_WORDS = ("lilly",)  # never show the kid's name on the site
 
 src = open(os.path.join(SITE, "data.js"), encoding="utf-8").read()
@@ -23,13 +22,19 @@ for x in lib:
         problems.append(f"{who}: no poster")
     elif not os.path.exists(os.path.join(SITE, x["poster"])):
         problems.append(f"{who}: missing file {x['poster']}")
-    if x["rating"] not in RATINGS and x["title"] not in ALLOWED_PG13:
-        problems.append(f"{who}: rating {x['rating']} isn't kids-only")
+    if not x.get("thumb"):
+        problems.append(f"{who}: no thumbnail (run tools/build_data.py)")
+    elif not os.path.exists(os.path.join(SITE, x["thumb"])):
+        problems.append(f"{who}: missing file {x['thumb']}")
     if not re.match(r"^https://tv\.apple\.com/", x["link"]):
         problems.append(f"{who}: link isn't an Apple TV link")
 used = {os.path.basename(x["poster"]) for x in lib if x.get("poster")}
 for f in sorted(set(os.listdir(os.path.join(SITE, "posters"))) - used):
     problems.append(f"posters/{f} isn't used by any title")
+used_thumbs = {os.path.basename(x["thumb"]) for x in lib if x.get("thumb")}
+thumbs_dir = os.path.join(SITE, "thumbs")
+for f in sorted(set(os.listdir(thumbs_dir) if os.path.isdir(thumbs_dir) else []) - used_thumbs):
+    problems.append(f"thumbs/{f} isn't used by any title")
 # every text file Netlify serves from the repo root, not just the app
 served = ["icons/manifest.webmanifest"] + [f for f in os.listdir(SITE) if f.lower().endswith((".html", ".js", ".md", ".json", ".txt"))]
 for name in served:
