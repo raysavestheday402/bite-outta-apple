@@ -8,12 +8,12 @@
  {"n": 7, "kind": "tv", "label": "Courage the Cowardly Dog", "term": "Courage the Cowardly Dog", "year": 1999, "mode": "", "wiki": [], "alts": []},
  {"n": 8, "kind": "tv", "label": "Cow & Chicken", "term": "Cow & Chicken", "year": 1997, "mode": "", "wiki": [], "alts": []},
  {"n": 9, "kind": "tv", "label": "Dora the Explorer", "term": "Dora the Explorer", "year": 2000, "mode": "", "wiki": [], "alts": []},
- {"n": 10, "kind": "movie", "label": "Halloweentown: 4-Movie Collection", "term": "Halloweentown", "year": 1998, "mode": "multi", "wiki": ["Halloweentown (film)", "Halloweentown II: Kalabar's Revenge", "Halloweentown High", "Return to Halloweentown"], "alts": [], "choices": [{"kind": "movie", "title": "Halloweentown", "term": "Halloweentown", "year": 1998}, {"kind": "movie", "title": "Halloweentown II: Kalabar's Revenge", "term": "Halloweentown II: Kalabar's Revenge", "year": 2001}, {"kind": "movie", "title": "Halloweentown High", "term": "Halloweentown High", "year": 2004}, {"kind": "movie", "title": "Return to Halloweentown", "term": "Return to Halloweentown", "year": 2006}]},
+ {"n": 10, "kind": "movie", "label": "Halloweentown: 4-Movie Collection", "term": "Halloweentown", "year": 1998, "mode": "multi", "wiki": ["Halloweentown (film)", "Halloweentown II: Kalabar's Revenge", "Halloweentown High", "Return to Halloweentown"], "alts": [], "choices": [{"kind": "movie", "title": "Halloweentown 1", "term": "Halloweentown", "year": 1998, "apple": "Halloweentown"}, {"kind": "movie", "title": "Halloweentown 2", "term": "Halloweentown II: Kalabar's Revenge", "year": 2001, "apple": "Halloweentown II: Kalabar's Revenge"}, {"kind": "movie", "title": "Halloweentown 3", "term": "Halloweentown High", "year": 2004, "apple": "Halloweentown High"}, {"kind": "movie", "title": "Halloweentown 4", "term": "Return to Halloweentown", "year": 2006, "apple": "Return to Halloweentown"}]},
  {"n": 11, "kind": "tv", "label": "Looney Tunes Cartoons", "term": "Looney Tunes Cartoons", "year": 2020, "mode": "", "wiki": [], "alts": []},
  {"n": 12, "kind": "tv", "label": "Rocko's Modern Life", "term": "Rocko's Modern Life", "year": 1993, "mode": "", "wiki": [], "alts": []},
  {"n": 13, "kind": "tv", "label": "Rugrats", "term": "Rugrats", "year": 1991, "mode": "", "wiki": [], "alts": []},
  {"n": 14, "kind": "tv", "label": "Sabrina, The Teenage Witch", "term": "Sabrina the Teenage Witch", "year": 1996, "mode": "", "wiki": [], "alts": []},
- {"n": 15, "kind": "tv", "label": "Steven Spielberg Presents... (1)", "term": "Steven Spielberg Presents", "year": "", "mode": "multi", "choices": [{"kind": "tv", "term": "Animaniacs", "year": 1993, "title": "Animaniacs"}, {"kind": "tv", "term": "Freakazoid!", "year": 1995, "title": "Freakazoid!", "skip": true}, {"kind": "tv", "term": "Pinky and the Brain", "year": 1995, "title": "Pinky and the Brain"}], "wiki": []},
+ {"n": 15, "kind": "tv", "label": "Steven Spielberg Presents... (1)", "term": "Steven Spielberg Presents", "year": "", "mode": "multi", "choices": [{"kind": "tv", "term": "Animaniacs", "year": 1993, "title": "Animaniacs", "skip": true}, {"kind": "tv", "term": "Freakazoid!", "year": 1995, "title": "Freakazoid!", "skip": true}, {"kind": "tv", "term": "Pinky and the Brain", "year": 1995, "title": "Pinky and the Brain"}], "wiki": []},
  {"n": 16, "kind": "tv", "label": "Steven Spielberg Presents... (2)", "term": "Steven Spielberg Presents", "year": "", "mode": "skip"},
  {"n": 17, "kind": "tv", "label": "Tom and Jerry", "term": "Tom and Jerry", "year": "", "mode": "", "wiki": [], "alts": []},
  {"n": 18, "kind": "movie", "label": "The Adventures of Rocky and Bullwinkle", "term": "The Adventures of Rocky and Bullwinkle", "year": 2000, "mode": "", "wiki": ["The Adventures of Rocky and Bullwinkle (film)"], "alts": []},
@@ -222,5 +222,10 @@
  {"n": 221, "kind": "tv", "label": "Wonder Pets: In the City", "term": "Wonder Pets: In the City", "year": "", "mode": "", "wiki": [], "alts": [], "tags": ["plus"]},
  {"n": 222, "kind": "tv", "label": "WondLa", "term": "WondLa", "year": "", "mode": "", "wiki": [], "alts": [], "tags": ["plus"]},
  {"n": 223, "kind": "tv", "label": "Yo Gabba Gabba!", "term": "Yo Gabba Gabba!", "year": 2007, "mode": "", "wiki": [], "alts": [], "tags": ["plus"]},
- {"n": 224, "kind": "tv", "label": "Yo Gabba GabbaLand!", "term": "Yo Gabba GabbaLand!", "year": "", "mode": "", "wiki": [], "alts": [], "tags": ["plus"]}
+ {"n": 224, "kind": "tv", "label": "Yo Gabba GabbaLand!", "term": "Yo Gabba GabbaLand!", "year": "", "mode": "", "wiki": [], "alts": [], "tags": ["plus"]},
+ {"n": 225, "kind": "movie", "label": "The Goonies", "term": "The Goonies", "year": 1985, "mode": "", "wiki": ["The Goonies"], "alts": []},
+ {"n": 226, "kind": "movie", "label": "The Simpsons Movie", "term": "The Simpsons Movie", "year": 2007, "mode": "", "wiki": ["The Simpsons Movie"], "alts": []},
+ {"n": 227, "kind": "tv", "label": "Family Guy", "term": "Family Guy", "year": 1999, "mode": "", "wiki": [], "alts": []},
+ {"n": 228, "kind": "tv", "label": "Tiny Toon Adventures", "term": "Tiny Toon Adventures", "year": 1990, "mode": "", "wiki": ["Tiny Toon Adventures"], "alts": []},
+ {"n": 229, "kind": "tv", "label": "Squidbillies", "term": "Squidbillies", "year": 2005, "mode": "", "wiki": ["Squidbillies"], "alts": []}
 ]

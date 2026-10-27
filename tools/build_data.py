@@ -7,6 +7,8 @@ For each title, best first:
   link:   a "link" in cover_rows.json, then tools/apple_links.json, then the Covers folder's apple-links.json, then the direct link already in data.js
   year/rating: the Covers folder's details.json, then what data.js already has
 So the Covers folder only needs the new titles; nothing on the site is lost if it's empty.
+Every poster also gets a smaller copy in thumbs/ (420px wide). The poster grid shows those, so a long scroll never holds hundreds of
+full-size images in memory; Cover Flow uses the full posters/.
 A title with no cover anywhere is left off the site until it has one."""
 import json, os, re, sys, shutil, tempfile
 from PIL import Image, PngImagePlugin
@@ -15,6 +17,7 @@ PngImagePlugin.MAX_TEXT_CHUNK = 100 * 1024 * 1024
 
 COVERS = covers_dir(sys.argv[1] if len(sys.argv) > 1 else None)
 POST = os.path.join(SITE, "posters")
+THUMBS = os.path.join(SITE, "thumbs")
 if not os.path.isdir(COVERS):  # check before wiping posters/
     sys.exit(f"Covers folder not found: {COVERS}")
 rows = load_rows()
@@ -26,6 +29,7 @@ KEEP = tempfile.mkdtemp()  # the current posters, so titles without a file in Co
 if os.path.isdir(POST):
     shutil.copytree(POST, KEEP, dirs_exist_ok=True)
 shutil.rmtree(POST, ignore_errors=True); os.makedirs(POST)
+shutil.rmtree(THUMBS, ignore_errors=True); os.makedirs(THUMBS)
 
 
 YEARS = {r["n"]: r["year"] for r in rows if r["year"]}
@@ -41,6 +45,8 @@ DISPLAY = {
  "E.T. The Extra-Terrestrial": "E.T. the Extra-Terrestrial",
  "A Scooby-Doo Valentine": "A Scooby-Doo! Valentine Bouquet",
 }
+# titles that belong side by side get a shared sort key (the page otherwise sorts A to Z by title)
+SORT = {"005": "animaniacs 1", "015c": "animaniacs 2 pinky and the brain", "228": "animaniacs 3 tiny toon adventures"}
 NO_YEAR = {"The Land of Sometimes", "A Scooby-Doo Valentine"}
 DISNEY = set("""Aladdin (1992)|Atlantis: The Lost Empire|Beauty and the Beast|Big Hero 6|A Bug's Life|Cars|Cars 2|Cars 3|Cinderella (1950)|Elio|The Emperor's New Groove|Encanto|An Extremely Goofy Movie|Finding Dory|Finding Nemo|Freaky Friday (2003)|Frozen|George of the Jungle|Herbie: Fully Loaded|Hercules|Hocus Pocus|Holes|Home on the Range|Hoppers|Inspector Gadget|Kronk's New Groove|Lady and the Tramp|Lilo & Stitch|Lilo & Stitch 2: Stitch Has a Glitch|The Lion King|The Little Mermaid (animated)|The Little Mermaid (live action)|Mary Poppins|Mary Poppins Returns|Pinocchio|Pocahontas|The Princess Diaries|The Santa Clause|The Santa Clause 2|The Santa Clause 3: The Escape Clause|Tarzan (1999)|Toy Story|Toy Story 2|Toy Story 3|Toy Story 4|Toy Story 5|Zootopia 2|Halloweentown: 4-Movie Collection""".split("|"))
 HOLIDAY = set("""Dr. Seuss' How the Grinch Stole Christmas (2000)|How the Grinch Stole Christmas (animated)|Illumination Presents: Dr. Seuss' The Grinch|Elf (2003)|Rudolph the Red-Nosed Reindeer|The Santa Clause|The Santa Clause 2|The Santa Clause 3: The Escape Clause|Hocus Pocus|Halloweentown: 4-Movie Collection|Casper|Scooby-Doo and the Witch's Ghost|Scooby-Doo! Frankencreepy|A Scooby-Doo Valentine""".split("|"))
@@ -54,6 +60,11 @@ def save_poster(src, out):
         im = im.resize((600, round(im.height * 600 / im.width)), Image.LANCZOS)
     im.save(out, "JPEG", quality=84, optimize=True, progressive=True)
     return im.size
+
+def save_thumb(src, out):
+    im = Image.open(src).convert("RGB")
+    im = im.resize((420, round(im.height * 420 / im.width)), Image.LANCZOS)
+    im.save(out, "JPEG", quality=80, optimize=True, progressive=True)
 
 files = cover_files(COVERS)
 
@@ -84,6 +95,7 @@ for it in items(rows):
         waiting.append(f"{key} {title}")
         continue
     poster = f"posters/{key}.jpg"
+    save_thumb(os.path.join(POST, f"{key}.jpg"), os.path.join(THUMBS, f"{key}.jpg"))
     lk = links.get(key)
     if it["link"]:  # a link pasted into cover_rows.json wins over everything
         link, lk = it["link"], {"url": it["link"]}
@@ -100,7 +112,7 @@ for it in items(rows):
     if label in HOLIDAY or "holiday" in it["tags"]: tags.append("holiday")
     tags += [t for t in it["tags"] if t not in tags]
     lib.append(dict(id=key, title=title, kind=it["kind"], year=str(year or ""), rating=rating,
-                    poster=poster, link=link, direct=bool(lk) or bool(old.get("direct") and link == old.get("link")), tags=tags))
+                    poster=poster, thumb=f"thumbs/{key}.jpg", link=link, **({"sort": SORT[key]} if key in SORT else {}), direct=bool(lk) or bool(old.get("direct") and link == old.get("link")), tags=tags))
 
 with open(os.path.join(SITE, "data.js"), "w", encoding="utf-8") as f:
     f.write("/* raysavestheday library data - generated, do not edit by hand */\n")
