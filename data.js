@@ -141,7 +141,7 @@ window.LIBRARY = [
 },
 {
 "id": "010c",
-"title": "Halloweentown 3",
+"title": "Halloweentown 3: Halloweentown High",
 "kind": "movie",
 "year": "2004",
 "rating": "G",
@@ -156,13 +156,13 @@ window.LIBRARY = [
 },
 {
 "id": "010d",
-"title": "Halloweentown 4",
+"title": "Halloweentown 4: Return to Halloweentown",
 "kind": "movie",
 "year": "2006",
 "rating": "G",
 "poster": "posters/010d.jpg",
 "thumb": "thumbs/010d.jpg",
-"link": "https://tv.apple.com/us/movie/halloweentown-4/umc.cmc.75eg3vua9sv1jsjprp7q7kb9u",
+"link": "https://tv.apple.com/us/movie/halloweentown-4-return-to-halloweentown/umc.cmc.75eg3vua9sv1jsjprp7q7kb9u",
 "direct": true,
 "tags": [
 "disney",
@@ -2325,20 +2325,6 @@ window.LIBRARY = [
 "poster": "posters/176.jpg",
 "thumb": "thumbs/176.jpg",
 "link": "https://tv.apple.com/us/movie/wolfwalkers/umc.cmc.amuoq00hqelfi98j0gvg641x",
-"direct": true,
-"tags": [
-"plus"
-]
-},
-{
-"id": "177",
-"title": "Amber Brown",
-"kind": "tv",
-"year": "2022",
-"rating": "TV-G",
-"poster": "posters/177.jpg",
-"thumb": "thumbs/177.jpg",
-"link": "https://tv.apple.com/us/show/amber-brown/umc.cmc.3rbpynkdkoc4rlyskaa8n3nmi",
 "direct": true,
 "tags": [
 "plus"

@@ -3,7 +3,7 @@ Usage: python tools/build_data.py ["path\\to\\Covers"]   (needs Pillow: pip inst
 With no path it uses the Covers folder used last time, or tools/Covers.
 
 For each title, best first:
-  cover:  the Covers folder, then the poster already in posters/ (a split collection can borrow the box-set cover)
+  cover:  tools/fixed_covers/ (hand-picked), then the Covers folder, then the poster already in posters/ (a split collection can borrow the box-set cover)
   link:   a "link" in cover_rows.json, then tools/apple_links.json, then the Covers folder's apple-links.json, then the direct link already in data.js
   year/rating: the Covers folder's details.json, then what data.js already has
 So the Covers folder only needs the new titles; nothing on the site is lost if it's empty.
@@ -18,6 +18,7 @@ PngImagePlugin.MAX_TEXT_CHUNK = 100 * 1024 * 1024
 COVERS = covers_dir(sys.argv[1] if len(sys.argv) > 1 else None)
 POST = os.path.join(SITE, "posters")
 THUMBS = os.path.join(SITE, "thumbs")
+FIXED = os.path.join(SITE, "tools", "fixed_covers")  # hand-picked covers, named by id (010a.jpg); win over Covers/
 if not os.path.isdir(COVERS):  # check before wiping posters/
     sys.exit(f"Covers folder not found: {COVERS}")
 rows = load_rows()
@@ -81,7 +82,9 @@ for it in items(rows):
     year = d.get("year") or old.get("year") or ("" if label in NO_YEAR else str((it["choice"] or {}).get("year") or YEARS.get(it["n"], "")))
     rating = d.get("rating") or old.get("rating") or box.get("rating", "")
     kept = os.path.join(KEEP, f"{key}.jpg")
-    if key in files:
+    if os.path.exists(os.path.join(FIXED, f"{key}.jpg")):  # a hand-picked cover wins over everything
+        save_poster(os.path.join(FIXED, f"{key}.jpg"), os.path.join(POST, f"{key}.jpg"))
+    elif key in files:
         save_poster(os.path.join(COVERS, files[key]), os.path.join(POST, f"{key}.jpg"))
     elif os.path.exists(kept):
         shutil.copyfile(kept, os.path.join(POST, f"{key}.jpg"))

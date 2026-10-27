@@ -1,7 +1,7 @@
 /* Offline support: keeps the app, the library and every poster on the device so TV Library opens without Wi-Fi.
    The page and data.js are fetched fresh when online (falling back to the saved copy); posters, icons and fonts
    come from the saved copy first and refresh in the background. Bump VERSION only to force-clear old caches. */
-var VERSION = 'v3';
+var VERSION = 'v4';
 var SHELL = 'shell-' + VERSION, ART = 'art-' + VERSION, FONTS = 'fonts-' + VERSION;
 var SHELL_FILES = [
   './', 'data.js', 'icons/icon-192.png', 'icons/apple-touch-icon.png',
