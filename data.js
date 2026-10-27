@@ -374,8 +374,8 @@ window.LIBRARY = [
 "rating": "NR",
 "poster": "posters/028.jpg",
 "thumb": "thumbs/028.jpg",
-"link": "https://tv.apple.com/us/search?term=Baby%20Shark's%20Big%20Movie",
-"direct": false,
+"link": "https://tv.apple.com/us/movie/baby-sharks-big-movie/umc.cmc.3yc4awn7u7zxm97bdiybptad5",
+"direct": true,
 "tags": []
 },
 {
@@ -1107,8 +1107,8 @@ window.LIBRARY = [
 "rating": "",
 "poster": "posters/084.jpg",
 "thumb": "thumbs/084.jpg",
-"link": "https://tv.apple.com/us/search?term=The%20Land%20of%20Sometimes",
-"direct": false,
+"link": "https://tv.apple.com/us/movie/the-land-of-sometimes/umc.cmc.6vakqll4m5fpd6jpazz2lxsto",
+"direct": true,
 "tags": []
 },
 {
@@ -1277,8 +1277,8 @@ window.LIBRARY = [
 "rating": "PG",
 "poster": "posters/097.jpg",
 "thumb": "thumbs/097.jpg",
-"link": "https://tv.apple.com/us/search?term=Minions%20&%20Monsters",
-"direct": false,
+"link": "https://tv.apple.com/us/movie/minions--monsters/umc.cmc.32e1ob3wfgxzlephbejpyvycu",
+"direct": true,
 "tags": []
 },
 {
@@ -1301,8 +1301,8 @@ window.LIBRARY = [
 "rating": "NR",
 "poster": "posters/099.jpg",
 "thumb": "thumbs/099.jpg",
-"link": "https://tv.apple.com/us/search?term=The%20Mouse%20and%20the%20Motorcycle",
-"direct": false,
+"link": "https://tv.apple.com/us/movie/the-mouse-and-the-motorcycle/umc.cmc.638h0o7duaf9fwslrgwzm0i00",
+"direct": true,
 "tags": []
 },
 {
@@ -1427,8 +1427,8 @@ window.LIBRARY = [
 "rating": "G",
 "poster": "posters/109.jpg",
 "thumb": "thumbs/109.jpg",
-"link": "https://tv.apple.com/us/search?term=Rudolph%20the%20Red-Nosed%20Reindeer",
-"direct": false,
+"link": "https://tv.apple.com/us/movie/rudolph-the-red-nosed-reindeer/umc.cmc.fv6sarqy2chcno2uu9nylgtq",
+"direct": true,
 "tags": [
 "holiday"
 ]
