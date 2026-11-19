@@ -368,6 +368,69 @@ main.wrap { padding-top: 22px; padding-bottom: 20px; min-height: 50vh; }
 .foot { padding: 14px 16px calc(22px + env(safe-area-inset-bottom, 0px)); text-align: center; color: rgba(201, 194, 255, .55); font-size: 10.5px; line-height: 1.4; }
 .foot p { max-width: 520px; margin: 0 auto; }
 
+/* ---------- "New" row: the newest titles first, marked with stars so she spots them without reading ---------- */
+.newrow { margin-bottom: clamp(26px, 3vw, 44px); }
+.newhead {
+  display: flex; align-items: center; justify-content: center; gap: .35em; margin: 0 0 16px;
+  font-family: var(--font-display); font-weight: 400; letter-spacing: .06em; text-transform: uppercase;
+  font-size: clamp(28px, 3.4vw, 46px); line-height: 1; color: var(--white);
+  text-shadow: 0 0 18px var(--yellow), 0 3px 4px rgba(0, 0, 0, .8);
+}
+.newhead .spark { font-size: .82em; filter: drop-shadow(0 0 10px var(--yellow)); }
+.grid.new .card { --rim: var(--yellow); }
+.grid.new .poster { box-shadow: 0 0 0 4px var(--yellow), 0 0 24px 5px rgba(255, 225, 77, .5), var(--shadow-poster); }
+.newbadge {
+  position: absolute; left: 8px; top: 8px; z-index: 2; width: 42px; height: 42px;
+  display: grid; place-items: center; border-radius: 50%; border: 3px solid var(--white);
+  background: var(--grad-hot); font-size: 21px; line-height: 1; box-shadow: 0 0 14px var(--pink);
+}
+.newline {
+  height: 4px; margin-top: clamp(22px, 2.6vw, 38px); border-radius: 3px; opacity: .85;
+  background: linear-gradient(90deg, transparent, var(--yellow), var(--pink), var(--violet), transparent);
+}
+
+/* ---------- opening splash: one big play button, a short intro, then the library ----------
+   Sound can only start from a tap (Safari blocks audio that starts on its own), so the button is what turns it on.
+   It shows once per launch: sessionStorage clears when the app is fully closed, so it plays again next time. */
+body.splash-on { overflow: hidden; }
+.splash {
+  position: fixed; inset: 0; z-index: 200;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: clamp(16px, 3.5vh, 38px);
+  text-align: center;
+  padding: calc(24px + env(safe-area-inset-top, 0px)) 24px calc(24px + env(safe-area-inset-bottom, 0px));
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 26%, rgba(255, 61, 154, .45), transparent 70%),
+    radial-gradient(ellipse 80% 55% at 50% 100%, rgba(41, 182, 255, .42), transparent 70%),
+    var(--night-1);
+}
+.splash.gone { opacity: 0; pointer-events: none; transition: opacity .55s ease; }
+.splash-icon {
+  width: min(34vw, 26vh, 210px); height: auto; border-radius: 22%;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, .35), 0 0 30px rgba(255, 61, 154, .65), 0 0 60px rgba(41, 182, 255, .45);
+}
+.splash-word {
+  margin: 0; font-family: var(--font-display); font-weight: 400; letter-spacing: .06em; text-transform: uppercase;
+  font-size: clamp(44px, 10vw, 104px); line-height: 1;
+  background: linear-gradient(180deg, #8fdcff 0%, #c25bff 55%, #ff3d9a 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 14px rgba(255, 61, 154, .6)) drop-shadow(0 3px 3px rgba(0, 0, 0, .8));
+}
+.splash-go {
+  width: min(40vw, 28vh, 196px); height: min(40vw, 28vh, 196px); padding: 0;
+  display: grid; place-items: center; border: 5px solid var(--white); border-radius: 50%;
+  background: var(--grad-hot); color: var(--white); cursor: pointer; -webkit-appearance: none; appearance: none;
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, .18), 0 0 44px 10px var(--pink), var(--shadow-btn);
+  animation: splashPulse 1.8s ease-in-out infinite;
+}
+.splash-go svg { width: 46%; height: 46%; margin-left: 8%; fill: currentColor; }
+.splash-go:active { transform: scale(.94); }
+@keyframes splashPulse { 50% { transform: scale(1.06); } }
+.splash.playing .splash-go { opacity: 0; transform: scale(.55); transition: opacity .3s ease, transform .3s ease; animation: none; }
+.splash.playing .splash-icon { animation: splashPop 1.5s cubic-bezier(.2, 1.5, .4, 1) forwards; }
+.splash.playing .splash-word { animation: splashWord 1.3s .12s cubic-bezier(.2, 1.2, .3, 1) both; }
+@keyframes splashPop { 0% { transform: scale(1) rotate(0); } 45% { transform: scale(1.2) rotate(-4deg); } 100% { transform: scale(1.07) rotate(0); } }
+@keyframes splashWord { 0% { opacity: 0; transform: translateY(20px) scale(.82); } 100% { opacity: 1; transform: none; } }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
   .tap:hover .poster, .tap:active .poster { transform: none; }
@@ -420,12 +483,19 @@ main.wrap { padding-top: 22px; padding-bottom: 20px; min-height: 50vh; }
 <div class="off" id="offline" role="alertdialog" aria-modal="true" aria-labelledby="offTitle" hidden>
   <svg class="off-icon" viewBox="0 0 120 120" aria-hidden="true" focusable="false"><circle cx="60" cy="60" r="56" fill="#FFFFFF"></circle><g fill="none" stroke="#FF3D9A" stroke-width="9" stroke-linecap="round"><path d="M22 48a54 54 0 0 1 76 0"></path><path d="M35 62a36 36 0 0 1 50 0"></path><path d="M48 76a18 18 0 0 1 24 0"></path><path d="M26 26l68 68" stroke="#0A0626" stroke-width="10"></path></g><circle cx="60" cy="90" r="6" fill="#FF3D9A"></circle></svg>
   <h2 class="off-title" id="offTitle">No Wi&#8209;Fi</h2>
-  <p class="off-sub">Downloaded movies still play in their apps.</p>
+  <p class="off-sub">Downloaded movies still play in the Apple TV app.</p>
   <div class="off-btns">
     <a class="big-btn go" id="dlBtn" href="videos://" draggable="false"><svg viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="15" fill="#FFFFFF"></circle><g fill="none" stroke="#12B87A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8v11"></path><path d="M11 14.5l5 5 5-5"></path><path d="M9.5 23.5h13"></path></g></svg>Open Downloads</a>
     <button class="big-btn again" id="retry" type="button"><svg viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="15" fill="#FFFFFF"></circle><g fill="none" stroke="#5A3DE0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M23 11a8.5 8.5 0 1 0 1.5 7"></path><path d="M23.5 5.5V11H18"></path></g></svg><span id="retryLabel">Try again</span></button>
   </div>
   <p class="off-note" id="offNote" role="status"></p>
+</div>
+
+<!-- opening splash: tap the play button, a short intro plays with sound, then the library -->
+<div class="splash" id="splash" role="dialog" aria-modal="true" aria-label="Start the Movie Library">
+  <img class="splash-icon" src="icons/icon-192.png" alt="" width="192" height="192" draggable="false">
+  <p class="splash-word" aria-hidden="true">Movies</p>
+  <button class="splash-go" id="splashGo" type="button" aria-label="Start"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 4.5v15l13-7.5z"></path></svg></button>
 </div>
 
 <script src="data.js"></script>
@@ -435,6 +505,9 @@ main.wrap { padding-top: 22px; padding-bottom: 20px; min-height: 50vh; }
 
   /* Set to false to remove every broken-link button, flag and note (the marks already saved on a device stay unused). */
   var BROKEN_LINK_BUTTON = true;
+
+  /* How many of the newest titles show in the "New" row at the top. Set to 0 to remove the row. */
+  var NEW_COUNT = 26;
 
   var LIB = Array.isArray(window.LIBRARY) ? window.LIBRARY : [];
 
@@ -491,6 +564,14 @@ main.wrap { padding-top: 22px; padding-bottom: 20px; min-height: 50vh; }
   var byId = {};
   items.forEach(function (it) { byId[String(it.d.id)] = it; });
 
+  /* The newest titles are simply the highest id numbers, so this stays right on its own as titles are added. */
+  function idNum(id) { return parseInt(String(id).replace(/[^0-9].*$/, ''), 10) || 0; }
+  var newest = LIB.map(function (d) { return String(d.id); })
+    .sort(function (a, b) { return idNum(b) - idNum(a) || (a < b ? 1 : a > b ? -1 : 0); })
+    .slice(0, Math.max(0, NEW_COUNT))
+    .map(function (id) { return byId[id]; })
+    .filter(function (it) { return !!it; });
+
   /* ---------- state ---------- */
   var view = lsGet('rstd:view') === 'flow' ? 'flow' : 'grid';
 
@@ -533,17 +614,17 @@ main.wrap { padding-top: 22px; padding-bottom: 20px; min-height: 50vh; }
       : '';
   }
 
-  function cardHTML(it) {
+  function cardHTML(it, isNew) {
     var d = it.d, id = String(d.id), t = esc(d.title);
     var src = d.thumb || d.poster;   // the grid uses the small copy; it loads when it scrolls near (see watchPosters)
     var media = src ? '<img data-src="' + esc(src) + '" alt="" decoding="async" width="420" height="630" draggable="false">' : tileHTML(d);
     return '<div class="card ' + rim(id) + '" role="listitem" data-id="' + esc(id) + '">' +
-      '<a class="tap" href="' + esc(safeUrl(d.link)) + '" target="_blank" rel="noopener" draggable="false" aria-label="Watch ' + t + '">' +
-        '<div class="poster">' + media + flagHTML(id) + '</div>' +
+      '<a class="tap" href="' + esc(safeUrl(d.link)) + '" target="_blank" rel="noopener" draggable="false" aria-label="Watch ' + t + ' in Apple TV">' +
+        '<div class="poster">' + media + (isNew ? '<span class="newbadge" aria-hidden="true">&#x2B50;</span>' : '') + flagHTML(id) + '</div>' +
         '<div class="name">' + t + '</div>' +
         (d.year ? '<div class="meta">' + esc(d.year) + '</div>' : '') +
       '</a>' +
-      brkHTML(id, t) +
+      (isNew ? '' : brkHTML(id, t)) +
     '</div>';
   }
 
@@ -583,8 +664,19 @@ main.wrap { padding-top: 22px; padding-bottom: 20px; min-height: 50vh; }
     cancelAnim();
     flowEl.hidden = true;
     resultsEl.hidden = false;
+    var azHTML = '<div class="grid" role="list">' +
+      items.map(function (it) { return cardHTML(it, false); }).join('') + '</div>';
+    var newHTML = newest.length
+      ? '<section class="newrow" aria-labelledby="newHead">' +
+          '<h2 class="newhead" id="newHead"><span class="spark" aria-hidden="true">&#x2728;</span>New<span class="spark" aria-hidden="true">&#x2728;</span></h2>' +
+          '<div class="grid new" role="list">' +
+            newest.map(function (it) { return cardHTML(it, true); }).join('') +
+          '</div>' +
+          '<div class="newline" aria-hidden="true"></div>' +
+        '</section>'
+      : '';
     resultsEl.innerHTML = items.length
-      ? '<div class="grid" role="list">' + items.map(cardHTML).join('') + '</div>'
+      ? newHTML + azHTML
       : '<div class="empty"><img src="icons/icon-192.png" alt="" width="96" height="96" draggable="false"><p>The library is empty.</p></div>';
     watchPosters();
     statusEl.textContent = items.length + ' titles';
@@ -665,7 +757,7 @@ main.wrap { padding-top: 22px; padding-bottom: 20px; min-height: 50vh; }
     var d = fl.list[i].d, old = a.querySelector('.ph');
     a._i = i;
     a.href = safeUrl(d.link);
-    a.setAttribute('aria-label', 'Watch ' + d.title);
+    a.setAttribute('aria-label', 'Watch ' + d.title + ' in Apple TV');
     var r = rim(String(d.id));
     if (a._rim !== r) { if (a._rim) a.classList.remove(a._rim); a.classList.add(r); a._rim = r; }
     if (old) old.parentNode.removeChild(old);
@@ -723,7 +815,7 @@ main.wrap { padding-top: 22px; padding-bottom: 20px; min-height: 50vh; }
     fl.id = id;
     flowTitleEl.firstChild.textContent = d.title;
     flowPlayEl.href = safeUrl(d.link);
-    flowPlayEl.setAttribute('aria-label', 'Play ' + d.title);
+    flowPlayEl.setAttribute('aria-label', 'Play ' + d.title + ' in Apple TV');
     syncFlowMark();
     flowCountEl.textContent = (i + 1) + ' of ' + n;
     if (scrubEl.value !== String(i)) scrubEl.value = String(i);
@@ -956,7 +1048,65 @@ main.wrap { padding-top: 22px; padding-bottom: 20px; min-height: 50vh; }
   window.setInterval(function () { if (document.visibilityState === 'visible') check(); }, offline ? 5000 : 30000);
   window.setInterval(function () { if (offline && document.visibilityState === 'visible') check(); }, 5000);
 
+  /* ---------- opening splash ----------
+     Safari will not start sound on its own, so the play button's tap is what unlocks it. The little fanfare is
+     made in code (no audio file to download, and it works offline). Shown once per launch. */
+  var splashEl = $('splash'), splashGoEl = $('splashGo');
+
+  function fanfare() {
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    var ctx;
+    try { ctx = new AC(); } catch (e) { return; }
+    if (ctx.state === 'suspended' && ctx.resume) { try { ctx.resume(); } catch (e2) { /* ignore */ } }
+    var t0 = ctx.currentTime + 0.02;
+    [[523.25, 0], [659.25, 0.11], [783.99, 0.22], [1046.50, 0.34]].forEach(function (n) {
+      var o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = 'triangle'; o.frequency.value = n[0];
+      g.gain.setValueAtTime(0.0001, t0 + n[1]);
+      g.gain.exponentialRampToValueAtTime(0.26, t0 + n[1] + 0.03);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + n[1] + 0.85);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(t0 + n[1]); o.stop(t0 + n[1] + 0.9);
+    });
+    var lo = ctx.createOscillator(), lg = ctx.createGain();   // a soft swell underneath
+    lo.type = 'sine';
+    lo.frequency.setValueAtTime(130.81, t0);
+    lo.frequency.exponentialRampToValueAtTime(261.63, t0 + 0.7);
+    lg.gain.setValueAtTime(0.0001, t0);
+    lg.gain.exponentialRampToValueAtTime(0.16, t0 + 0.16);
+    lg.gain.exponentialRampToValueAtTime(0.0001, t0 + 1.2);
+    lo.connect(lg); lg.connect(ctx.destination);
+    lo.start(t0); lo.stop(t0 + 1.25);
+    window.setTimeout(function () { try { ctx.close(); } catch (e3) { /* already closed */ } }, 2800);
+  }
+
+  function dropSplash() {
+    if (splashEl && splashEl.parentNode) splashEl.parentNode.removeChild(splashEl);
+    splashEl = null;
+    document.body.classList.remove('splash-on');
+  }
+  function startSplash() {
+    if (!splashEl || !splashGoEl) { dropSplash(); return; }
+    var seen = false;
+    try { seen = window.sessionStorage.getItem('rstd:splash') === '1'; } catch (e) { /* no storage */ }
+    if (seen) { dropSplash(); return; }          // same launch: straight to the library
+    document.body.classList.add('splash-on');
+    splashGoEl.addEventListener('click', function () {
+      try { window.sessionStorage.setItem('rstd:splash', '1'); } catch (e) { /* no storage */ }
+      splashGoEl.disabled = true;
+      splashEl.classList.add('playing');
+      fanfare();
+      window.setTimeout(function () {
+        if (!splashEl) return;
+        splashEl.classList.add('gone');
+        window.setTimeout(dropSplash, 600);
+      }, fl.reduced ? 450 : 2200);
+    });
+  }
+
   /* ---------- start ---------- */
+  startSplash();
   syncNote();
   syncView();
   render();
