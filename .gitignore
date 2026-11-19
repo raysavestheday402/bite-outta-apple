@@ -14,3 +14,8 @@ venv/
 desktop.ini
 .netlify/
 tools/covers_folder.txt
+
+# private notes - kept on this PC, never published to GitHub or the site
+CLAUDE.md
+PROJECT-BRIEF.md
+tools/private_words.txt

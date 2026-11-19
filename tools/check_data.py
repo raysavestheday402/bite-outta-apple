@@ -6,7 +6,20 @@ from libtools import items
 HERE = os.path.dirname(os.path.abspath(__file__))
 SITE = os.path.join(HERE, "..")
 # ratings are not checked or shown (Ray, Oct 2026): the library is whatever he owns
-BANNED_WORDS = ("lilly",)  # never show the kid's name on the site
+# Never show the kid's name on the site. The words live in tools/private_words.txt,
+# which is git-ignored, so the name itself is not published in this script.
+def _banned_words():
+    path = os.path.join(HERE, "private_words.txt")
+    if not os.path.exists(path):
+        print("NOTE: tools/private_words.txt is missing, so the name check is not running.")
+        return ()
+    with open(path, encoding="utf-8") as f:
+        return tuple(w.strip().lower() for w in f if w.strip() and not w.startswith("#"))
+
+
+BANNED_WORDS = _banned_words()
+# the services a poster may open: Apple TV, and Netflix (netflix.com/watch/<id> plays or resumes)
+LINK_OK = (r"^https://tv\.apple\.com/", r"^https://www\.netflix\.com/watch/\d+$")
 
 src = open(os.path.join(SITE, "data.js"), encoding="utf-8").read()
 lib = json.loads(src[src.index("["):src.rindex("]") + 1])
@@ -26,8 +39,8 @@ for x in lib:
         problems.append(f"{who}: no thumbnail (run tools/build_data.py)")
     elif not os.path.exists(os.path.join(SITE, x["thumb"])):
         problems.append(f"{who}: missing file {x['thumb']}")
-    if not re.match(r"^https://tv\.apple\.com/", x["link"]):
-        problems.append(f"{who}: link isn't an Apple TV link")
+    if not any(re.match(p, x["link"]) for p in LINK_OK):
+        problems.append(f"{who}: link isn't an Apple TV or Netflix link")
 used = {os.path.basename(x["poster"]) for x in lib if x.get("poster")}
 for f in sorted(set(os.listdir(os.path.join(SITE, "posters"))) - used):
     problems.append(f"posters/{f} isn't used by any title")
@@ -48,16 +61,18 @@ for name in ("apple_links.json", "cover_rows.json"):
     except ValueError:
         problems.append(f"tools/{name} is damaged (a leftover merge conflict?)")
 seen = {}
-for x in lib:  # two titles opening the same Apple TV page usually means one link is wrong
+for x in lib:  # two titles opening the same page usually means one link is wrong
     if x["direct"]:
         tv_id = x["link"].split("?")[0].rstrip("/").rsplit("/", 1)[-1]
         if tv_id in seen:
-            problems.append(f"{x['id']} {x['title']}: same Apple TV link as {seen[tv_id]}")
+            problems.append(f"{x['id']} {x['title']}: same link as {seen[tv_id]}")
         seen[tv_id] = f"{x['id']} {x['title']}"
 
 movies = sum(x["kind"] == "movie" for x in lib)
 plus = sum("plus" in x.get("tags", []) for x in lib)
-print(f"{len(lib)} titles | {movies} movies, {len(lib) - movies} shows | {plus} Apple TV+ | {sum(x['direct'] for x in lib)} direct links")
+flix = sum("netflix" in x.get("tags", []) for x in lib)
+print(f"{len(lib)} titles | {movies} movies, {len(lib) - movies} shows | {plus} Apple TV+ | "
+      f"{flix} Netflix | {sum(x['direct'] for x in lib)} direct links")
 pending = [it["key"] for it in items() if it["key"] not in set(ids)]
 if pending:
     print(f"{len(pending)} titles in cover_rows.json aren't on the site yet (run tools/update_library.py): {' '.join(pending)}")

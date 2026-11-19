@@ -3049,5 +3049,360 @@ window.LIBRARY = [
 "link": "https://tv.apple.com/us/show/squidbillies/umc.cmc.1uam95cwjg3tvishz99oeq94z",
 "direct": true,
 "tags": []
+},
+{
+"id": "230",
+"title": "12 Days of Snoopy",
+"kind": "movie",
+"year": "2026",
+"rating": "G",
+"poster": "posters/230.jpg",
+"thumb": "thumbs/230.jpg",
+"link": "https://tv.apple.com/us/movie/12-days-of-snoopy/umc.cmc.7js98w9pfzw394wpm8da3cuzq",
+"direct": true,
+"tags": [
+"holiday",
+"plus"
+]
+},
+{
+"id": "231",
+"title": "Inside Out",
+"kind": "movie",
+"year": "2015",
+"rating": "PG",
+"poster": "posters/231.jpg",
+"thumb": "thumbs/231.jpg",
+"link": "https://tv.apple.com/us/movie/inside-out/umc.cmc.e8rnwzv7klnnt9d5gq9m45nv",
+"direct": true,
+"tags": [
+"disney"
+]
+},
+{
+"id": "232",
+"title": "Inside Out 2",
+"kind": "movie",
+"year": "2024",
+"rating": "PG",
+"poster": "posters/232.jpg",
+"thumb": "thumbs/232.jpg",
+"link": "https://tv.apple.com/us/movie/inside-out-2/umc.cmc.1i9m3zsyxnwssydez7vjeax6l",
+"direct": true,
+"tags": [
+"disney"
+]
+},
+{
+"id": "233",
+"title": "Moana",
+"kind": "movie",
+"year": "2016",
+"rating": "PG",
+"poster": "posters/233.jpg",
+"thumb": "thumbs/233.jpg",
+"link": "https://tv.apple.com/us/movie/moana/umc.cmc.13yhzauh3b57obklyle10aepi",
+"direct": true,
+"tags": [
+"disney"
+]
+},
+{
+"id": "234",
+"title": "Moana 2",
+"kind": "movie",
+"year": "2024",
+"rating": "PG",
+"poster": "posters/234.jpg",
+"thumb": "thumbs/234.jpg",
+"link": "https://tv.apple.com/us/movie/moana-2/umc.cmc.6a0vv8bp0aa4fij9rn6fak8lt",
+"direct": true,
+"tags": [
+"disney"
+]
+},
+{
+"id": "235",
+"title": "Alice Through the Looking Glass",
+"kind": "movie",
+"year": "2016",
+"rating": "PG",
+"poster": "posters/235.jpg",
+"thumb": "thumbs/235.jpg",
+"link": "https://tv.apple.com/us/movie/alice-through-the-looking-glass/umc.cmc.4nyifvx14a7zp0m7mmd95u6fz",
+"direct": true,
+"tags": [
+"disney"
+]
+},
+{
+"id": "236",
+"title": "Sinbad: Legend of the Seven Seas",
+"kind": "movie",
+"year": "2003",
+"rating": "PG",
+"poster": "posters/236.jpg",
+"thumb": "thumbs/236.jpg",
+"link": "https://tv.apple.com/us/movie/sinbad-legend-of-the-seven-seas/umc.cmc.45k50cwwu1g6je7cpj8su0e8c",
+"direct": true,
+"tags": []
+},
+{
+"id": "237",
+"title": "Tom & Jerry",
+"kind": "movie",
+"year": "2021",
+"rating": "PG",
+"poster": "posters/237.jpg",
+"thumb": "thumbs/237.jpg",
+"link": "https://tv.apple.com/us/movie/tom--jerry/umc.cmc.1wqrsa0rg26sodzfts9c6p5tp",
+"direct": true,
+"tags": []
+},
+{
+"id": "238",
+"title": "Stuart Little",
+"kind": "movie",
+"year": "1999",
+"rating": "PG",
+"poster": "posters/238.jpg",
+"thumb": "thumbs/238.jpg",
+"link": "https://tv.apple.com/us/movie/stuart-little/umc.cmc.47szxfss7y9og9z4xrd2rf02u",
+"direct": true,
+"tags": []
+},
+{
+"id": "239",
+"title": "Stuart Little 2",
+"kind": "movie",
+"year": "2002",
+"rating": "PG",
+"poster": "posters/239.jpg",
+"thumb": "thumbs/239.jpg",
+"link": "https://tv.apple.com/us/movie/stuart-little-2/umc.cmc.3428f98jgd2erldt1lnma4a46",
+"direct": true,
+"tags": []
+},
+{
+"id": "240",
+"title": "SuperClaus",
+"kind": "movie",
+"year": "2024",
+"rating": "NR",
+"poster": "posters/240.jpg",
+"thumb": "thumbs/240.jpg",
+"link": "https://tv.apple.com/us/movie/superclaus/umc.cmc.39rva07mbzjw8wht5fey84a8h",
+"direct": true,
+"tags": [
+"holiday"
+]
+},
+{
+"id": "241",
+"title": "Scooby-Doo! and Guess Who?",
+"kind": "tv",
+"year": "2019",
+"rating": "TV-PG",
+"poster": "posters/241.jpg",
+"thumb": "thumbs/241.jpg",
+"link": "https://tv.apple.com/us/show/scooby-doo-and-guess-who/umc.cmc.18a7401ycr41ybx0a8b08eggj",
+"direct": true,
+"tags": []
+},
+{
+"id": "242",
+"title": "Shaun the Sheep",
+"kind": "tv",
+"year": "2007",
+"rating": "TV-G",
+"poster": "posters/242.jpg",
+"thumb": "thumbs/242.jpg",
+"link": "https://tv.apple.com/us/show/shaun-the-sheep/umc.cmc.2xv16ikbkqjcnvquiqo3r3oqn",
+"direct": true,
+"tags": []
+},
+{
+"id": "243",
+"title": "KPop Demon Hunters",
+"kind": "movie",
+"year": "2025",
+"rating": "PG",
+"poster": "posters/243.jpg",
+"thumb": "thumbs/243.jpg",
+"link": "https://www.netflix.com/watch/81498621",
+"direct": true,
+"tags": [
+"netflix"
+]
+},
+{
+"id": "244",
+"title": "Gabby's Dollhouse: The Movie",
+"kind": "movie",
+"year": "2025",
+"rating": "G",
+"poster": "posters/244.jpg",
+"thumb": "thumbs/244.jpg",
+"link": "https://www.netflix.com/watch/82182294",
+"direct": true,
+"tags": [
+"netflix"
+]
+},
+{
+"id": "245",
+"title": "Thelma the Unicorn",
+"kind": "movie",
+"year": "2024",
+"rating": "PG",
+"poster": "posters/245.jpg",
+"thumb": "thumbs/245.jpg",
+"link": "https://www.netflix.com/watch/81110501",
+"direct": true,
+"tags": [
+"netflix"
+]
+},
+{
+"id": "246",
+"title": "Leo",
+"kind": "movie",
+"year": "2023",
+"rating": "PG",
+"poster": "posters/246.jpg",
+"thumb": "thumbs/246.jpg",
+"link": "https://www.netflix.com/watch/81218917",
+"direct": true,
+"tags": [
+"netflix"
+]
+},
+{
+"id": "247",
+"title": "Spellbound",
+"kind": "movie",
+"year": "2024",
+"rating": "PG",
+"poster": "posters/247.jpg",
+"thumb": "thumbs/247.jpg",
+"link": "https://www.netflix.com/watch/81745658",
+"direct": true,
+"tags": [
+"netflix"
+]
+},
+{
+"id": "248",
+"title": "In Your Dreams",
+"kind": "movie",
+"year": "2025",
+"rating": "PG",
+"poster": "posters/248.jpg",
+"thumb": "thumbs/248.jpg",
+"link": "https://www.netflix.com/watch/80992977",
+"direct": true,
+"tags": [
+"netflix"
+]
+},
+{
+"id": "249",
+"title": "My Little Pony: A New Generation",
+"kind": "movie",
+"year": "2021",
+"rating": "PG",
+"poster": "posters/249.jpg",
+"thumb": "thumbs/249.jpg",
+"link": "https://www.netflix.com/watch/81424207",
+"direct": true,
+"tags": [
+"netflix"
+]
+},
+{
+"id": "250",
+"title": "That Christmas",
+"kind": "movie",
+"year": "2024",
+"rating": "PG",
+"poster": "posters/250.jpg",
+"thumb": "thumbs/250.jpg",
+"link": "https://www.netflix.com/watch/81309564",
+"direct": true,
+"tags": [
+"holiday",
+"netflix"
+]
+},
+{
+"id": "251",
+"title": "Klaus",
+"kind": "movie",
+"year": "2019",
+"rating": "PG",
+"poster": "posters/251.jpg",
+"thumb": "thumbs/251.jpg",
+"link": "https://www.netflix.com/watch/80183187",
+"direct": true,
+"tags": [
+"holiday",
+"netflix"
+]
+},
+{
+"id": "252",
+"title": "Ms. Rachel",
+"kind": "tv",
+"year": "2025",
+"rating": "TV-Y",
+"poster": "posters/252.jpg",
+"thumb": "thumbs/252.jpg",
+"link": "https://www.netflix.com/watch/81975233",
+"direct": true,
+"tags": [
+"netflix"
+]
+},
+{
+"id": "253",
+"title": "Gabby's Dollhouse",
+"kind": "tv",
+"year": "2021",
+"rating": "TV-Y",
+"poster": "posters/253.jpg",
+"thumb": "thumbs/253.jpg",
+"link": "https://www.netflix.com/watch/81009946",
+"direct": true,
+"tags": [
+"netflix"
+]
+},
+{
+"id": "254",
+"title": "The Creature Cases",
+"kind": "tv",
+"year": "2022",
+"rating": "TV-Y7",
+"poster": "posters/254.jpg",
+"thumb": "thumbs/254.jpg",
+"link": "https://www.netflix.com/watch/81014532",
+"direct": true,
+"tags": [
+"netflix"
+]
+},
+{
+"id": "257",
+"title": "Unicorn Academy",
+"kind": "tv",
+"year": "2023",
+"rating": "TV-Y7",
+"poster": "posters/257.jpg",
+"thumb": "thumbs/257.jpg",
+"link": "https://www.netflix.com/watch/81279322",
+"direct": true,
+"tags": [
+"netflix"
+]
 }
 ];
