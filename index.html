@@ -377,6 +377,12 @@ main.wrap { padding-top: 22px; padding-bottom: 20px; min-height: 50vh; }
   text-shadow: 0 0 18px var(--yellow), 0 3px 4px rgba(0, 0, 0, .8);
 }
 .newhead .spark { font-size: .82em; filter: drop-shadow(0 0 10px var(--yellow)); }
+.allhead {
+  margin: 0 0 16px; text-align: center;
+  font-family: var(--font-display); font-weight: 400; letter-spacing: .06em; text-transform: uppercase;
+  font-size: clamp(28px, 3.4vw, 46px); line-height: 1; color: var(--white);
+  text-shadow: 0 0 18px var(--blue), 0 3px 4px rgba(0, 0, 0, .8);
+}
 .grid.new .card { --rim: var(--yellow); }
 .grid.new .poster { box-shadow: 0 0 0 4px var(--yellow), 0 0 24px 5px rgba(255, 225, 77, .5), var(--shadow-poster); }
 .newbadge {
@@ -408,13 +414,6 @@ body.splash-on { overflow: hidden; }
   width: min(34vw, 26vh, 210px); height: auto; border-radius: 22%;
   box-shadow: 0 0 0 3px rgba(255, 255, 255, .35), 0 0 30px rgba(255, 61, 154, .65), 0 0 60px rgba(41, 182, 255, .45);
 }
-.splash-word {
-  margin: 0; font-family: var(--font-display); font-weight: 400; letter-spacing: .06em; text-transform: uppercase;
-  font-size: clamp(44px, 10vw, 104px); line-height: 1;
-  background: linear-gradient(180deg, #8fdcff 0%, #c25bff 55%, #ff3d9a 100%);
-  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 14px rgba(255, 61, 154, .6)) drop-shadow(0 3px 3px rgba(0, 0, 0, .8));
-}
 .splash-go {
   width: min(40vw, 28vh, 196px); height: min(40vw, 28vh, 196px); padding: 0;
   display: grid; place-items: center; border: 5px solid var(--white); border-radius: 50%;
@@ -427,17 +426,15 @@ body.splash-on { overflow: hidden; }
 @keyframes splashPulse { 50% { transform: scale(1.06); } }
 .splash.playing .splash-go { opacity: 0; transform: scale(.55); transition: opacity .3s ease, transform .3s ease; animation: none; }
 .splash.playing .splash-icon { animation: splashPop 1.5s cubic-bezier(.2, 1.5, .4, 1) forwards; }
-.splash.playing .splash-word { animation: splashWord 1.3s .12s cubic-bezier(.2, 1.2, .3, 1) both; }
 @keyframes splashPop { 0% { transform: scale(1) rotate(0); } 45% { transform: scale(1.2) rotate(-4deg); } 100% { transform: scale(1.07) rotate(0); } }
-@keyframes splashWord { 0% { opacity: 0; transform: translateY(20px) scale(.82); } 100% { opacity: 1; transform: none; } }
-.splash-icon, .splash-word, .splash-go { position: relative; z-index: 2; }
+.splash-icon, .splash-go { position: relative; z-index: 2; }
 .splash-vid {
   position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%;
   object-fit: contain;            /* the whole frame, nothing cropped; "cover" would fill the screen instead */
   background: #000; opacity: 0; transition: opacity .4s ease;
 }
 .splash.playing .splash-vid { opacity: 1; }
-.splash.playing .splash-icon, .splash.playing .splash-word { opacity: 0; transition: opacity .3s ease; }
+.splash.playing .splash-icon { opacity: 0; transition: opacity .3s ease; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
@@ -503,7 +500,6 @@ body.splash-on { overflow: hidden; }
 <div class="splash" id="splash" role="dialog" aria-modal="true" aria-label="Start the Movie Library">
   <video class="splash-vid" id="splashVid" src="intro.mp4" playsinline webkit-playsinline preload="auto" disablepictureinpicture disableremoteplayback></video>
   <img class="splash-icon" src="icons/icon-192.png" alt="" width="192" height="192" draggable="false">
-  <p class="splash-word" aria-hidden="true">Movies</p>
   <button class="splash-go" id="splashGo" type="button" aria-label="Start"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 4.5v15l13-7.5z"></path></svg></button>
 </div>
 
@@ -673,8 +669,12 @@ body.splash-on { overflow: hidden; }
     cancelAnim();
     flowEl.hidden = true;
     resultsEl.hidden = false;
-    var azHTML = '<div class="grid" role="list">' +
-      items.map(function (it) { return cardHTML(it, false); }).join('') + '</div>';
+    var azHTML = '<section aria-labelledby="allHead">' +
+        '<h2 class="allhead" id="allHead">All Movies</h2>' +
+        '<div class="grid" role="list">' +
+          items.map(function (it) { return cardHTML(it, false); }).join('') +
+        '</div>' +
+      '</section>';
     var newHTML = newest.length
       ? '<section class="newrow" aria-labelledby="newHead">' +
           '<h2 class="newhead" id="newHead"><span class="spark" aria-hidden="true">&#x2728;</span>New<span class="spark" aria-hidden="true">&#x2728;</span></h2>' +
