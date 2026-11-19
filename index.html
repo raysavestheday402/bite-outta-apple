@@ -430,6 +430,14 @@ body.splash-on { overflow: hidden; }
 .splash.playing .splash-word { animation: splashWord 1.3s .12s cubic-bezier(.2, 1.2, .3, 1) both; }
 @keyframes splashPop { 0% { transform: scale(1) rotate(0); } 45% { transform: scale(1.2) rotate(-4deg); } 100% { transform: scale(1.07) rotate(0); } }
 @keyframes splashWord { 0% { opacity: 0; transform: translateY(20px) scale(.82); } 100% { opacity: 1; transform: none; } }
+.splash-icon, .splash-word, .splash-go { position: relative; z-index: 2; }
+.splash-vid {
+  position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%;
+  object-fit: contain;            /* the whole frame, nothing cropped; "cover" would fill the screen instead */
+  background: #000; opacity: 0; transition: opacity .4s ease;
+}
+.splash.playing .splash-vid { opacity: 1; }
+.splash.playing .splash-icon, .splash.playing .splash-word { opacity: 0; transition: opacity .3s ease; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
@@ -493,6 +501,7 @@ body.splash-on { overflow: hidden; }
 
 <!-- opening splash: tap the play button, a short intro plays with sound, then the library -->
 <div class="splash" id="splash" role="dialog" aria-modal="true" aria-label="Start the Movie Library">
+  <video class="splash-vid" id="splashVid" src="intro.mp4" playsinline webkit-playsinline preload="auto" disablepictureinpicture disableremoteplayback></video>
   <img class="splash-icon" src="icons/icon-192.png" alt="" width="192" height="192" draggable="false">
   <p class="splash-word" aria-hidden="true">Movies</p>
   <button class="splash-go" id="splashGo" type="button" aria-label="Start"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 4.5v15l13-7.5z"></path></svg></button>
@@ -1092,16 +1101,35 @@ body.splash-on { overflow: hidden; }
     try { seen = window.sessionStorage.getItem('rstd:splash') === '1'; } catch (e) { /* no storage */ }
     if (seen) { dropSplash(); return; }          // same launch: straight to the library
     document.body.classList.add('splash-on');
-    splashGoEl.addEventListener('click', function () {
-      try { window.sessionStorage.setItem('rstd:splash', '1'); } catch (e) { /* no storage */ }
-      splashGoEl.disabled = true;
-      splashEl.classList.add('playing');
-      fanfare();
+    var vidEl = $('splashVid'), ending = false;
+    function finishSplash(wait) {
+      if (ending || !splashEl) return;
+      ending = true;
       window.setTimeout(function () {
         if (!splashEl) return;
         splashEl.classList.add('gone');
         window.setTimeout(dropSplash, 600);
-      }, fl.reduced ? 450 : 2200);
+      }, wait || 0);
+    }
+    function noClip() { fanfare(); finishSplash(fl.reduced ? 450 : 2000); }   // clip missing or blocked: still opens
+    splashGoEl.addEventListener('click', function () {
+      try { window.sessionStorage.setItem('rstd:splash', '1'); } catch (e) { /* no storage */ }
+      splashGoEl.disabled = true;
+      splashEl.classList.add('playing');
+      if (!vidEl) { noClip(); return; }
+      vidEl.addEventListener('ended', function () { finishSplash(300); });
+      vidEl.addEventListener('error', noClip);
+      var p;
+      try { p = vidEl.play(); } catch (e2) { noClip(); return; }   // must be called right here, so the tap counts
+      if (p && p.then) p.then(null, noClip);
+      window.setTimeout(function () { finishSplash(0); }, 20000);  // never leave her stuck on the splash
+    });
+    // a tap anywhere while it plays goes straight to the library
+    splashEl.addEventListener('click', function (e) {
+      if (splashGoEl.contains(e.target)) return;
+      if (!splashEl.classList.contains('playing')) return;
+      if (vidEl) { try { vidEl.pause(); } catch (e3) { /* nothing playing */ } }
+      finishSplash(0);
     });
   }
 
